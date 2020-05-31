@@ -56,6 +56,7 @@ public class BGW {
 		//random beta in Z_p
 		Fr beta = new Fr();
 		beta.setByCSPRNG();
+		
 		//compute v
 		G2 v = new G2();
 		Mcl.mul(v, g, beta); //v = g^beta
