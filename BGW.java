@@ -9,7 +9,6 @@ import com.herumi.mcl.*;
 public class BGW {
 
 	private static Fr alpha;
-	private static boolean allTestsPassed = false;
 	
 	//Input: n = # of receivers
 	//Output: Object[]
