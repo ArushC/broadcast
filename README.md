@@ -11,7 +11,7 @@ place this file in the following directory: /mcl/ffi/java
 
 3. Change the filepath on line #125 (on my computer, for some reason, the relative path does not work)
 
-
+4. Compile and run
 
 
 
