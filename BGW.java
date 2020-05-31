@@ -101,7 +101,7 @@ public class BGW {
 	
 	public static void testSetup(int n) {
 		//TEST SETUP
-			Object[] setup = setup(n); //102 elements (public keys + g_0 + v)
+			Object[] setup = setup(n);
 			//EXTRACT EVERYTHING
 			ArrayList<G2> PK = (ArrayList<G2>) setup[0];
 			ArrayList<G2> privateKeys = (ArrayList<G2>) setup[1];
