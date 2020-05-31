@@ -1,7 +1,5 @@
 import java.io.*;
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.math.*;
 
 import com.herumi.mcl.*;
 
@@ -31,7 +29,6 @@ public class BGW {
 		
 		//Instantiate public key PK
 		ArrayList<G2> PK = new ArrayList<G2>();
-		BigInteger a_value = new BigInteger(alpha.toString());
 		PK.add(g); //add group g
 		
 		//from i = 1 to i = n
