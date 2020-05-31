@@ -73,14 +73,31 @@ public class BGW {
 		
 	//Input: S = subset to which the message is brodcast, PK = public key
 	//Output: Hdr = header (broadcast ciphertext), K = message encryption key
-	//public static int[] encrypt(ArrayList<Integer> S, int PK) {
+	public static Object[] encrypt(ArrayList<Integer> S, ArrayList<G2> PK) {
 			
-	//}
+		//Pick a random t in Z_p
+		Fr t = new Fr();
+		t.setByCSPRNG();
+		
+		//calculate e(g_n, g_1)
+		GT e = new GT();
+		//STUCK HERE
+		//g_n and g_1 both of type G2
+		//but parameters for Mcl.pairing function are in the form GT = e(G1, G2)
+		//??????????
+		//convert g_1 to G1 element?
+		G1 g = new G1();
+		Mcl.hashAndMapToG1(g, "abc".getBytes());
+		G1 g1 = new G1();
+		Mcl.mul(g, g1, alpha); 
+		//will this work?
+		///TO BE WRITTEN
+	}
 	
 	//Input: S = subset, i = user id, di = user private key, Hdr = header, PK = public key
 	//Output: if i is in S, output message encryption key K. Use to decode C (brodcast body)
 	//public static int[] decrypt(ArrayList<Integer> S, int i, int di, int Hdr, int PK) {
-		
+		//TO BE WRITTEN
 	//}
 	
 	//TESTING -------------------------------------------------------------------------------
