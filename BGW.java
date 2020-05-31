@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.ArrayList;
-
 import com.herumi.mcl.*;
 
 //How to use the library: https://github.com/herumi/mcl/blob/master/ffi/java/java.md
