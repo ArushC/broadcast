@@ -204,7 +204,7 @@ public class BGWReal {
 	public static Object[] testSetup(int n) {
 		//TEST SETUP: returns the setup Object[]
 			Object[] setup = setup(n);
-			System.out.println(BGWReal.n);
+		
 			//EXTRACT EVERYTHING
 			ArrayList<G2> PK = (ArrayList<G2>) setup[0];
 			ArrayList<G2> privateKeys = (ArrayList<G2>) setup[1];
