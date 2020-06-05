@@ -228,6 +228,8 @@ public class BGWReal {
 		G2 di = privateKeys.get(i - 1);
 		Object[] encrypted = encrypt(S, PK);
 		Object[] Hdr = (Object[]) encrypted[0];
+		System.out.println();
+		System.out.println("DECRYPT TEST: ");
 		testDecrypt(S, i, di, Hdr, PK); //YES! IT WORKED! FINALLY (after so much debugging hahaha)
 		
 	}
