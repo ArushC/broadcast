@@ -249,8 +249,8 @@ public class BGWReal {
 		long startDecrypt = System.nanoTime();
 		long elapsedDecrypt = System.nanoTime() - startDecrypt;
 		double secondsDecrypt = ((double) elapsedDecrypt) / 1E9;
-		//Finally, print out the results
 		
+		//Finally, print out the results
 		System.out.println("RUNTIMES, n = " + n + ", subset size = " + subsetSize);
 		System.out.println(); //padding
 		System.out.println("setup took " + secondsSetup + " seconds");
