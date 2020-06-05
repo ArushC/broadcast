@@ -11,7 +11,6 @@ import com.herumi.mcl.*;
 
 public class BGWReal {
 
-	
 	//From https://books.google.com/books?id=kb7ZzFrJi48C&pg=PA106&lpg=PA106&dq=calculate+e(g,+g)+pairing&source=bl&ots=Taa2npE3kj&sig=ACfU3U1zNODtV4H_2pUbgscbcQsYljeujg&hl=en&sa=X&ved=2ahUKEwjD_q6hj-LpAhXLTN8KHS3eAU8Q6AEwCXoECAcQAQ#v=onepage&q=calculate%20e(g%2C%20g)%20pairing&f=falsev
 	//e(g, g^(ab)) = e(g, g)^(ab) = e(g^a, g^b)
 	//so instantiate g as a G1 group and make all the others G2 groups
@@ -39,7 +38,7 @@ public class BGWReal {
 		gg = new G2();
 		Mcl.hashAndMapToG2(gg, randomGenerator.getBytes());
 		
-		//random alpha in Z_p 
+		//random alpha and t in Z_p 
 		alpha = new Fr();
 		alpha.setByCSPRNG(); 
 		t = new Fr();
@@ -52,22 +51,11 @@ public class BGWReal {
 		ArrayList<Object> PK = new ArrayList<Object>();
 		PK.add(g); //add group element g (type G1)
 		
-		//from i = 1 to i = n
-		for (int i = 1; i < n; i++) {
+		//from i = 1 to i = 2n (ALL)
+		for (int i = 1; i <= 2*n; i++) {
 			G2 pub = new G2();
-			Fr exp = new Fr();
-			Mcl.mul(exp, alpha, new Fr(i)); //exp = alpha^(i) 
-			//System.out.println(exp);
+			Fr exp = power(alpha, i); //exp = alpha^i
 			Mcl.mul(pub, gg, exp); // g_n = g^(exp)
-			//System.out.println(pub);
-			PK.add(pub);
-		}
-		//from i = n to i = 2n (step = 2)
-		for (int i = n; i <= 2*n; i+=2) {
-			G2 pub = new G2();
-			Fr exp = new Fr();
-			Mcl.mul(exp, alpha, new Fr(i)); //exp = alpha^(i) 
-			Mcl.mul(pub, gg, exp);
 			PK.add(pub);
 		}
 		
@@ -96,14 +84,11 @@ public class BGWReal {
 	
 	//precomputes K = e(gn+1, g)^t
 	private static void precompute() {
-		
 		//calculate e(g, g_(n+1))
 		GT e = new GT();
 		G2 gNPlus1 = new G2();
-		Fr exp = new Fr();
-		Mcl.mul(exp, alpha, new Fr(n + 1));
+		Fr exp = power(alpha, n+1);
 		Mcl.mul(gNPlus1, gg, exp); //gn = g^(alpha^n), so gn+1 = g^(alpha^(n+1)) = g^(exp)
-		//will this work?
 		Mcl.pairing(e, g, gNPlus1);
 		K = new GT();
 		Mcl.pow(K, e, t); // K = e(g, gn+1)^t
@@ -119,18 +104,15 @@ public class BGWReal {
 		
 		//calculate C_1 (second element in Hdr)
 		G2 v = (G2) PK.get(PK.size() - 1);
+		G2 product = new G2(v);
 		
-		int initialIndex = n + 1 - S.get(0); //S.get(0) = j
-		G2 product = new G2((G2) PK.get(initialIndex));
-		
-		for (int i = 1; i < S.size(); i++) {
+		for (int i = 0; i < S.size(); i++) {
 			int j = S.get(i);
 			Mcl.add(product, product, (G2) PK.get(n + 1 - j)); //product *= g_(n + 1 - j)
 		}
 		
 		G2 c1 = new G2();
-		Mcl.add(c1, v, product); // c1 = v * product
-		Mcl.mul(c1, c1, t);      //c1 = c1^(t)
+		Mcl.mul(c1, product, t);      //c1 = c1^(t)
 		
 		//return Hdr and K
 		Object[] Hdr = new Object[2];
@@ -151,9 +133,10 @@ public class BGWReal {
 		//Calculate e(g_i, C1) = e(g, C1^(alpha^i))
 		GT e1 = new GT();
 		G2 c1 = (G2) Hdr[1];
-		Fr exp = new Fr();
-		Mcl.mul(exp, alpha, new Fr(i));
-		Mcl.pairing(e1, g, c1);
+		Fr exp = power(alpha, i);
+		G1 gi = new G1();
+		Mcl.mul(gi, g, exp); //gi = g^(alpha^i)
+		Mcl.pairing(e1, gi, c1);
 		
 		//Calculate e(big messy expression, C0) --> see the paper, page 6: https://eprint.iacr.org/2005/018.pdf 
 		//In this case, C0 is of type G1, big messy expression of type G2
@@ -161,32 +144,26 @@ public class BGWReal {
 		G1 c0 = (G1) Hdr[0];
 		
 		//calculate big messy expression
-		int initialIndex = n + 1 - S.get(0) + i; //S.get(0) = j
-		G2 product = new G2((G2) PK.get(initialIndex));
+		G2 product = new G2(di);
 		
-		
-		for (int k = 1; k < S.size(); k++) {
-			if (k == i) {
+		for (int k = 0; k < S.size(); k++) {	
+			int j = S.get(k);
+			if (j == i) {
 				continue;
 			}
-			//else	
-			int j = S.get(k);
 			Mcl.add(product, product, (G2) PK.get(n + 1 - j + i)); //product *= g_(n + 1 - j + i)
 		}
 		
-		G2 result = new G2();
-		Mcl.add(result, di, product); //result = di * product
-		
 		//finally, compute the pairing
 		GT e2 = new GT();
-		Mcl.pairing(e2, c0, result);
+		Mcl.pairing(e2, c0, product);
 		
-		GT K = new GT();
+		GT K_R = new GT();
 		//to compute e1 / e2, calculate e2^(-1) and output e1 * e2^(-1)
 		Mcl.pow(e2, e2, new Fr(-1)); //CONFIRMED this works (after testing)
-		Mcl.mul(K, e1, e2);
+		Mcl.mul(K_R, e1, e2);
 		
-		return K;
+		return K_R;
 		
 	}
 	
@@ -204,7 +181,6 @@ public class BGWReal {
 	public static Object[] testSetup(int n) {
 		//TEST SETUP: returns the setup Object[]
 			Object[] setup = setup(n);
-		
 			//EXTRACT EVERYTHING
 			ArrayList<G2> PK = (ArrayList<G2>) setup[0];
 			ArrayList<G2> privateKeys = (ArrayList<G2>) setup[1];
@@ -212,8 +188,7 @@ public class BGWReal {
 			for (int i = 1; i <= n; i++) {
 				//Verify for each key: di = vi (v^(alpha^(i)))
 				G2 di = privateKeys.get(i - 1); // (i - 1) because private keys starts from i = 1
-				Fr exp = new Fr();
-				Mcl.mul(exp, alpha, new Fr(i)); //exp = (alpha^(i))
+				Fr exp = power(alpha, i);
 				System.out.println("Exponent = " + exp.toString());
 				G2 vi = new G2();
 				Mcl.mul(vi, v, exp); //vi = v^(exp)
@@ -224,6 +199,7 @@ public class BGWReal {
 	}
 	
 	//must be called AFTER setup function has been called, otherwise instance variables will not be instantiated
+	//Expected: K.toString() == K1.toString()
 	public static void testDecrypt(ArrayList<Integer> S, int i, G2 di, Object[] Hdr, ArrayList<Object> PK) {
 		GT K1 = decrypt(S, i, di, Hdr, PK);
 		System.out.println("K = " + K.toString());
@@ -231,6 +207,13 @@ public class BGWReal {
 	}
 
 	
+	private static Fr power(Fr base, int exponent) {
+		Fr res = new Fr(1);
+		for (int i = 0; i < exponent; i++) {
+			Mcl.mul(res, res, base); //res = res * base (do this exponent # of times)
+		}
+		return res;
+	}
 	
 	public static void main(String[] args) {
 		//change the file directory here
@@ -240,14 +223,12 @@ public class BGWReal {
 		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
 		ArrayList<G2> privateKeys = (ArrayList<G2>) setup[1];
 		ArrayList<Integer> S = new ArrayList<Integer>();
-		S.addAll(Arrays.asList(1, 6, 17, 25, 33));
-		int i = 61;
+		S.addAll(Arrays.asList(1, 6, 17, 25, 33, 49));
+		int i = 6;
 		G2 di = privateKeys.get(i - 1);
 		Object[] encrypted = encrypt(S, PK);
 		Object[] Hdr = (Object[]) encrypted[0];
-		testDecrypt(S, i, di, Hdr, PK); //Unfortunately, this doesn't work (K should be equal to K1)
-										//Gotta do a lot of debugging now...
-		
+		testDecrypt(S, i, di, Hdr, PK); //YES! IT WORKED! FINALLY (after so much debugging hahaha)
 		
 	}
 
