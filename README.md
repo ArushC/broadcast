@@ -1,6 +1,6 @@
 # cryptography
 
-How to use this file:
+How to use these files:
 
 1. Download and install the MCL library from https://github.com/herumi/mcl
 Instructions for how to build the library are at the bottom of the page.
