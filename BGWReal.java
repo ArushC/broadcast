@@ -300,7 +300,6 @@ public class BGWReal {
 	
 	}
 	
-	
 	public static void main(String[] args) {
 		//change the file directory here
 		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
