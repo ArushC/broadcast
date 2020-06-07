@@ -11,9 +11,11 @@ public class WatersDualEncryption {
 	private static G2 gg;
 	private static Fr b; 
 	
-	
+	//input: security parameter lambda (Mcl.BN254 or Mcl.BLS_381)
 	//output: (public key PK, secret key MSK)
-	public static Object[] setup() { 
+	public static Object[] setup(int lambda) { 
+		
+		Mcl.SystemInit(lambda); // curveType = Mcl.BN254 or Mcl.BLS12_381
 		
 		//Step 1: choose random generators
 		
@@ -356,7 +358,13 @@ public class WatersDualEncryption {
 		
 	}
 	
-	public static void testDecrypt() {
+	public static void testDecrypt(int lambda) {
+		
+		//first, setup
+		Object[] setup = setup(lambda);
+		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
+		ArrayList<Object> MSK = (ArrayList<Object>) setup[1];
+		
 		//generate a nondegenerate message M using pairings
 		G1 g1 = new G1();
 		Mcl.hashAndMapToG1(g1, generateRandomBytes());
@@ -370,10 +378,7 @@ public class WatersDualEncryption {
 		I.setByCSPRNG();
 				
 		System.out.println("M: " + M.toString());
-		//first, setup
-		Object[] setup = setup();
-		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
-		ArrayList<Object> MSK = (ArrayList<Object>) setup[1];
+		
 				
 		//generate ciphertext and keys
 		ArrayList<Object> CT = encrypt(PK, I, M);
@@ -389,10 +394,8 @@ public class WatersDualEncryption {
 	public static void main(String[] args) {
 		//change the file directory here
 		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
-		Mcl.SystemInit(Mcl.BN254); // curveType = Mcl.BN254 or Mcl.BLS12_381
-		testDecrypt();
-		
+		testDecrypt(Mcl.BLS12_381);
+		testDecrypt(Mcl.BN254);
 	}
-	
-		
+			
 }
