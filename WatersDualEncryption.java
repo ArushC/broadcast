@@ -358,10 +358,13 @@ public class WatersDualEncryption {
 		
 	}
 	
-	public static void testDecrypt(int lambda) {
+	private static long[] printRuntimes(int lambda) {
 		
-		//first, setup
+		long startSetup = System.nanoTime();
 		Object[] setup = setup(lambda);
+		long elapsedSetup = System.nanoTime() - startSetup;
+		double secondsSetup = ((double) elapsedSetup) / 1E6;
+		
 		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
 		ArrayList<Object> MSK = (ArrayList<Object>) setup[1];
 		
@@ -372,30 +375,94 @@ public class WatersDualEncryption {
 		Mcl.hashAndMapToG2(g2, generateRandomBytes());
 		GT M = new GT();
 		Mcl.pairing(M, g1, g2);
-				
+		
 		//generate a random value for the key I
 		Fr I = new Fr();
 		I.setByCSPRNG();
-				
-		System.out.println("M: " + M.toString());
 		
-				
+		
 		//generate ciphertext and keys
+		long startEncrypt = System.nanoTime();
 		ArrayList<Object> CT = encrypt(PK, I, M);
+		long elapsedEncrypt = System.nanoTime() - startEncrypt;
+		double secondsEncrypt = ((double) elapsedEncrypt) / 1E6;
+		long startKeyGen = System.nanoTime();
 		ArrayList<Object> SKI = keyGen(MSK, I);
-				
-		//Finally, decrypt and check if the result from the decryption is equal to M
+		long elapsedKeyGen = System.nanoTime() - startKeyGen;
+		double secondsKeyGen = ((double) elapsedKeyGen) / 1E6;
+		
+		//finally, decrypt
+		long startDecrypt = System.nanoTime();
 		GT M1 = decrypt(CT, SKI);
-		System.out.println("M1: " + M1.toString()); //It works! Second try!
-				
+		long elapsedDecrypt = System.nanoTime() - startDecrypt;
+		double secondsDecrypt = ((double) elapsedDecrypt) / 1E6;
+		
+		String result = (M.equals(M1)) ? "SUCCESSFUL DECRYPTION" : "FAILED DECRYPTION";
+		System.out.println(result);
+		System.out.println(); //padding
+		System.out.println("setup took " + secondsSetup + " milliseconds");
+		System.out.println("encryption took " + secondsEncrypt + " milliseconds");
+		System.out.println("key generation took " + secondsKeyGen + " milliseconds");
+		System.out.println("decryption took " + secondsDecrypt + " milliseconds");
+		System.out.println(); //more padding
+		
+		long[] elapsedTimes = new long[4];
+		elapsedTimes[0] = elapsedSetup;
+		elapsedTimes[1] = elapsedEncrypt;
+		elapsedTimes[2] = elapsedKeyGen;
+		elapsedTimes[3] = elapsedDecrypt;
+		
+		return elapsedTimes;
+		
 	}
 	
+	//n = # of times to test
+	//lambda = Mcl.BLS12_381 or Mcl.BN254
+	public static double[] testRuntimes(int lambda, int n) {
+		
+		System.out.println("Testing runtimes, n = " + n);
+		
+		
+		long totalSetupTime = 0, totalEncryptionTime = 0, totalKeyGenTime = 0, totalDecryptionTime = 0;
+		
+		for (int i = 0; i < n; i++) {
+			long[] elapsedTimes = printRuntimes(lambda);
+			if (i == 0) { continue; } //for some reason, the setup time for the VERY FIRST run is always an outlier, do not include in average
+			
+			totalSetupTime += elapsedTimes[0];
+			totalEncryptionTime += elapsedTimes[1];
+			totalKeyGenTime += elapsedTimes[2];
+			totalDecryptionTime += elapsedTimes[3];
+		}
+		
+		double averageSetupTime = ((double) totalSetupTime) / (1E6 * n);
+		double averageEncryptionTime = ((double) totalEncryptionTime) / (1E6 * n);
+		double averageKeyGenTime = ((double) totalKeyGenTime) / (1E6 * n);
+		double averageDecryptionTime = ((double) totalDecryptionTime) / (1E6 * n);
+		
+		System.out.println("Average setup time: " + averageSetupTime + " milliseconds");
+		System.out.println("Average encryption time: " + averageEncryptionTime + " milliseconds");
+		System.out.println("Average key generation time: " + averageKeyGenTime + " milliseconds");
+		System.out.println("Average decryption time: " + averageDecryptionTime + " milliseconds");
+		System.out.println();
+		System.out.println("The average times do not include the data from the very first run because the first setup time always tends to be an outlier");
+		
+		//return a double array -- could run some statistical analyses on the sampling distributions of mean times for a sample size of n = 100
+		double[] result = new double[4];
+		result[0] = averageSetupTime;
+		result[1] = averageEncryptionTime;
+		result[2] = averageKeyGenTime;
+		result[3] = averageDecryptionTime;
+		
+		return result;
+		
+	}
 	
 	public static void main(String[] args) {
 		//change the file directory here
 		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
-		testDecrypt(Mcl.BLS12_381);
-		testDecrypt(Mcl.BN254);
+		testRuntimes(Mcl.BN254, 100);
+		testRuntimes(Mcl.BLS12_381, 100); //this should be a lot slower
 	}
 			
 }
