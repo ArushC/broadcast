@@ -9,8 +9,8 @@ import com.herumi.mcl.*;
 //How to use the library: https://github.com/herumi/mcl/blob/master/ffi/java/java.md
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf
 //Description of BLS: https://crypto.stanford.edu/~dabo/pubs/papers/BLSmultisig.html
-
-public class BGWReal {
+//This implements a special case in which A = 1 and B = n
+public class BGWSpecialCase {
 
 	//From https://books.google.com/books?id=kb7ZzFrJi48C&pg=PA106&lpg=PA106&dq=calculate+e(g,+g)+pairing&source=bl&ots=Taa2npE3kj&sig=ACfU3U1zNODtV4H_2pUbgscbcQsYljeujg&hl=en&sa=X&ved=2ahUKEwjD_q6hj-LpAhXLTN8KHS3eAU8Q6AEwCXoECAcQAQ#v=onepage&q=calculate%20e(g%2C%20g)%20pairing&f=falsev
 	//e(g, g^(ab)) = e(g, g)^(ab) = e(g^a, g^b)
@@ -29,7 +29,7 @@ public class BGWReal {
 	//second element: list containing private keys: d1, d2, ... dn 
 	public static Object[] setup(int n) {
 		
-		BGWReal.n = n; //save n so it can be used for other functions
+		BGWSpecialCase.n = n; //save n so it can be used for other functions
 		
 		//initialize random generator g in G
 		g = new G1();
