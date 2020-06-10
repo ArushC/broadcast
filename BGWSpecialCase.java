@@ -49,8 +49,8 @@ public class BGWSpecialCase {
 		precompute();
 		
 		//Instantiate public key PK
-		ArrayList<Object> PK = new ArrayList<Object>();
-		PK.add(g); //add group element g (type G1)
+		ArrayList<G2> PK = new ArrayList<G2>();
+		PK.add(gg); //add group element g (type G2)
 		
 		//from i = 1 to i = 2n (ALL)
 		for (int i = 1; i <= 2*n; i++) {
@@ -97,19 +97,19 @@ public class BGWSpecialCase {
 	
 	//Input: S = subset to which the message is brodcast, PK = public key
 	//Output: Hdr = header (broadcast ciphertext), K = message encryption key
-	public static Object[] encrypt(ArrayList<Integer> S, ArrayList<Object> PK) {
+	public static Object[] encrypt(ArrayList<Integer> S, ArrayList<G2> PK) {
 			 		
 		//calculate C_0 (first element in Hdr)
 		G1 c0 = new G1();
 		Mcl.mul(c0, g, t); //C_0 = g^t
 		
 		//calculate C_1 (second element in Hdr)
-		G2 v = (G2) PK.get(PK.size() - 1);
+		G2 v = PK.get(PK.size() - 1);
 		G2 product = new G2(v);
 		
 		for (int i = 0; i < S.size(); i++) {
 			int j = S.get(i);
-			Mcl.add(product, product, (G2) PK.get(n + 1 - j)); //product *= g_(n + 1 - j)
+			Mcl.add(product, product, PK.get(n + 1 - j)); //product *= g_(n + 1 - j)
 		}
 		
 		G2 c1 = new G2();
@@ -152,7 +152,7 @@ public class BGWSpecialCase {
 			if (j == i) {
 				continue;
 			}
-			Mcl.add(product, product, (G2) PK.get(n + 1 - j + i)); //product *= g_(n + 1 - j + i)
+			Mcl.add(product, product, PK.get(n + 1 - j + i)); //product *= g_(n + 1 - j + i)
 		}
 		
 		//finally, compute the pairing
@@ -225,7 +225,7 @@ public class BGWSpecialCase {
 		long elapsedSetup = System.nanoTime() - startSetup;
 		double secondsSetup = ((double) elapsedSetup) / 1E9;
 		//extract public/private key from setup
-		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
+		ArrayList<Object> PK = (ArrayList<G2>) setup[0];
 		ArrayList<G2> privateKeys = (ArrayList<G2>) setup[1];
 		
 		
@@ -306,7 +306,7 @@ public class BGWSpecialCase {
 		Mcl.SystemInit(Mcl.BN254); // curveType = Mcl.BN254 or Mcl.BLS12_381
 		testRuntimes();
 		/*Object[] setup = testSetup(100);
-		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
+		ArrayList<Object> PK = (ArrayList<G2>) setup[0];
 		ArrayList<G2> privateKeys = (ArrayList<G2>) setup[1];
 		ArrayList<Integer> S = new ArrayList<Integer>();
 		S.addAll(Arrays.asList(1, 6, 17, 25, 33, 49));
