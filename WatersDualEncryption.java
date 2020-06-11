@@ -21,29 +21,29 @@ public class WatersDualEncryption {
 		
 		//This is the g in G1 that is used in the private key
 		G1 g = new G1();
-		Mcl.hashAndMapToG1(g, generateRandomBytes());
+		Mcl.hashAndMapToG1(g, "abc".getBytes());
 		
 		//This is the "real" g that is used for calculations in the public key
 		gg = new G2();
-		Mcl.hashAndMapToG2(gg, generateRandomBytes());
+		Mcl.hashAndMapToG2(gg, "def".getBytes());
 		
 		G1 v = new G1();
-		Mcl.hashAndMapToG1(v, generateRandomBytes());
+		Mcl.hashAndMapToG1(v, "ghi".getBytes());
 		
 		G1 v1 = new G1();
-		Mcl.hashAndMapToG1(v1, generateRandomBytes());
+		Mcl.hashAndMapToG1(v1, "jkl".getBytes());
 
 		G1 v2 = new G1();
-		Mcl.hashAndMapToG1(v2, generateRandomBytes());
+		Mcl.hashAndMapToG1(v2, "mno".getBytes());
 		
 		G1 w = new G1();
-		Mcl.hashAndMapToG1(w, generateRandomBytes());
+		Mcl.hashAndMapToG1(w, "pqr".getBytes());
 		
 		G1 u = new G1();
-		Mcl.hashAndMapToG1(u, generateRandomBytes());
+		Mcl.hashAndMapToG1(u, "stu".getBytes());
 		
 		G1 h = new G1();
-		Mcl.hashAndMapToG1(h, generateRandomBytes());
+		Mcl.hashAndMapToG1(h, "vwx".getBytes());
 		
 		//Step 2: choose random exponents in Z_p
 		
@@ -348,7 +348,7 @@ public class WatersDualEncryption {
 	}
 		
 	
-	//generates a random byte array -- helper function used to obtain random generators in G
+	//generates a random byte array -- helper function used to obtain random generators in G: NOT NECESSARY
 	private static byte[] generateRandomBytes() {
 		
 		SecureRandom random = new SecureRandom();
@@ -370,9 +370,9 @@ public class WatersDualEncryption {
 		
 		//generate a nondegenerate message M using pairings
 		G1 g1 = new G1();
-		Mcl.hashAndMapToG1(g1, generateRandomBytes());
+		Mcl.hashAndMapToG1(g1, "abc".getBytes());
 		G2 g2 = new G2();
-		Mcl.hashAndMapToG2(g2, generateRandomBytes());
+		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		GT M = new GT();
 		Mcl.pairing(M, g1, g2);
 		
