@@ -9,7 +9,7 @@ Instructions for how to build the library are at the bottom of the page.
 place this file in the following directory: /mcl/ffi/java
 
 
-3. Change the filepath on line #305 (on my computer, for some reason, the relative path does not work)
+3. Change the filepath in the main() function for each program (on my computer, for some reason, the relative path does not work)
 
 4. Compile and run
 
