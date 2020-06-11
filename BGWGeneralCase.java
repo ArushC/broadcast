@@ -231,23 +231,23 @@ public class BGWGeneralScheme {
 	
 	public static Object[] testSetup(int n) {
 		//TEST SETUP: returns the setup Object[]
-			Object[] setup = setup(n);
-			//EXTRACT EVERYTHING
-			ArrayList<Object> PK = (ArrayList<Object>) setup[0];
-			ArrayList<G2> privateKeys = (ArrayList<G2>) setup[1];
-			for (int i = 1; i <= n; i++) {
-				//Verify for each key: di = vi (v^(alpha^(i)))
-				G2 di = privateKeys.get(i - 1); // (i - 1) because private keys starts from i = 1
-				int b = (i % B == 0) ? B : (i % B);
-				int a = (int) Math.ceil(((double) i) / B); 
-				Fr exp = power(alpha, b);
-				System.out.println("Exponent = " + exp.toString());
-				G2 vi = new G2();
-				Mcl.mul(vi, (G2) PK.get(2 * B + a), exp); //vi = v^(exp)
-				assertEquals("i = " + i + " ", di.toString(), vi.toString());
-			}
+		Object[] setup = setup(n);
+		//EXTRACT EVERYTHING
+		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
+		ArrayList<G2> privateKeys = (ArrayList<G2>) setup[1];
+		for (int i = 1; i <= n; i++) {
+			//Verify for each key: di = vi (v^(alpha^(i)))
+			G2 di = privateKeys.get(i - 1); // (i - 1) because private keys starts from i = 1
+			int b = (i % B == 0) ? B : (i % B);
+			int a = (int) Math.ceil(((double) i) / B); 
+			Fr exp = power(alpha, b);
+			System.out.println("Exponent = " + exp.toString());
+			G2 vi = new G2();
+			Mcl.mul(vi, (G2) PK.get(2 * B + a), exp); //vi = v^(exp)
+			assertEquals("i = " + i + " ", di.toString(), vi.toString());
+		}
 			
-			return setup;
+		return setup;
 	}
 	
 	//must be called AFTER setup function has been called, otherwise instance variables will not be instantiated
@@ -313,10 +313,16 @@ public class BGWGeneralScheme {
 		
 		
 		ArrayList<Integer> S = new ArrayList<Integer>();
-		//randomly generate numbers to put in the subset S
+		//randomly generate numbers to put in the subset S (NO REPEATS)
+		ArrayList<Integer> randomNums = new ArrayList<Integer>();
+		for (int i = 0; i < n; i++) { 
+			randomNums.add(i + 1);
+		}
 		for (int i = 0; i < subsetSize; i++) {
-			int randomID = ThreadLocalRandom.current().nextInt(1, n + 1);
+			int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
+			int randomID = randomNums.get(randomIndex);
 			S.add(randomID);
+			randomNums.remove(randomIndex);
 		}
 		
 		//Get elapsed time for encrypt
