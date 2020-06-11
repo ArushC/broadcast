@@ -225,7 +225,7 @@ public class BGWSpecialCase {
 		long elapsedSetup = System.nanoTime() - startSetup;
 		double secondsSetup = ((double) elapsedSetup) / 1E9;
 		//extract public/private key from setup
-		ArrayList<Object> PK = (ArrayList<G2>) setup[0];
+		ArrayList<G2> PK = (ArrayList<G2>) setup[0];
 		ArrayList<G2> privateKeys = (ArrayList<G2>) setup[1];
 		
 		
@@ -248,11 +248,13 @@ public class BGWSpecialCase {
 		
 		//Get elapsed time for decrypt
 		long startDecrypt = System.nanoTime();
+		GT K1 = decrypt(S, i, di, Hdr, PK);
 		long elapsedDecrypt = System.nanoTime() - startDecrypt;
 		double secondsDecrypt = ((double) elapsedDecrypt) / 1E9;
 		
 		//Finally, print out the results
-		System.out.println("RUNTIMES, n = " + n + ", subset size = " + subsetSize);
+		String success = (K1 == K) ? "SUCCESSFUL DECRYPTION" : "FAILED DECRYPTION";
+		System.out.println(success + ": " + "n = " + n + ", subset size = " + subsetSize);
 		System.out.println(); //padding
 		System.out.println("setup took " + secondsSetup + " seconds");
 		System.out.println("encryption took " + secondsEncrypt + " seconds");
