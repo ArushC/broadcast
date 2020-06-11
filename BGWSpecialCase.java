@@ -253,7 +253,7 @@ public class BGWSpecialCase {
 		double secondsDecrypt = ((double) elapsedDecrypt) / 1E9;
 		
 		//Finally, print out the results
-		String success = (K1 == K) ? "SUCCESSFUL DECRYPTION" : "FAILED DECRYPTION";
+		String success = (K1.equals(K)) ? "SUCCESSFUL DECRYPTION" : "FAILED DECRYPTION";
 		System.out.println(success + ": " + "n = " + n + ", subset size = " + subsetSize);
 		System.out.println(); //padding
 		System.out.println("setup took " + secondsSetup + " seconds");
