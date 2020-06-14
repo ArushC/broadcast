@@ -519,7 +519,8 @@ public class BonehWatersABE {
 		Object[] SK = (Object[]) setup.get(u);
 		GT M1 = decryptABE(S, userCoordinates, SK, C, PK);
 		System.out.println("M1 = " + M1); //This doesn't work... but WHY? I think everything is written correctly (checked twice).
-		
+		//M should be EQUAL to M1
+		//Is there an underlying logic error in the code? Or a typo in the paper?
 		
 		//System.out.println(SKu[y + 1]);
 		/*for (Object o: SKu)
