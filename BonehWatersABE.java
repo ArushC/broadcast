@@ -6,7 +6,7 @@ import com.herumi.mcl.*;
 
 
 
-//The scheme: https://eprint.iacr.org/2006/298.pdf
+//The scheme: https://eprint.iacr.org/2006/298.pdf (pages 11-13)
 public class BonehWatersABE {
 	
 	private static G2 gg, ggp, ggq;
