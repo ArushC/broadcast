@@ -230,7 +230,7 @@ public class BonehWatersABE {
 	}
 	
 	
-	//input: subset S, public key PK, int[][] containing rows with value i [0] and column value j [1], message M in GT
+	//input: subset S, public key PK, int[][] containing rows with x-value i [0] and y-value j [1], message M in GT
 	public static ArrayList<Object> encryptABE(int[][] S, Object[] PK, int[] values, GT M) {
 		
 		//extract data
@@ -276,7 +276,7 @@ public class BonehWatersABE {
 		//2. get Sx (all the y-values in S) -- helper function below
 		ArrayList<Integer> Sx = getSx(S);
 		
-		//3. add to the ciphertext using the helper functions
+		//3. add to the ciphertext using more helper functions
 		ArrayList<Object> C = new ArrayList<Object>();
 		for (int k = 0; k < m; k++) //x components [0] - [m-1]
 			C.add(getXCiphertextComponents(k+1, i, PK, Sx, kappa, t, vExponents, sExponents, M));
