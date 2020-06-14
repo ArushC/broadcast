@@ -514,11 +514,13 @@ public class BonehWatersABE {
 		System.out.println("M = " + M);
 		ArrayList<Object> C = encryptABE(S, PK, values, M); //NO ERRORS THROWN -- that's a good sign!
 		//ok now let's decrypt it
-		/*int[] userCoordinates = {4, 5};
+		int[] userCoordinates = {4, 5};
 		int u = (userCoordinates[0] - 1) * m + userCoordinates[1];
 		Object[] SK = (Object[]) setup.get(u);
 		GT M1 = decryptABE(S, userCoordinates, SK, C, PK);
-		System.out.println("M1 = " + M1);*/
+		System.out.println("M1 = " + M1); //This doesn't work... but WHY? I think everything is written correctly (checked twice).
+		
+		
 		//System.out.println(SKu[y + 1]);
 		/*for (Object o: SKu)
 			System.out.println(o);
@@ -533,7 +535,7 @@ public class BonehWatersABE {
 		
 		//ALL DIFFERENT OUTPUTS
 		
-		System.out.println();
+		/*System.out.println();
 		for (int u = 1; u <= 50; u++) {
 			Object[] SKu = (Object[]) setup.get(u);
 			int y = (u % m == 0) ? m : (u % m);
@@ -543,14 +545,14 @@ public class BonehWatersABE {
 			System.out.println("u = " + u + ", x = " + x + ", y = " + y);
 			System.out.println("M1 = " + M1);
 			System.out.println();
-		}
+		}*/
 		
 		
 		
 		
 		
 		//CONFIDENT ABOUT: setup, getSK, getXCiphertextComponents, getYCiphertextComponents, 
-		//NOT CONFIDENT ABOUT: 
+		//NOT CONFIDENT ABOUT: NONE?!
 		
 	}
 	
