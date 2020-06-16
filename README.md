@@ -6,10 +6,10 @@ How to use these files:
 Instructions for how to build the library are at the bottom of the page.
 
 2. Assuming the entire MCL library has been installed in a folder called "mcl",
-place this file in the following directory: /mcl/ffi/java
+place these folders in the following directory: /mcl/ffi/java
 
 
-3. Change the filepath in the main() function for each program (on my computer, for some reason, the relative path does not work)
+3. Change the filepath when loading the library in the main() function for each program (on my computer, for some reason, the relative path does not work)
 
 4. Compile and run
 
