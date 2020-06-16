@@ -1,4 +1,5 @@
-import java.security.SecureRandom;
+package schemes;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.io.*;
@@ -344,17 +345,6 @@ public class WatersDualEncryption {
 		Mcl.mul(M, (GT) CT.get(0), denominator);
 		
 		return M;
-		
-	}
-		
-	
-	//generates a random byte array -- helper function used to obtain random generators in G: NOT NECESSARY
-	private static byte[] generateRandomBytes() {
-		
-		SecureRandom random = new SecureRandom();
-		byte[] bytes = new byte[20];
-		random.nextBytes(bytes);
-		return bytes;
 		
 	}
 	
