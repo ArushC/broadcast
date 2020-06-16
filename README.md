@@ -10,7 +10,7 @@ Instructions for how to build the library are at the bottom of the page.
 
 3. Change the filepath when loading the library in the main() function for each program (on my computer, for some reason, the relative path does not work)
 
-4. Compile and run
+4. Compile and run. Programs can be run individually.
 
 
 
