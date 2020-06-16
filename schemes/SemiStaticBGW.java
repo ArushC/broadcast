@@ -1,5 +1,6 @@
-import com.herumi.mcl.*;
+package schemes;
 
+import com.herumi.mcl.*;
 import java.io.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;
