@@ -4,7 +4,7 @@ import java.io.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-
+import helperclasses.Tools;
 
 //The scheme: https://eprint.iacr.org/2008/268.pdf (3.1, page 8)
 public class SemiStaticBGW {
@@ -51,7 +51,7 @@ public class SemiStaticBGW {
 		
 		for (int i = 0; i < n; i++) {
 			G1 h = new G1();
-			Mcl.hashAndMapToG1(h, generateRandomBytes());
+			Mcl.hashAndMapToG1(h, Tools.generateRandomBytes());
 			PK.add(h);
 		}
 		
@@ -178,15 +178,6 @@ public class SemiStaticBGW {
 		Mcl.mul(exp, alpha, t);
 		Mcl.pow(K, K, exp);
 	}
-	
-	//generates a random byte array -- helper function used to obtain random generators in G 
-	private static byte[] generateRandomBytes() {
-				
-		byte[] bytes = new byte[20];
-		new SecureRandom().nextBytes(bytes);
-		return bytes;
-					
-		}
 	
 	
 	public static void main(String[] args) {
