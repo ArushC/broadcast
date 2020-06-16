@@ -1,3 +1,4 @@
+package schemes;
 
 import java.io.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -5,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.herumi.mcl.*;
+import helperclasses.Tools;
 
 //How to use the library: https://github.com/herumi/mcl/blob/master/ffi/java/java.md
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf
@@ -55,7 +57,7 @@ public class BGWSpecialCase {
 		//from i = 1 to i = 2n (ALL)
 		for (int i = 1; i <= 2*n; i++) {
 			G2 pub = new G2();
-			Fr exp = power(alpha, i); //exp = alpha^i
+			Fr exp = Tools.power(alpha, i); //exp = alpha^i
 			Mcl.mul(pub, gg, exp); // g_n = g^(exp)
 			PK.add(pub);
 		}
@@ -88,7 +90,7 @@ public class BGWSpecialCase {
 		//calculate e(g, g_(n+1))
 		GT e = new GT();
 		G2 gNPlus1 = new G2();
-		Fr exp = power(alpha, n+1);
+		Fr exp = Tools.power(alpha, n+1);
 		Mcl.mul(gNPlus1, gg, exp); //gn = g^(alpha^n), so gn+1 = g^(alpha^(n+1)) = g^(exp)
 		Mcl.pairing(e, g, gNPlus1);
 		K = new GT();
@@ -134,7 +136,7 @@ public class BGWSpecialCase {
 		//Calculate e(g_i, C1) = e(g, C1^(alpha^i))
 		GT e1 = new GT();
 		G2 c1 = (G2) Hdr[1];
-		Fr exp = power(alpha, i);
+		Fr exp = Tools.power(alpha, i);
 		G1 gi = new G1();
 		Mcl.mul(gi, g, exp); //gi = g^(alpha^i)
 		Mcl.pairing(e1, gi, c1);
@@ -189,7 +191,7 @@ public class BGWSpecialCase {
 			for (int i = 1; i <= n; i++) {
 				//Verify for each key: di = vi (v^(alpha^(i)))
 				G2 di = privateKeys.get(i - 1); // (i - 1) because private keys starts from i = 1
-				Fr exp = power(alpha, i);
+				Fr exp = Tools.power(alpha, i);
 				System.out.println("Exponent = " + exp.toString());
 				G2 vi = new G2();
 				Mcl.mul(vi, v, exp); //vi = v^(exp)
@@ -207,14 +209,6 @@ public class BGWSpecialCase {
 		System.out.println("K1 = " + K1.toString());
 	}
 
-	
-	private static Fr power(Fr base, int exponent) {
-		Fr res = new Fr(1);
-		for (int i = 0; i < exponent; i++) {
-			Mcl.mul(res, res, base); //res = res * base (do this exponent # of times)
-		}
-		return res;
-	}
 	
 	//returns long[] containing elapsed time for setup, encrypt, and decrypt, respectively
 	private static long[] printRuntimes(int n, int subsetSize) {
