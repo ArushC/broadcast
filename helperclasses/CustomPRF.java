@@ -21,12 +21,12 @@ public class CustomPRF {
 	}
 	
 	
-	void setKey(Fr newKey) {
+	public void setKey(Fr newKey) {
 		this.key = new Fr(newKey).toString();
 	}
 	
 	
-	Fr compute() {
+	public Fr compute() {
 		String repeatedKey = new String(new char[input]).replace("\0", key);
 		G1 g1 = new G1();
 		Mcl.hashAndMapToG1(g1, repeatedKey.getBytes()); 
