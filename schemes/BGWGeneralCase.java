@@ -1,8 +1,10 @@
+package schemes;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
-
+import helperclasses.Tools;
 import com.herumi.mcl.*;
 
 //How to use the library: https://github.com/herumi/mcl/blob/master/ffi/java/java.md
@@ -59,7 +61,7 @@ public class BGWGeneralScheme {
 		//from i = 1 to i = 2n (ALL)
 		for (int i = 1; i <= 2*B; i++) {
 			G2 pub = new G2();
-			Fr exp = power(alpha, i); //exp = alpha^i
+			Fr exp = Tools.power(alpha, i); //exp = alpha^i
 			Mcl.mul(pub, gg, exp); // g_n = g^(exp)
 			PK.add(pub);
 		}
@@ -97,7 +99,7 @@ public class BGWGeneralScheme {
 		//calculate e(g, g_(B+1))
 		GT e = new GT();
 		G2 gBPlus1 = new G2();
-		Fr exp = power(alpha, B+1);
+		Fr exp = Tools.power(alpha, B+1);
 		Mcl.mul(gBPlus1, gg, exp); //gn = g^(alpha^n), so gn+1 = g^(alpha^(n+1)) = g^(exp)
 		Mcl.pairing(e, g, gBPlus1);
 		K = new GT();
@@ -189,7 +191,7 @@ public class BGWGeneralScheme {
 		GT e1 = new GT();
 		G2 cA = (G2) Hdr.get(a);
 		G1 gB = new G1();
-		Fr exp = power(alpha, b);
+		Fr exp = Tools.power(alpha, b);
 		Mcl.mul(gB, g, exp);
 		Mcl.pairing(e1, gB, cA);
 		
@@ -240,7 +242,7 @@ public class BGWGeneralScheme {
 			G2 di = privateKeys.get(i - 1); // (i - 1) because private keys starts from i = 1
 			int b = (i % B == 0) ? B : (i % B);
 			int a = (int) Math.ceil(((double) i) / B); 
-			Fr exp = power(alpha, b);
+			Fr exp = Tools.power(alpha, b);
 			System.out.println("Exponent = " + exp.toString());
 			G2 vi = new G2();
 			Mcl.mul(vi, (G2) PK.get(2 * B + a), exp); //vi = v^(exp)
@@ -257,14 +259,6 @@ public class BGWGeneralScheme {
 		System.out.println("K1 = " + K1.toString());
 	}
 	
-	
-	public static Fr power(Fr base, int exponent) {
-		Fr res = new Fr(1);
-		for (int i = 0; i < exponent; i++) {
-			Mcl.mul(res, res, base); //res = res * base (do this exponent # of times)
-		}
-		return res;
-	}
 	
 	//Test the runtimes of the algorithms
 	public static void testRuntimes() {
