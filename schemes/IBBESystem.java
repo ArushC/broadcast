@@ -27,11 +27,10 @@ public class IBBESystem {
 		//generate random g1, g2
 		G1 g1 = new G1();
 		Mcl.hashAndMapToG1(g1, "abc".getBytes());
-		
 		g2 = new G2();
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		
-		//generate random exponenets alpha, beta, gamma, t
+		//generate random exponents alpha, beta, gamma, t
 		alpha = new Fr();
 		alpha.setByCSPRNG();
 		
@@ -48,7 +47,7 @@ public class IBBESystem {
 		//compute gHat1 = g1^(beta) and gHat2 = g2^(beta)
 		G1 gHat1 = new G1();
 		Mcl.mul(gHat1, g1, beta);
-		
+
 		G2 gHat2 = new G2();
 		Mcl.mul(gHat2, g2, beta);
 		
@@ -60,10 +59,12 @@ public class IBBESystem {
 		PK.add(n);
 		PK.add(l);
 		G1 element = new G1();
-		Mcl.mul(element, element, gamma);
+		Mcl.mul(element, g1, gamma); //add g1^(gamma)
 		PK.add(element);
-		Mcl.mul(element, element, alpha);
-		PK.add(element);
+		G1 element2 = new G1();
+		Mcl.mul(element2, g1, gamma);
+		Mcl.mul(element2, element2, alpha); //add g1^(gamma * alpha)
+		PK.add(element2);
 		
 		//second part of PK is going to be a (l + 1) * (l -1) matrix
 		Object[][] pkSecondPart = new Object[l+1][l-1];
@@ -185,6 +186,7 @@ public class IBBESystem {
 		G1 gHat1 = (G1) (((Object[]) pkSecondPart[0][0])[1]);
 		G2 gHat2 = (G2) (((Object[]) pkSecondPart[0][0])[3]);
 		
+		
 		//compute Px
 		Fr[] Px = computePx(n, l, k, S);
 		
@@ -203,8 +205,7 @@ public class IBBESystem {
 		Mcl.mul(C3, g1, exp3);
 		
 		GT C4 = new GT();
-		Fr exp4 = LagrangeInterpolationZp.computeFx(tau, alpha); //F(alpha)
-		Mcl.mul(exp4, exp4, t);
+		Fr exp4 = new Fr(exp3);
 		Mcl.mul(exp4, exp4, Tools.power(alpha, l - 1));
 		Mcl.pairing(C4, g1, gHat2);
 		Mcl.pow(C4, C4, exp4);
@@ -251,7 +252,7 @@ public class IBBESystem {
 		G2 hi = (G2) di[1];
 		
 		//3. compute Pi(alpha), Fi(alpha), and ei
-		Fr Pialpha = Tools.power(alpha, l - 1);
+		Fr Pialpha = new Fr(Tools.power(alpha, l - 1));
 		Fr numeratorPi = LagrangeInterpolationZp.computeFx(Px, alpha);
 		Fr denominatorPi = new Fr();
 		Mcl.sub(denominatorPi, alpha, new Fr(i));
@@ -262,12 +263,13 @@ public class IBBESystem {
 		Fr Fialpha = new Fr();
 		Fr numeratorFi = new Fr();
 		Fr denominatorFi = new Fr();
-		Mcl.sub(numeratorFi, LagrangeInterpolationZp.computeFx(tau, alpha), LagrangeInterpolationZp.computeFx(tau, new Fr(i))); //numerator = F(alpha) - F(u)
+		Fr Fi = LagrangeInterpolationZp.computeFx(tau, new Fr(i));
+		Mcl.sub(numeratorFi, LagrangeInterpolationZp.computeFx(tau, alpha), Fi); //numerator = F(alpha) - F(u)
 		Mcl.sub(denominatorFi, alpha, new Fr(i));
 		Mcl.div(Fialpha, numeratorFi, denominatorFi);
 		
 		Fr ei = new Fr();
-		Mcl.div(ei, ri, LagrangeInterpolationZp.computeFx(tau, new Fr(i)));
+		Mcl.div(ei, ri, Fi);
 		Mcl.mul(ei, ei, new Fr(-1));
 		
 		//compute the pairings
@@ -311,7 +313,6 @@ public class IBBESystem {
 			ijValues.add(n +  j);
 		}
 		
-		//combine ij values with the elements from S
 		ArrayList<Integer> allIJValues = new ArrayList<Integer>();
 		allIJValues.addAll(S);
 		allIJValues.addAll(ijValues);
@@ -345,7 +346,6 @@ public class IBBESystem {
 	
 	
 	public static void main(String[] args) {
-		
 		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
 		Mcl.SystemInit(Mcl.BN254);
 		ArrayList<Integer> S = new ArrayList<Integer>();
@@ -363,10 +363,7 @@ public class IBBESystem {
 		GT K1 = (GT) C[2];
 		GT K2 = decrypt(S, i, di, tau, Hdr, PK);
 		System.out.println("K1 = " + K1);
-		System.out.println("K2 = " + K2); //This doesn't work
-										  //To be debugged...
+		System.out.println("K2 = " + K2); 
 	}
-	
-	
 	
 }
