@@ -59,7 +59,7 @@ public class Vector2D {
 	
 	@Override
 	public String toString() {
-		return "( " + this.x.toString() + ", " + this.y.toString() + ")";
+		return "(" + this.x.toString() + ", " + this.y.toString() + ")";
 	}
 	
 	//getter methods
