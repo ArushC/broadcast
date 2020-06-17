@@ -15,21 +15,22 @@ public class CustomPRF {
 	//       2. input in [1, n]
 	public CustomPRF(Fr key, int input) {
 		
-		this.key = new Fr(key).toString();
+		Mcl.add(key, key, new Fr(input));
+		this.key = key.toString();
 		this.input = input;
 		
 	}
 	
 	
 	public void setKey(Fr newKey) {
-		this.key = new Fr(newKey).toString();
+		Mcl.add(newKey, newKey, new Fr(input));
+		this.key = newKey.toString();
 	}
 	
 	
 	public Fr compute() {
-		String repeatedKey = new String(new char[input]).replace("\0", key);
 		G1 g1 = new G1();
-		Mcl.hashAndMapToG1(g1, repeatedKey.getBytes()); 
+		Mcl.hashAndMapToG1(g1, key.getBytes()); 
 		String g1String = g1.toString();
 		int endIndex = g1String.indexOf(' ', 2); 
 		Fr result = new Fr(g1String.substring(2, endIndex)); //result is defined as the first Fr that appears in the G1 string
@@ -38,4 +39,3 @@ public class CustomPRF {
 	
 	
 }
-
