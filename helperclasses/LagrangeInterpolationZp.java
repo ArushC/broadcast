@@ -134,8 +134,9 @@ public class LagrangeInterpolationZp {
 		Fr[] xValues = {new Fr(1), new Fr(2), new Fr(3), new Fr(4), new Fr(5), new Fr(6), new Fr(7)};
 		Fr[] yValues = {new Fr(3), new Fr(5), new Fr(7), new Fr(9), new Fr(1), new Fr(1), new Fr(1)};
 		Fr[] laGrange = laGrange(xValues, yValues, 6);
-		for (Fr d: laGrange) {
-			System.out.print(d + " ");
+		//expected: returns yValues
+		for (int count = 0; count < xValues.length; count++) {
+			System.out.print(computeFx(laGrange, xValues[count]) + " ");
 		}
 	
 		
