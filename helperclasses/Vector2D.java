@@ -43,15 +43,22 @@ public class Vector2D {
 		
 	}
 	
+	public Vector2D add(Vector2D v) {
+		Fr result = new Fr();
+		Fr xSum = new Fr();
+		Fr ySum = new Fr();
+		Mcl.add(xSum, v.getX(), this.x);
+		Mcl.add(ySum, v.getY(), this.y);
+		return new Vector2D(xSum, ySum);
+	}
+	
 	public Fr dotProduct(Vector2D v) {
 		
 		Fr result = new Fr();
-		Fr vx = v.getX();
-		Fr vy = v.getY();
 		Fr xProduct = new Fr();
 		Fr yProduct = new Fr();
-		Mcl.mul(xProduct, this.x, vx);
-		Mcl.mul(yProduct, this.y, vy);
+		Mcl.mul(xProduct, this.x, v.getX());
+		Mcl.mul(yProduct, this.y, v.getY());
 		Mcl.add(result, xProduct, yProduct);
 		return result;
 		
