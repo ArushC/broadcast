@@ -25,9 +25,9 @@ public class Tools {
 	
 	
 	//generates a random byte array -- helper function used to obtain random generators in G 
-	public static byte[] generateRandomBytes() {
+	public static byte[] generateRandomBytes(int numberOfBytes) {
 					
-		byte[] bytes = new byte[20];
+		byte[] bytes = new byte[numberOfBytes];
 		new SecureRandom().nextBytes(bytes);
 		return bytes;
 						
