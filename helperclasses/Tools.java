@@ -8,11 +8,18 @@ public class Tools {
 
 	
 	public static Fr power(Fr base, int exponent) {
-		Fr res = new Fr(1);
-		for (int i = 0; i < exponent; i++) {
-			Mcl.mul(res, res, base); //res = res * base (do this exponent # of times)
-		}
-		return res;
+		
+		    Fr res = new Fr(1);     // Initialize result 
+		    while (exponent > 0) 
+		    { 
+		        // If y is odd, multiply x with result 
+		        if (exponent % 2 == 1) 
+		            Mcl.mul(res, res, base);
+		        // y must be even now 
+		        exponent = exponent>>1; // y = y/2 
+		        Mcl.mul(base, base, base);  // Change x to x^2 
+		    } 
+		    return res;
 	}
 	
 	
