@@ -1,6 +1,7 @@
 package schemes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 import java.io.*;
 
 import helperclasses.Tools;
@@ -60,6 +61,8 @@ public class AugBE {
 		//Third element: a 4 * m matrix
 		Object[][] pkThirdPart = new Object[4][m];
 		
+		byte[] b = Tools.generateRandomBytes(m + 2);
+		
 		//Add everything in this one gigantic for loop (repeat this single-column addition m times)
 		for (int i = 0; i < m; i++) {
 			
@@ -75,8 +78,8 @@ public class AugBE {
 			Mcl.mul(Hi, g2, cExponents[i]);
 			
 			G2 ui = new G2();
-			Mcl.hashAndMapToG2(ui, Tools.generateRandomBytes());
-			
+			byte[] randomBytes = Arrays.copyOfRange(b, i, i + 3);
+			Mcl.hashAndMapToG2(ui, randomBytes);
 			
 			//Finally, add all the elements to their places in the matrix
 			pkThirdPart[0][i] = Ei;
@@ -165,6 +168,8 @@ public class AugBE {
 		return C;
 	}
 	
+	
+	
 	public static GT decryptABE(Object[][] C, ArrayList<Integer> S, Object[] SK, int u)     {
 		
 		//extract data
@@ -175,7 +180,7 @@ public class AugBE {
 		G2 product = new G2((G2) SK[0]);
 		ArrayList<Integer> Sx = getSx(S);
 		for (int k: Sx) {
-			if (k == y) 
+			if (k == y)
 				continue;	
 			//else
 			Mcl.add(product, product, (G2) SK[k+1]);
@@ -255,8 +260,7 @@ public class AugBE {
 			SK[i + 1] = element;
 		}
 		
-		return SK;
-		
+		return SK;	
 	}
 	
 	
@@ -278,10 +282,16 @@ public class AugBE {
 	}
 	
 	private static ArrayList<Integer> getSx(ArrayList<Integer> S) {
+		//note the k-values returned must be UNIQUE
 		ArrayList<Integer> Sx = new ArrayList<Integer>();
+		ArrayList<Integer> uniqueKValues = new ArrayList<Integer>();
 		for (int u: S)  {
 			int y = (u % m == 0) ? m : (u % m);
-			Sx.add(y);
+			if (!(uniqueKValues.contains(y))) {
+				Sx.add(y);
+				uniqueKValues.add(y);
+			}
+				
 		}
 		return Sx;
 	}
@@ -474,14 +484,115 @@ public class AugBE {
 	}
 	
 	
+	//returns long[] containing elapsed time for setup, encrypt, and decrypt, respectively
+		private static long[] printRuntimes(int N, int subsetSize, int lambda) {
+			
+			//Get elapsed time for setup(n) 
+			long startSetup = System.nanoTime();
+			ArrayList<Object> setup = setupABE(N, lambda);
+			long elapsedSetup = System.nanoTime() - startSetup;
+			double secondsSetup = ((double) elapsedSetup) / 1E9;
+			
+			//generate random message M in GT
+			GT M = new GT();
+			G1 g1 = new G1();
+			Mcl.hashAndMapToG1(g1, Tools.generateRandomBytes(3));
+			G2 g2 = new G2();
+			Mcl.hashAndMapToG2(g2, Tools.generateRandomBytes(3));
+			Mcl.pairing(M, g1, g2);
+			
+			//extract public key from setup and initialize S
+			Object[] PK = (Object[]) setup.get(0);
+			ArrayList<Integer> S = new ArrayList<Integer>();
+			
+			//randomly generate numbers to put in the subset S (NO REPEATS)
+			ArrayList<Integer> randomNums = new ArrayList<Integer>();
+				for (int i = 0; i < N; i++) { 
+					randomNums.add(i + 1);
+				}
+				for (int i = 0; i < subsetSize; i++) {
+					int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
+					int randomID = randomNums.get(randomIndex);
+					S.add(randomID);
+					randomNums.remove(randomIndex);
+				}
+				
+			long startEncrypt = System.nanoTime();
+			Object[][] C = encryptABE(S, PK, 1, M);
+			long elapsedEncrypt = System.nanoTime() - startEncrypt;
+			double secondsEncrypt = ((double) elapsedEncrypt) / 1E9;
+					
+			//Get random user ID i to test the decryption
+			int u = S.get(ThreadLocalRandom.current().nextInt(0, S.size()));
+			
+			//Get elapsed time for decrypt
+			Object[] SK = (Object[]) setup.get(u);
+			long startDecrypt = System.nanoTime();
+			GT M1 = decryptABE(C, S, SK, u);
+			long elapsedDecrypt = System.nanoTime() - startDecrypt;
+			double secondsDecrypt = ((double) elapsedDecrypt) / 1E9;
+			
+			//Finally, print out the results
+			String success = (M1.equals(M)) ? "SUCCESSFUL DECRYPTION" : "FAILED DECRYPTION";
+			if (success == "FAILED DECRYPTION")
+					System.out.println(S);
+			System.out.println(success + ": " + "N = " + N + ", subset size = " + subsetSize);
+			System.out.println(); //padding
+			System.out.println("setup took " + secondsSetup + " seconds");
+			System.out.println("encryption took " + secondsEncrypt + " seconds");
+			System.out.println("decryption took " + secondsDecrypt + " seconds (u = " + u + ")");
+			System.out.println(); //more padding
+			
+			long[] elapsedTimes = new long[3];
+			elapsedTimes[0] = elapsedSetup;
+			elapsedTimes[1] = elapsedEncrypt;
+			elapsedTimes[2] = elapsedDecrypt;
+			
+			return elapsedTimes;
+		}
+	
+		
+	//Test the runtimes of the algorithms
+	public static void testRuntimes(int lambda) {
+			
+		//see how runtime changes with constant n and increasing subset size
+		long totalSetupTime = 0;
+			
+		for (int i = 100; i <= 2000; i+=100) {
+			long[] elapsedTimes = printRuntimes(10000, i, lambda);
+			totalSetupTime += elapsedTimes[0];
+		}
+			
+		double averageSetupTime = ((double) totalSetupTime) / (1E9 * 20);
+			
+			
+		long totalEncryptionTime = 0;
+		long totalDecryptionTime = 0;
+		//see how runtime changes with increasing n, constant subset size = 100
+		for (int i = 1000; i <= 20000; i += 1000) {
+			long[] elapsedTimes =  printRuntimes(i, 100, lambda);
+			totalEncryptionTime += elapsedTimes[1];
+			totalDecryptionTime += elapsedTimes[2];
+		}
+			
+		double averageEncryptionTime = ((double) totalEncryptionTime) / (1E9 * 20);
+		double averageDecryptionTime = ((double) totalDecryptionTime) / (1E9 * 20);
+			
+		System.out.println("Average setup time, constant n = 10000: " + averageSetupTime + " seconds");
+		System.out.println("Average encryption time, constant subset size = 100: " + averageEncryptionTime + " seconds");
+		System.out.println("Average decryption time, constant subset size = 100: " + averageDecryptionTime + " seconds");
+		
+		}
+			
 	
 	public static void main(String[] args) {
 		
 		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
-		ArrayList<Object> setup = setupABE(100, Mcl.BN254);
+		testRuntimes(Mcl.BN254);
+		/*ArrayList<Object> setup = setupABE(100, Mcl.BN254);
 		ArrayList<Integer> S = new ArrayList<Integer>();
-		S.addAll(Arrays.asList(1, 4, 7, 13, 16, 20, 69, 70, 99));
-		int u = 7;
+		S.addAll(Arrays.asList(1, 4, 7, 13, 25, 16, 20, 60, 69, 70, 99));
+		int u = 20;
 		GT M = new GT();
 		G1 g1 = new G1();
 		Mcl.hashAndMapToG1(g1, "abc".getBytes());
@@ -489,14 +600,13 @@ public class AugBE {
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		Mcl.pairing(M, g1, g2);
 		Object[] PK = (Object[]) setup.get(0);
-		Object[][] C = encryptABE(S, PK, 7, M);
+		Object[][] C = encryptABE(S, PK, 1, M);
 		Object[] SK = (Object[]) setup.get(u);
 		GT M1 = decryptABE(C, S, SK, u);
 		System.out.println("M = " + M);
-		System.out.println("M1 = " + M1);
+		System.out.println("M1 = " + M1);*/
 		
 	}
 	
 	
 }
-
