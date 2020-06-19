@@ -8,16 +8,16 @@ public class Tools {
 
 	
 	public static Fr power(Fr base, int exponent) {
-		
+		    Fr baseCopy = new Fr(base); //don't want to change the value of base
 		    Fr res = new Fr(1);     // Initialize result 
 		    while (exponent > 0) 
 		    { 
 		        // If y is odd, multiply x with result 
 		        if (exponent % 2 == 1) 
-		            Mcl.mul(res, res, base);
+		            Mcl.mul(res, res, baseCopy);
 		        // y must be even now 
 		        exponent = exponent>>1; // y = y/2 
-		        Mcl.mul(base, base, base);  // Change x to x^2 
+		        Mcl.mul(baseCopy, baseCopy, baseCopy);  // Change x to x^2 
 		    } 
 		    return res;
 	}
