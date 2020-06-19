@@ -522,7 +522,7 @@ public class AugBE {
 			long elapsedEncrypt = System.nanoTime() - startEncrypt;
 			double secondsEncrypt = ((double) elapsedEncrypt) / 1E9;
 					
-			//Get random user ID i to test the decryption
+			//Get random user ID u to test the decryption
 			int u = S.get(ThreadLocalRandom.current().nextInt(0, S.size()));
 			
 			//Get elapsed time for decrypt
