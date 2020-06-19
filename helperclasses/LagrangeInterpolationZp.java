@@ -112,9 +112,9 @@ public class LagrangeInterpolationZp {
 		
 		Fr sum = new Fr(0);
 		int i = 0;
-		
+		Fr xCopy = new Fr(x); //don't want to change the value of x that is passed into the function
 		for (int degree = coefficients.length - 1; degree >= 0; degree--) {
-			Fr xExponentiated = Tools.power(x, degree);
+			Fr xExponentiated = Tools.power(xCopy, degree);
 			Fr product = new Fr();
 			Mcl.mul(product, coefficients[i], xExponentiated);
 			Mcl.add(sum, sum, product);
