@@ -1,3 +1,6 @@
+BONEH-GENTRY-WATERS SCHEME (SPECIAL CASE: A = 1, B = N) PROGRAM OUTPUT USING THE CURVE BN254
+____________________________________________________________________________________________
+
 SUCCESSFUL DECRYPTION: n = 10000, subset size = 100
 
 setup took 5.38780946 seconds
