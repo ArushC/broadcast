@@ -1,4 +1,4 @@
-OUTPUT OF WATERS DUAL ENCRYPTION IBE SYSTEM OVER BLS12_381 
+OUTPUT OF WATERS DUAL ENCRYPTION IBE SYSTEM OVER BLS12_381 (100 trials)
 __________________________________________________________
 
 
