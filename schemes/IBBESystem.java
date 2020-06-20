@@ -415,19 +415,18 @@ public static double[] testRuntimes(int lambda) {
 		
 		long totalSetupTime = 0, totalEncryptionTime = 0, totalKeyGenTime = 0, totalDecryptionTime = 0;
 		
-		int count = 0;
 		for (int n = 5000; n < 100000; n+= 5000) {
 			long[] elapsedTimes = printRuntimes(n, 100, lambda); //constant l = 100; changing n does not affect the other times
-			count++;
 			totalSetupTime += elapsedTimes[0];
 			totalEncryptionTime += elapsedTimes[1];
 			totalKeyGenTime += elapsedTimes[2];
 			totalDecryptionTime += elapsedTimes[3];
 		}
 		
-		count = 0;
-		for (int l = 10; l <= 300; l += 10) {
+		int count = 0;
+		for (int l = 10; l <= 200; l += 10) {
 			printRuntimes(100000, l, lambda); //value of n really doesn't matter, as long as it's constant
+			count++;
 		}
 		double averageSetupTime = ((double) totalSetupTime) / (1E9 * count);
 		double averageEncryptionTime = ((double) totalEncryptionTime) / (1E9 * count);
@@ -449,8 +448,6 @@ public static double[] testRuntimes(int lambda) {
 		return result;
 		
 }
-	
-	
 	
 	public static void main(String[] args) {
 		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
