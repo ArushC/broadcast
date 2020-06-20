@@ -569,16 +569,16 @@ public class AugBE {
 		long totalEncryptionTime = 0;
 		long totalDecryptionTime = 0;
 		//see how runtime changes with increasing n, constant subset size = 100
-		for (int i = 100; i <= 2000; i += 100) {
+		for (int i = 200; i <= 2000; i += 100) {
 			long[] elapsedTimes =  printRuntimes(i, 100, lambda);
 			totalEncryptionTime += elapsedTimes[1];
 			totalDecryptionTime += elapsedTimes[2];
 		}
 			
-		double averageEncryptionTime = ((double) totalEncryptionTime) / (1E9 * 20);
-		double averageDecryptionTime = ((double) totalDecryptionTime) / (1E9 * 20);
+		double averageEncryptionTime = ((double) totalEncryptionTime) / (1E9 * 19);
+		double averageDecryptionTime = ((double) totalDecryptionTime) / (1E9 * 19);
 			
-		System.out.println("Average setup time, constant n = 10000: " + averageSetupTime + " seconds");
+		System.out.println("Average setup time, constant n = 1000: " + averageSetupTime + " seconds");
 		System.out.println("Average encryption time, constant subset size = 100: " + averageEncryptionTime + " seconds");
 		System.out.println("Average decryption time, constant subset size = 100: " + averageDecryptionTime + " seconds");
 		
