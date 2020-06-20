@@ -1,0 +1,709 @@
+OUTPUT OF WATERS DUAL ENCRYPTION IBE SYSTEM OVER BN254
+______________________________________________________
+
+SUCCESSFUL DECRYPTION
+
+setup took 14.704805 milliseconds
+encryption took 4.199201 milliseconds
+key generation took 3.789726 milliseconds
+decryption took 13.291803 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 8.498721 milliseconds
+encryption took 3.07135 milliseconds
+key generation took 1.72319 milliseconds
+decryption took 13.296433 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.425185 milliseconds
+encryption took 4.203653 milliseconds
+key generation took 3.35856 milliseconds
+decryption took 8.628094 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.26745 milliseconds
+encryption took 4.119333 milliseconds
+key generation took 3.153763 milliseconds
+decryption took 13.720113 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.774693 milliseconds
+encryption took 4.215794 milliseconds
+key generation took 3.214477 milliseconds
+decryption took 12.697248 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.959922 milliseconds
+encryption took 4.098704 milliseconds
+key generation took 3.284035 milliseconds
+decryption took 14.05316 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.030479 milliseconds
+encryption took 6.163156 milliseconds
+key generation took 5.518898 milliseconds
+decryption took 13.727263 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 7.113292 milliseconds
+encryption took 4.313262 milliseconds
+key generation took 3.243857 milliseconds
+decryption took 13.122373 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.844558 milliseconds
+encryption took 4.746007 milliseconds
+key generation took 3.338713 milliseconds
+decryption took 6.98555 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.309477 milliseconds
+encryption took 4.781441 milliseconds
+key generation took 3.31481 milliseconds
+decryption took 14.555727 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.071293 milliseconds
+encryption took 4.591946 milliseconds
+key generation took 3.604226 milliseconds
+decryption took 13.96071 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.475473 milliseconds
+encryption took 6.040444 milliseconds
+key generation took 1.661563 milliseconds
+decryption took 8.43269 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 7.114909 milliseconds
+encryption took 3.011746 milliseconds
+key generation took 1.788582 milliseconds
+decryption took 7.862197 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.388 milliseconds
+encryption took 2.259879 milliseconds
+key generation took 1.978215 milliseconds
+decryption took 7.109961 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.702754 milliseconds
+encryption took 2.082102 milliseconds
+key generation took 1.900214 milliseconds
+decryption took 6.934201 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 8.85603 milliseconds
+encryption took 4.174353 milliseconds
+key generation took 4.464088 milliseconds
+decryption took 14.685206 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.989597 milliseconds
+encryption took 5.26323 milliseconds
+key generation took 2.63587 milliseconds
+decryption took 12.414647 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.708073 milliseconds
+encryption took 4.250702 milliseconds
+key generation took 3.241416 milliseconds
+decryption took 12.532368 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 8.965394 milliseconds
+encryption took 3.841061 milliseconds
+key generation took 1.749861 milliseconds
+decryption took 12.516604 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.845826 milliseconds
+encryption took 4.25863 milliseconds
+key generation took 3.363619 milliseconds
+decryption took 13.986965 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.256916 milliseconds
+encryption took 3.89968 milliseconds
+key generation took 4.518838 milliseconds
+decryption took 11.463163 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 7.232713 milliseconds
+encryption took 8.685943 milliseconds
+key generation took 18.78032 milliseconds
+decryption took 28.53367 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.371164 milliseconds
+encryption took 4.08738 milliseconds
+key generation took 7.462866 milliseconds
+decryption took 11.013914 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.159539 milliseconds
+encryption took 4.896776 milliseconds
+key generation took 3.443502 milliseconds
+decryption took 21.813045 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.925855 milliseconds
+encryption took 7.513056 milliseconds
+key generation took 4.405539 milliseconds
+decryption took 14.001614 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.819119 milliseconds
+encryption took 2.819639 milliseconds
+key generation took 1.66619 milliseconds
+decryption took 10.576741 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.858727 milliseconds
+encryption took 4.440798 milliseconds
+key generation took 3.405877 milliseconds
+decryption took 12.972624 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 8.463374 milliseconds
+encryption took 4.709384 milliseconds
+key generation took 4.000383 milliseconds
+decryption took 13.644379 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.112127 milliseconds
+encryption took 4.092767 milliseconds
+key generation took 5.394296 milliseconds
+decryption took 10.939946 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.829358 milliseconds
+encryption took 2.19683 milliseconds
+key generation took 1.690472 milliseconds
+decryption took 11.190507 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.351691 milliseconds
+encryption took 2.324797 milliseconds
+key generation took 1.71217 milliseconds
+decryption took 6.523724 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.138258 milliseconds
+encryption took 2.053636 milliseconds
+key generation took 1.671716 milliseconds
+decryption took 7.990371 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.912515 milliseconds
+encryption took 4.136264 milliseconds
+key generation took 3.44208 milliseconds
+decryption took 12.675876 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.450674 milliseconds
+encryption took 2.096267 milliseconds
+key generation took 2.2767 milliseconds
+decryption took 6.627114 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.082399 milliseconds
+encryption took 6.290462 milliseconds
+key generation took 3.310838 milliseconds
+decryption took 7.151476 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.754281 milliseconds
+encryption took 2.194183 milliseconds
+key generation took 1.729772 milliseconds
+decryption took 6.607553 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.610851 milliseconds
+encryption took 2.427493 milliseconds
+key generation took 1.659122 milliseconds
+decryption took 7.096941 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.440397 milliseconds
+encryption took 3.977634 milliseconds
+key generation took 3.220932 milliseconds
+decryption took 13.224152 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.844451 milliseconds
+encryption took 3.910504 milliseconds
+key generation took 3.217703 milliseconds
+decryption took 13.36998 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 4.934693 milliseconds
+encryption took 2.074876 milliseconds
+key generation took 1.653403 milliseconds
+decryption took 11.197774 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.432404 milliseconds
+encryption took 2.953048 milliseconds
+key generation took 1.764156 milliseconds
+decryption took 6.87227 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.12437 milliseconds
+encryption took 2.24902 milliseconds
+key generation took 1.697234 milliseconds
+decryption took 8.461581 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.215833 milliseconds
+encryption took 3.94727 milliseconds
+key generation took 3.114477 milliseconds
+decryption took 10.656003 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.029972 milliseconds
+encryption took 3.928835 milliseconds
+key generation took 2.2249 milliseconds
+decryption took 12.599476 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 4.074346 milliseconds
+encryption took 2.285594 milliseconds
+key generation took 3.413283 milliseconds
+decryption took 9.334376 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.544185 milliseconds
+encryption took 4.436736 milliseconds
+key generation took 3.221123 milliseconds
+decryption took 13.627187 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.228862 milliseconds
+encryption took 2.12818 milliseconds
+key generation took 5.131496 milliseconds
+decryption took 13.866135 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.81753 milliseconds
+encryption took 4.509873 milliseconds
+key generation took 2.428232 milliseconds
+decryption took 9.145311 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 4.149766 milliseconds
+encryption took 4.619123 milliseconds
+key generation took 3.362846 milliseconds
+decryption took 9.63448 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.395071 milliseconds
+encryption took 2.067594 milliseconds
+key generation took 1.645136 milliseconds
+decryption took 6.691685 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.329297 milliseconds
+encryption took 2.099906 milliseconds
+key generation took 1.711162 milliseconds
+decryption took 11.105646 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.90998 milliseconds
+encryption took 3.920176 milliseconds
+key generation took 3.262313 milliseconds
+decryption took 12.829524 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.826956 milliseconds
+encryption took 4.039074 milliseconds
+key generation took 3.251928 milliseconds
+decryption took 8.338568 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.0858 milliseconds
+encryption took 4.326419 milliseconds
+key generation took 2.990866 milliseconds
+decryption took 11.641011 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.41519 milliseconds
+encryption took 4.074741 milliseconds
+key generation took 3.226422 milliseconds
+decryption took 13.048907 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.807321 milliseconds
+encryption took 2.621394 milliseconds
+key generation took 1.671641 milliseconds
+decryption took 6.605566 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.718012 milliseconds
+encryption took 2.203365 milliseconds
+key generation took 1.67538 milliseconds
+decryption took 6.529763 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.110053 milliseconds
+encryption took 2.125092 milliseconds
+key generation took 1.645529 milliseconds
+decryption took 6.514348 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.128603 milliseconds
+encryption took 2.075948 milliseconds
+key generation took 1.66724 milliseconds
+decryption took 6.79021 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.066565 milliseconds
+encryption took 2.17897 milliseconds
+key generation took 1.654807 milliseconds
+decryption took 7.255879 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.803071 milliseconds
+encryption took 4.266994 milliseconds
+key generation took 2.027566 milliseconds
+decryption took 6.564741 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.143007 milliseconds
+encryption took 2.069133 milliseconds
+key generation took 2.135876 milliseconds
+decryption took 6.76836 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.309543 milliseconds
+encryption took 2.081027 milliseconds
+key generation took 1.812491 milliseconds
+decryption took 6.903284 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.162514 milliseconds
+encryption took 3.977167 milliseconds
+key generation took 3.22329 milliseconds
+decryption took 13.5493 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.689967 milliseconds
+encryption took 2.242286 milliseconds
+key generation took 1.730489 milliseconds
+decryption took 7.325013 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.979848 milliseconds
+encryption took 2.080942 milliseconds
+key generation took 1.665114 milliseconds
+decryption took 12.053461 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.946436 milliseconds
+encryption took 3.08514 milliseconds
+key generation took 3.042805 milliseconds
+decryption took 13.968363 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.921253 milliseconds
+encryption took 6.133973 milliseconds
+key generation took 1.827884 milliseconds
+decryption took 6.720128 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.107857 milliseconds
+encryption took 2.076347 milliseconds
+key generation took 3.19331 milliseconds
+decryption took 12.743763 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.940327 milliseconds
+encryption took 2.101602 milliseconds
+key generation took 2.181973 milliseconds
+decryption took 12.744416 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.957977 milliseconds
+encryption took 4.04285 milliseconds
+key generation took 3.309504 milliseconds
+decryption took 7.645144 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.17928 milliseconds
+encryption took 2.774226 milliseconds
+key generation took 1.701754 milliseconds
+decryption took 6.5511 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 4.09882 milliseconds
+encryption took 4.027055 milliseconds
+key generation took 3.201116 milliseconds
+decryption took 13.544106 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.491637 milliseconds
+encryption took 4.030214 milliseconds
+key generation took 3.04956 milliseconds
+decryption took 12.967203 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.718313 milliseconds
+encryption took 2.104796 milliseconds
+key generation took 1.74876 milliseconds
+decryption took 6.54982 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 4.448829 milliseconds
+encryption took 4.10873 milliseconds
+key generation took 3.164844 milliseconds
+decryption took 15.087905 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.767934 milliseconds
+encryption took 4.03663 milliseconds
+key generation took 3.288393 milliseconds
+decryption took 11.80549 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.144904 milliseconds
+encryption took 2.077033 milliseconds
+key generation took 1.662617 milliseconds
+decryption took 7.231654 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.221739 milliseconds
+encryption took 2.128519 milliseconds
+key generation took 1.659257 milliseconds
+decryption took 11.947815 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.747481 milliseconds
+encryption took 4.210173 milliseconds
+key generation took 3.253308 milliseconds
+decryption took 9.998802 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 4.003603 milliseconds
+encryption took 2.188735 milliseconds
+key generation took 1.665501 milliseconds
+decryption took 6.479042 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.912184 milliseconds
+encryption took 2.081274 milliseconds
+key generation took 1.658893 milliseconds
+decryption took 6.491937 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.068033 milliseconds
+encryption took 2.078409 milliseconds
+key generation took 1.70965 milliseconds
+decryption took 10.569533 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.83672 milliseconds
+encryption took 4.02757 milliseconds
+key generation took 3.199886 milliseconds
+decryption took 12.74797 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.939704 milliseconds
+encryption took 4.12536 milliseconds
+key generation took 3.48179 milliseconds
+decryption took 8.731076 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.808525 milliseconds
+encryption took 2.584302 milliseconds
+key generation took 1.671129 milliseconds
+decryption took 8.66601 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 4.567349 milliseconds
+encryption took 2.068653 milliseconds
+key generation took 1.72187 milliseconds
+decryption took 6.535109 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.517195 milliseconds
+encryption took 3.75518 milliseconds
+key generation took 1.685643 milliseconds
+decryption took 11.287627 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.90408 milliseconds
+encryption took 4.04247 milliseconds
+key generation took 3.221756 milliseconds
+decryption took 12.757364 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.929791 milliseconds
+encryption took 4.165567 milliseconds
+key generation took 3.162607 milliseconds
+decryption took 12.73328 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 4.634717 milliseconds
+encryption took 2.052017 milliseconds
+key generation took 2.231884 milliseconds
+decryption took 6.661508 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.139588 milliseconds
+encryption took 2.06432 milliseconds
+key generation took 1.658873 milliseconds
+decryption took 7.701166 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.15804 milliseconds
+encryption took 2.043936 milliseconds
+key generation took 1.661562 milliseconds
+decryption took 8.004446 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.967046 milliseconds
+encryption took 4.03775 milliseconds
+key generation took 3.175197 milliseconds
+decryption took 13.084318 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 6.280329 milliseconds
+encryption took 4.164878 milliseconds
+key generation took 3.323167 milliseconds
+decryption took 12.644249 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.202881 milliseconds
+encryption took 2.076957 milliseconds
+key generation took 2.745143 milliseconds
+decryption took 9.994709 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 4.321858 milliseconds
+encryption took 2.33985 milliseconds
+key generation took 1.725049 milliseconds
+decryption took 7.426648 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 3.191033 milliseconds
+encryption took 2.064359 milliseconds
+key generation took 1.677566 milliseconds
+decryption took 6.478447 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.957587 milliseconds
+encryption took 4.275173 milliseconds
+key generation took 3.155543 milliseconds
+decryption took 7.682636 milliseconds
+
+SUCCESSFUL DECRYPTION
+
+setup took 5.862357 milliseconds
+encryption took 4.064749 milliseconds
+key generation took 3.500058 milliseconds
+decryption took 12.659638 milliseconds
+
+Average setup time: 5.12283701 milliseconds
+Average encryption time: 3.45061866 milliseconds
+Average key generation time: 2.82873525 milliseconds
+Average decryption time: 10.43390581 milliseconds
+
+The average times do not include the data from the very first run because the first setup time always tends to be an outlier
