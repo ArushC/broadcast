@@ -558,8 +558,8 @@ public class AugBE {
 		//see how runtime changes with constant n and increasing subset size
 		long totalSetupTime = 0;
 			
-		for (int i = 100; i <= 2000; i+=100) {
-			long[] elapsedTimes = printRuntimes(10000, i, lambda);
+		for (int i = 100; i < 1000; i+=50) {
+			long[] elapsedTimes = printRuntimes(1000, i, lambda);
 			totalSetupTime += elapsedTimes[0];
 		}
 			
@@ -569,7 +569,7 @@ public class AugBE {
 		long totalEncryptionTime = 0;
 		long totalDecryptionTime = 0;
 		//see how runtime changes with increasing n, constant subset size = 100
-		for (int i = 1000; i <= 20000; i += 1000) {
+		for (int i = 100; i <= 2000; i += 100) {
 			long[] elapsedTimes =  printRuntimes(i, 100, lambda);
 			totalEncryptionTime += elapsedTimes[1];
 			totalDecryptionTime += elapsedTimes[2];
