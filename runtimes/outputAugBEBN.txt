@@ -1,0 +1,227 @@
+OUTPUT FROM THE AUGMENTED BROADCAST ENCRYPTION SYSTEM OVER BN254
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 100
+
+setup took 6.949668373 seconds
+encryption took 0.082839953 seconds
+decryption took 0.004887379 seconds (u = 710)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 150
+
+setup took 9.06914764 seconds
+encryption took 0.088219053 seconds
+decryption took 0.004496153 seconds (u = 508)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 200
+
+setup took 7.366381438 seconds
+encryption took 0.101854034 seconds
+decryption took 0.004246473 seconds (u = 228)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 250
+
+setup took 6.516592893 seconds
+encryption took 0.073348718 seconds
+decryption took 0.006059383 seconds (u = 926)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 300
+
+setup took 8.02736211 seconds
+encryption took 0.077492355 seconds
+decryption took 0.004821892 seconds (u = 406)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 350
+
+setup took 7.012919993 seconds
+encryption took 0.065736993 seconds
+decryption took 0.004166823 seconds (u = 108)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 400
+
+setup took 6.67280868 seconds
+encryption took 0.096861976 seconds
+decryption took 0.004848604 seconds (u = 585)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 450
+
+setup took 6.202452872 seconds
+encryption took 0.065688556 seconds
+decryption took 0.00419982 seconds (u = 456)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 500
+
+setup took 6.201354038 seconds
+encryption took 0.065058983 seconds
+decryption took 0.004490359 seconds (u = 752)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 550
+
+setup took 6.111545244 seconds
+encryption took 0.06851605 seconds
+decryption took 0.00525551 seconds (u = 704)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 600
+
+setup took 6.35723145 seconds
+encryption took 0.06501188 seconds
+decryption took 0.004202131 seconds (u = 793)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 650
+
+setup took 6.402780357 seconds
+encryption took 0.068472786 seconds
+decryption took 0.004204334 seconds (u = 212)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 700
+
+setup took 6.118326282 seconds
+encryption took 0.065927736 seconds
+decryption took 0.004317993 seconds (u = 839)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 750
+
+setup took 6.433355621 seconds
+encryption took 0.075758246 seconds
+decryption took 0.004606 seconds (u = 294)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 800
+
+setup took 6.24085591 seconds
+encryption took 0.066449346 seconds
+decryption took 0.004243543 seconds (u = 400)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 850
+
+setup took 6.282947692 seconds
+encryption took 0.065854068 seconds
+decryption took 0.004238302 seconds (u = 506)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 900
+
+setup took 6.098600847 seconds
+encryption took 0.065183246 seconds
+decryption took 0.004263771 seconds (u = 424)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 950
+
+setup took 7.213220213 seconds
+encryption took 0.065223546 seconds
+decryption took 0.004275781 seconds (u = 965)
+
+SUCCESSFUL DECRYPTION: N = 200, subset size = 100
+
+setup took 0.714235462 seconds
+encryption took 0.029739618 seconds
+decryption took 0.004178484 seconds (u = 163)
+
+SUCCESSFUL DECRYPTION: N = 300, subset size = 100
+
+setup took 1.167634653 seconds
+encryption took 0.045112293 seconds
+decryption took 0.005604507 seconds (u = 120)
+
+SUCCESSFUL DECRYPTION: N = 400, subset size = 100
+
+setup took 1.715585937 seconds
+encryption took 0.042640468 seconds
+decryption took 0.00406915 seconds (u = 75)
+
+SUCCESSFUL DECRYPTION: N = 500, subset size = 100
+
+setup took 2.344072899 seconds
+encryption took 0.046007053 seconds
+decryption took 0.004055199 seconds (u = 87)
+
+SUCCESSFUL DECRYPTION: N = 600, subset size = 100
+
+setup took 3.174252324 seconds
+encryption took 0.059001223 seconds
+decryption took 0.005860991 seconds (u = 75)
+
+SUCCESSFUL DECRYPTION: N = 700, subset size = 100
+
+setup took 3.737148827 seconds
+encryption took 0.054675286 seconds
+decryption took 0.004095437 seconds (u = 343)
+
+SUCCESSFUL DECRYPTION: N = 800, subset size = 100
+
+setup took 4.502960404 seconds
+encryption took 0.058089481 seconds
+decryption took 0.004069198 seconds (u = 181)
+
+SUCCESSFUL DECRYPTION: N = 900, subset size = 100
+
+setup took 5.292323233 seconds
+encryption took 0.06038912 seconds
+decryption took 0.006739074 seconds (u = 288)
+
+SUCCESSFUL DECRYPTION: N = 1000, subset size = 100
+
+setup took 6.162948197 seconds
+encryption took 0.075308702 seconds
+decryption took 0.004196253 seconds (u = 711)
+
+SUCCESSFUL DECRYPTION: N = 1100, subset size = 100
+
+setup took 7.261275567 seconds
+encryption took 0.068857135 seconds
+decryption took 0.004077364 seconds (u = 118)
+
+SUCCESSFUL DECRYPTION: N = 1200, subset size = 100
+
+setup took 8.095810881 seconds
+encryption took 0.07264481 seconds
+decryption took 0.00470459 seconds (u = 632)
+
+SUCCESSFUL DECRYPTION: N = 1300, subset size = 100
+
+setup took 9.21745083 seconds
+encryption took 0.110568216 seconds
+decryption took 0.004099908 seconds (u = 160)
+
+SUCCESSFUL DECRYPTION: N = 1400, subset size = 100
+
+setup took 10.134757171 seconds
+encryption took 0.19828046 seconds
+decryption took 0.006573046 seconds (u = 1378)
+
+SUCCESSFUL DECRYPTION: N = 1500, subset size = 100
+
+setup took 11.224593777 seconds
+encryption took 0.49539644 seconds
+decryption took 0.007925546 seconds (u = 870)
+
+SUCCESSFUL DECRYPTION: N = 1600, subset size = 100
+
+setup took 12.116939155 seconds
+encryption took 0.081472073 seconds
+decryption took 0.00410824 seconds (u = 1329)
+
+SUCCESSFUL DECRYPTION: N = 1700, subset size = 100
+
+setup took 13.474527737 seconds
+encryption took 0.098776561 seconds
+decryption took 0.00412281 seconds (u = 949)
+
+SUCCESSFUL DECRYPTION: N = 1800, subset size = 100
+
+setup took 14.6460712 seconds
+encryption took 0.087663176 seconds
+decryption took 0.004090347 seconds (u = 376)
+
+SUCCESSFUL DECRYPTION: N = 1900, subset size = 100
+
+setup took 15.68954566 seconds
+encryption took 0.089434788 seconds
+decryption took 0.004127489 seconds (u = 1080)
+
+SUCCESSFUL DECRYPTION: N = 2000, subset size = 100
+
+setup took 16.97781567 seconds
+encryption took 0.09246316 seconds
+decryption took 0.004112198 seconds (u = 337)
+
+Average setup time, constant n = 1000: 6.7376417585 seconds
+Average encryption time, constant n = 1000: 0.07352764027777778 seconds
+Average decryption time, constant n = 1000: 0.0045457917222222225 seconds
