@@ -76,20 +76,6 @@ public class VectorND {
 		return sum;
 	}
 	
-	public static VectorND columnVectorTimesRowVector(VectorND v1, VectorND v2) {
-		
-		ArrayList<Fr> resCoords = new ArrayList<Fr>();
-		int n = v1.getCoords().size();
-		for (int i = 0; i < n; i++) {
-			Fr product = new Fr();
-			Mcl.mul(product, v1.getCoords().get(i), v2.getCoords().get(i));
-			resCoords.add(product);
-		}
-		
-		return new VectorND(resCoords);
-		
-	}
-	
 	public static ArrayList<G1> exponentiate(G1 g, VectorND v) {
 		
 		ArrayList<G1> res = new ArrayList<G1>();
