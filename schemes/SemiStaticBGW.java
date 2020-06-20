@@ -180,12 +180,112 @@ public class SemiStaticBGW {
 		Mcl.pow(K, K, exp);
 	}
 	
+		
+private static long[] printRuntimes(int N, int subsetSize) {
+		
+		long startSetup = System.nanoTime();
+		Object[] setup = setup(N);
+		long elapsedSetup = System.nanoTime() - startSetup;
+		double secondsSetup = ((double) elapsedSetup) / 1E9;
+
+		ArrayList<Integer> S = new ArrayList<Integer>();
+		
+		//randomly generate numbers to put in the subset S (NO REPEATS)
+		ArrayList<Integer> randomNums = new ArrayList<Integer>();
+			for (int i = 0; i < N; i++) { 
+				randomNums.add(i + 1);
+			}
+			for (int i = 0; i < subsetSize; i++) {
+				int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
+				int randomID = randomNums.get(randomIndex);
+				S.add(randomID);
+				randomNums.remove(randomIndex);
+			}
+			
+		//Get random user ID u to test the decryption
+		int i = S.get(ThreadLocalRandom.current().nextInt(0, S.size()));
+		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
+		Object[] SK = (Object[]) setup[1];
+		
+		long startKeyGen = System.nanoTime();
+		ArrayList<Object> di = keyGen(i, SK);
+		long elapsedKeyGen = System.nanoTime() - startKeyGen;
+		double secondsKeyGen = ((double) elapsedKeyGen)/1E9;
+		
+		long startEnc = System.nanoTime();
+		Object[] C = enc(S, PK);
+		long elapsedEnc = System.nanoTime() - startEnc;
+		double secondsEnc = ((double) elapsedEnc)/1E9;
+		
+		Object[] Hdr = (Object[]) C[0];
+		long startDecrypt = System.nanoTime();
+		GT K1 = decrypt(S, i, di, Hdr, PK);
+		long elapsedDecrypt = System.nanoTime() - startDecrypt;
+		double secondsDecrypt = ((double) elapsedDecrypt)/1E9;
+		
+		
+		String result = (K.equals(K1)) ? "SUCCESSFUL DECRYPTION" : "FAILED DECRYPTION";
+		System.out.println(result + ": " + "N = " + N + ", subset size = " + subsetSize);
+		System.out.println(); //padding
+		System.out.println("setup took " + secondsSetup + " seconds");
+		System.out.println("encryption took " + secondsEnc + " seconds");
+		System.out.println("key generation took " + secondsKeyGen + " seconds");
+		System.out.println("decryption took " + secondsDecrypt + " seconds");
+		System.out.println(); //more padding
+		
+		long[] elapsedTimes = new long[4];
+		elapsedTimes[0] = elapsedSetup;
+		elapsedTimes[1] = elapsedEnc;
+		elapsedTimes[2] = elapsedKeyGen;
+		elapsedTimes[3] = elapsedDecrypt;
+		
+		return elapsedTimes;
+		
+	}
+
+	//Test the runtimes of the algorithms
+	public static void testRuntimes() {
+		
+		//see how runtime changes with constant n and increasing subset size
+		long totalSetupTime = 0;
+		long totalKeygenTime = 0;
+		
+		for (int i = 1000; i < 10000; i+=500) {
+			long[] elapsedTimes = printRuntimes(10000, i);
+			totalSetupTime += elapsedTimes[0];
+			totalKeygenTime += elapsedTimes[2];
+		}
+		
+		double averageSetupTime = ((double) totalSetupTime) / (1E9 * 20);
+		double averageKeygenTime = ((double) totalKeygenTime) / (1E9 * 20);
+		
+		long totalEncryptionTime = 0;
+		long totalDecryptionTime = 0;
+		int count = 0;
+		//see how runtime changes with increasing n, constant subset size = 100
+		for (int i = 2000; i <= 20000; i += 1000) {
+			long[] elapsedTimes =  printRuntimes(i, 1000);
+			totalEncryptionTime += elapsedTimes[1];
+			totalDecryptionTime += elapsedTimes[3];
+			count++;
+		}
+		
+		double averageEncryptionTime = ((double) totalEncryptionTime) / (1E9 * count);
+		double averageDecryptionTime = ((double) totalDecryptionTime) / (1E9 * count);
+		
+		System.out.println("Average setup time, constant n = 10000: " + averageSetupTime + " seconds");
+		System.out.println("Average setup time, constant n = 10000: " + averageKeygenTime + " seconds");
+		System.out.println("Average encryption time, constant subset size = 1000: " + averageEncryptionTime + " seconds");
+		System.out.println("Average decryption time, constant subset size = 1000: " + averageDecryptionTime + " seconds");
+	
+	}
 	
 	public static void main(String[] args) {
 		
 		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
 		Mcl.SystemInit(Mcl.BN254);
-		Object[] setup = setup(100);
+		testRuntimes();
+		/*Object[] setup = setup(100);
 		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
 		Object[] SK = (Object[]) setup[1];
 		int i = 75;
@@ -196,7 +296,7 @@ public class SemiStaticBGW {
 		Object[] Hdr = (Object[]) C[0];
 		GT K1 = decrypt(S, i, di, Hdr, PK);
 		System.out.println("K = " + K);
-		System.out.println("K1 = " + K1);
+		System.out.println("K1 = " + K1);*/
 		
 		
 	}
