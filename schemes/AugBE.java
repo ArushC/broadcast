@@ -431,13 +431,7 @@ public class AugBE {
 			
 		}
 		
-		Object[] ciphertextX = new Object[5];
-		ciphertextX[0] = Rx;
-		ciphertextX[1] = Ax;
-		ciphertextX[2] = Tx;
-		ciphertextX[3] = RSquigglex;
-		ciphertextX[4] = Bx;
-		
+		Object[] ciphertextX = {Rx, Ax, Tx, RSquigglex, Bx};
 		return ciphertextX;	
 	}
 	
@@ -477,9 +471,7 @@ public class AugBE {
 		CSquiggley[0] = CSquiggleyx;
 		CSquiggley[1] = CSquiggleyy;
 		
-		Object[] ciphertextY = new Object[2];
-		ciphertextY[0] = Cy;
-		ciphertextY[1] = CSquiggley;
+		Object[] ciphertextY = {Cy, CSquiggley};
 		return ciphertextY;
 	}
 	
