@@ -11,7 +11,7 @@ import com.herumi.mcl.*;
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf
 //Description of BLS: https://crypto.stanford.edu/~dabo/pubs/papers/BLSmultisig.html
 
-//This implements a special case in which A = 1 and B = n
+//A = sqrt(n), B = sqrt(n)
 public class BGWGeneralScheme {
 
 	
