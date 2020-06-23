@@ -70,28 +70,36 @@ public class IBBESystem {
 		Mcl.mul(element2, element2, alpha); //add g1^(gamma * alpha)
 		PK.add(element2);
 		
-		//second part of PK is going to be a (l + 1) * (l -1) matrix
-		Object[][] pkSecondPart = new Object[l+1][l-1];
+		//second part of PK is going to be the following
+		//first element of the object array is a set containing the g1 set elements: {[g1^(alpha^j), gHat1^(alpha^j) for all 0 <= j <= l}
+		//second element of the object array is a set containing the g2 set elements {[g2^(alpha^j), gHat2^(alpha^j) for all 0 <= j <= l - 2}
+		Object[] pkSecondPart = new Object[2];
+		ArrayList<Object> g1Set = new ArrayList<Object>();
+		ArrayList<Object> g2Set = new ArrayList<Object>();
 		
 		for (int j = 0; j <= l; j++) {
-			for (int k = 0; k <= l - 2; k++) {
-				Object[] setElement = new Object[4];
+				Object[] elmnt1 = new Object[2];
 				G1 e1 = new G1();
 				G1 e2 = new G1();
-				G2 e3 = new G2();
-				G2 e4 = new G2();
 				Mcl.mul(e1, g1, Tools.power(alpha, j));
 				Mcl.mul(e2, gHat1, Tools.power(alpha, j));
-				Mcl.mul(e3, g2, Tools.power(alpha, k));
-				Mcl.mul(e4, gHat2, Tools.power(alpha, k));
-				setElement[0] = e1;
-				setElement[1] = e2;
-				setElement[2] = e3;
-				setElement[3] = e4;
-				pkSecondPart[j][k] = setElement;
-			}
+				elmnt1[0] = e1;
+				elmnt1[1] = e2;
+				g1Set.add(elmnt1);
+				
+				if (j <= l - 2) {
+					Object[] elmnt2 = new Object[2];
+					G2 e3 = new G2();
+					G2 e4 = new G2();
+					Mcl.mul(e3, g2, Tools.power(alpha, j));
+					Mcl.mul(e4, gHat2, Tools.power(alpha, j));
+					elmnt2[0] = e3;
+					elmnt2[1] = e4;
+					g2Set.add(elmnt2);
+				}						
 		}
-		
+		pkSecondPart[0] = g1Set;
+		pkSecondPart[1] = g2Set;
 		PK.add(pkSecondPart);
 		
 		//Generate random key kappa for a pseudorandom function psi
@@ -185,10 +193,12 @@ public class IBBESystem {
 		int k = S.size();
 		
 		//extract g1, gHat1, gHat2
-		Object[][] pkSecondPart = (Object[][]) PK.get(4);
-		G1 g1 = (G1) (((Object[]) pkSecondPart[0][0])[0]);
-		G1 gHat1 = (G1) (((Object[]) pkSecondPart[0][0])[1]);
-		G2 gHat2 = (G2) (((Object[]) pkSecondPart[0][0])[3]);
+		Object[] pkSecondPart = (Object[]) PK.get(4);
+		ArrayList<Object> g1Parts = (ArrayList<Object>) pkSecondPart[0];
+		Object[] setElement = (Object[]) g1Parts.get(0);
+		G1 g1 = (G1) setElement[0];
+		G1 gHat1 = (G1) setElement[1];
+		G2 gHat2 = (G2) (((Object[]) ((ArrayList<Object>) pkSecondPart[1]).get(0))[1]);
 		
 		
 		//compute Px
@@ -240,8 +250,8 @@ public class IBBESystem {
 	public static GT decrypt(ArrayList<Integer> S, int i, Object[] di, Fr[] tau, Object[] Hdr, ArrayList<Object> PK) {
 		
 		//1. extract from PK and compute P(x)
-		Object[][] pkSecondPart = (Object[][]) PK.get(4);
-		G2 gHat2 = (G2) (((Object[]) pkSecondPart[0][0])[3]);
+		Object[] pkSecondPart = (Object[]) PK.get(4);
+		G2 gHat2 = (G2) (((Object[]) ((ArrayList<Object>) pkSecondPart[1]).get(0))[1]);
 		int n = (int) PK.get(0);
 		int l = (int) PK.get(1);
 		int k = S.size();
@@ -449,9 +459,11 @@ public static double[] testRuntimes(int lambda) {
 		
 }
 	
+	
+	
 	public static void main(String[] args) {
 		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
-		testRuntimes(Mcl.BLS12_381);
+		testRuntimes(Mcl.BN254);
 		/*ArrayList<Integer> S = new ArrayList<Integer>();
 		int n = 100000;  //i = 1 to i = 100000
 		int l = 30; //max subset size
