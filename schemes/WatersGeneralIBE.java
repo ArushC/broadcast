@@ -7,7 +7,7 @@ import java.io.*;
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2009/385.pdf (bottom of page 6)
-public class WatersDualEncryption {
+public class WatersGeneralIBE {
 	
 	private static G2 gg;
 	private static Fr b; 
