@@ -73,7 +73,13 @@ public class BaselineScheme {
 		G1 c = CT[0];
 		G1 res = new G1();
 		Mcl.mul(res, c, xi);
-		Mcl.sub(res, zi, res);	
+		try {
+			Mcl.sub(res, zi, res);
+		}
+		catch (NullPointerException e) {
+			return null; //if cannot be decrypted, return null
+		}
+			
 		return res;	
 	}
 	
@@ -83,17 +89,14 @@ public class BaselineScheme {
 		ArrayList<G1> PK = (ArrayList<G1>) setup[0];
 		ArrayList<Fr> SK = (ArrayList<Fr>) setup[1];
 		ArrayList<Integer> S = new ArrayList<Integer>();
-		S.addAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 99));
+		S.addAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 100));
 		G1 M = new G1();
 		Mcl.hashAndMapToG1(M, "abc".getBytes());
 		System.out.println("M = " + M);
-		int i = 99;
+		int i = 100;
 		G1[] CT = enc(PK, S, M);
 		Fr xi = SK.get(i - 1);
 		G1 M1 = dec(CT, xi, i);
 		System.out.println("M1 = " + M1);
-	}
-	
-	
-	
+	}	
 }
