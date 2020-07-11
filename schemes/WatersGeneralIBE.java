@@ -450,7 +450,8 @@ public class WatersGeneralIBE {
 	
 	public static void main(String[] args) {
 		//change the file directory here
-		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
+		File lib = new File("../../lib/libmcljava.dylib");
+		System.load(lib.getAbsolutePath());
 		testRuntimes(Mcl.BN254, 100);
 		testRuntimes(Mcl.BLS12_381, 100); //this should be a lot slower
 	}
