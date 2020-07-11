@@ -181,8 +181,9 @@ public class BaselineScheme {
 		}
 	
 	public static void main(String[] args) {
-		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
-		testRuntimes(Mcl.BLS12_381);
+		File lib = new File("../../lib/libmcljava.dylib");
+		System.load(lib.getAbsolutePath());
+		testRuntimes(Mcl.BN254);
 		//printRuntimes(Mcl.BN254, 1000000, 100);
 		/*Object[] setup = setup(Mcl.BN254, 100);
 		ArrayList<G1> PK = (ArrayList<G1>) setup[0];
