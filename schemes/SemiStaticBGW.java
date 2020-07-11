@@ -281,8 +281,8 @@ private static long[] printRuntimes(int N, int subsetSize) {
 	}
 	
 	public static void main(String[] args) {
-		
-		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
+		File lib = new File("../../lib/libmcljava.dylib");
+		System.load(lib.getAbsolutePath());
 		Mcl.SystemInit(Mcl.BN254);
 		testRuntimes();
 		/*Object[] setup = setup(100);
