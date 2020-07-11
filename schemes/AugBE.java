@@ -580,7 +580,8 @@ public class AugBE {
 	
 	public static void main(String[] args) {
 		
-		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
+		File lib = new File("../../lib/libmcljava.dylib");
+		System.load(lib.getAbsolutePath());
 		testRuntimes(Mcl.BN254);
 		/*ArrayList<Object> setup = setupABE(100, Mcl.BN254);
 		ArrayList<Integer> S = new ArrayList<Integer>();
