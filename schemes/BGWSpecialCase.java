@@ -303,8 +303,9 @@ public class BGWSpecialCase {
 	}
 	
 	public static void main(String[] args) {
-		//change the file directory here
-		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
+
+		File lib = new File("../../lib/libmcljava.dylib");
+		System.load(lib.getAbsolutePath());
 		Mcl.SystemInit(Mcl.BN254); // curveType = Mcl.BN254 or Mcl.BLS12_381
 		testRuntimes();
 		/*Object[] setup = testSetup(100);
