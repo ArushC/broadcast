@@ -354,7 +354,7 @@ public class BGWGeneralScheme {
 	}
 	
 	public static void main(String[] args) {
-		//change the file directory here
+		
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
 		Mcl.SystemInit(Mcl.BN254); // curveType = Mcl.BN254 or Mcl.BLS12_381
@@ -368,11 +368,7 @@ public class BGWGeneralScheme {
 		S.addAll(Arrays.asList(1, 5, 31, 30, 40, 45, 22, 21, 20, 19, 18, 100));
 		Object[] C = encrypt(S, PK);
 		ArrayList<Object> Hdr = (ArrayList<Object>) C[0];
-		testDecrypt(S, i, di, Hdr, PK);*/
-		
-		
-		
-		
+		testDecrypt(S, i, di, Hdr, PK);*/	
 	}
 
 }
