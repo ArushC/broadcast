@@ -1,4 +1,4 @@
-# cryptography
+# broadcast encryption implementations
 
 How to use these files:
 
