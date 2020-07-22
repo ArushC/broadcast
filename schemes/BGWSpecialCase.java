@@ -136,8 +136,8 @@ public class BGWSpecialCase {
 		//Calculate e(g_i, C1) = e(g, C1^(alpha^i))
 		GT e1 = new GT();
 		G2 c1 = (G2) Hdr[1];
-		Fr exp = Tools.power(alpha, i);
-		G1 gi = new G1();
+		Fr exp = Tools.power(alpha, i); //compute g^(alpha^i) for all i and include in PK
+		G1 gi = new G1();               //g2 multiplication/exponentation is more expensive
 		Mcl.mul(gi, g, exp); //gi = g^(alpha^i)
 		Mcl.pairing(e1, gi, c1);
 		
