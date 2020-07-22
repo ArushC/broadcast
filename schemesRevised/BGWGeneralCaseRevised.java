@@ -243,15 +243,15 @@ public class BGWGeneralCaseRevised {
 		ArrayList<Integer> S = new ArrayList<Integer>();
 		//randomly generate numbers to put in the subset S (NO REPEATS)
 		ArrayList<Integer> randomNums = new ArrayList<Integer>();
-			for (int i = 0; i < n; i++) { 
-				randomNums.add(i + 1);
-			}
-			for (int i = 0; i < subsetSize; i++) {
-				int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
-				int randomID = randomNums.get(randomIndex);
-				S.add(randomID);
-				randomNums.remove(randomIndex);
-			}
+		for (int i = 0; i < n; i++) { 
+			randomNums.add(i + 1);
+		}
+		for (int i = 0; i < subsetSize; i++) {
+			int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
+			int randomID = randomNums.get(randomIndex);
+			S.add(randomID);
+			randomNums.remove(randomIndex);
+		}
 
 		//Get elapsed time for encrypt
 		long startEncrypt = System.nanoTime();
