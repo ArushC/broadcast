@@ -154,7 +154,7 @@ public class BGWSpecialCase {
 			if (j == i) {
 				continue;
 			}
-			Mcl.add(product, product, PK.get(n + 1 - j + i)); //product *= g_(n + 1 - j + i)
+			Mcl.add(product, product, (G2) PK.get(n + 1 - j + i)); //product *= g_(n + 1 - j + i)
 		}
 		
 		//finally, compute the pairing
