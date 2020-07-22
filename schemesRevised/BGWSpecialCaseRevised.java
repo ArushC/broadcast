@@ -119,7 +119,7 @@ public class BGWSpecialCaseRevised {
 		}
 		
 		G1 c1 = new G1();
-		Mcl.mul(c1, product, t);      //c1 = c1^(t)
+		Mcl.mul(c1, product, t);   //c1 = c1^(t)
 		
 		//return Hdr and K
 		Object[] Hdr = new Object[2];
@@ -172,46 +172,8 @@ public class BGWSpecialCaseRevised {
 		
 	}
 	
-//TESTING --------------------------------------------------------------------------------------------------------------------------
-	
-	public static void assertEquals(String msg, String x, String y) {
-		if (x.equals(y)) {
-			System.out.println("OK : " + msg);
-		} 
-		else {
-			System.out.println("NG : " + msg + ", x = " + x + ", y = " + y);
-		}
-	}
-	
-	public static Object[] testSetup(int n) {
-		//TEST SETUP: returns the setup Object[]
-			Object[] setup = setup(n);
-			//EXTRACT EVERYTHING
-			ArrayList<G2> PK = (ArrayList<G2>) setup[0];
-			ArrayList<G2> privateKeys = (ArrayList<G2>) setup[1];
-			G2 v = PK.get(PK.size() - 1);
-			for (int i = 1; i <= n; i++) {
-				//Verify for each key: di = vi (v^(alpha^(i)))
-				G2 di = privateKeys.get(i - 1); // (i - 1) because private keys starts from i = 1
-				Fr exp = Tools.power(alpha, i);
-				System.out.println("Exponent = " + exp.toString());
-				G2 vi = new G2();
-				Mcl.mul(vi, v, exp); //vi = v^(exp)
-				assertEquals("i = " + i + " ", di.toString(), vi.toString());
-			}
-			
-			return setup;
-	}
-	
-	//must be called AFTER setup function has been called, otherwise instance variables will not be instantiated
-	//Expected: K.toString() == K1.toString()
-	public static void testDecrypt(ArrayList<Integer> S, int i, G1 di, Object[] Hdr, Object[] PK) {
-		GT K1 = decrypt(S, i, di, Hdr, PK);
-		System.out.println("K = " + K.toString());
-		System.out.println("K1 = " + K1.toString());
-	}
+	//TESTING --------------------------------------------------------------------------------------------------------------------------
 
-	
 	//returns long[] containing elapsed time for setup, encrypt, and decrypt, respectively
 	private static long[] printRuntimes(int n, int subsetSize) {
 		
@@ -282,24 +244,10 @@ public class BGWSpecialCaseRevised {
 	}
 	
 	public static void main(String[] args) {
-
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
 		Mcl.SystemInit(Mcl.BN254); // curveType = Mcl.BN254 or Mcl.BLS12_381
-		testRuntimes(10);
-		/*Object[] setup = testSetup(100);
-		ArrayList<Object> PK = (ArrayList<G2>) setup[0];
-		ArrayList<G2> privateKeys = (ArrayList<G2>) setup[1];
-		ArrayList<Integer> S = new ArrayList<Integer>();
-		S.addAll(Arrays.asList(1, 6, 17, 25, 33, 49));
-		int i = 6;
-		G2 di = privateKeys.get(i - 1);
-		Object[] encrypted = encrypt(S, PK);
-		Object[] Hdr = (Object[]) encrypted[0];
-		System.out.println();
-		System.out.println("DECRYPT TEST: ");
-		testDecrypt(S, i, di, Hdr, PK); //YES! IT WORKED! FINALLY (after so much debugging hahaha)*/
-		
+		testRuntimes(10); //subset size = 10% of N
 	}
 
 }
