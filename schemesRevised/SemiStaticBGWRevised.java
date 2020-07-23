@@ -14,7 +14,7 @@ import helperclasses.Tools;
 //Changes made: optimized selection of G1 and G2, added both to the public key
 //KeyGen takes the public key as a parameter (a slight modification to the described scheme)
 //K is precomputed in the setup phase so that encryption does not require pairings
-//Secret key contains g^(alpha) and gg^(alpha) 
+//Secret key contains g1^(alpha) and g2^(alpha) 
 
 public class SemiStaticBGWRevised {
 
