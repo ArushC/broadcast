@@ -57,6 +57,15 @@ public class LagrangeInterpolationZp {
 		return result;
 	}
 	
+	public static Fr[] negate(Fr[] polynomial) {
+		Fr[] result = new Fr[polynomial.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = new Fr();
+			Mcl.mul(result[i], polynomial[i], new Fr(-1));
+		}
+		return result;
+	}
+	
 	//returns the coefficients of the LaGrange polynomial
 	//precondition: xValues.length == yValues.length
 	//default: n = (# of data points - 1)
