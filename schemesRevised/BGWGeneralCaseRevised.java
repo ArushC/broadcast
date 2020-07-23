@@ -12,7 +12,7 @@ import com.herumi.mcl.*;
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.2)
 //Changes made: optimized selection of G1 and G2, included gg^(alpha^i) for all i in the public key,
 //both g1 and g2 are included in the public key
-//MAKE SURE TO MENTION IN PAPER: precomputation
+//MAKE SURE TO MENTION IN PAPER: precomputation of K in the setup phase
 public class BGWGeneralCaseRevised {
 
 	private static Fr alpha, t;
