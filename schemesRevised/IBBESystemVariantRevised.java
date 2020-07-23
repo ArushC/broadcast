@@ -15,13 +15,11 @@ import java.util.concurrent.ThreadLocalRandom;
 //mention that K is precomputed in the setup function
 //Additional changes: fixed computation of g^P(alpha)
 //Added e(g1, gHat2)^(alpha^(l - 1)) to the public key
-//Included conditionals to ensure that the scheme works when l = 1
 public class IBBESystemVariantRevised {
 
 	private static CustomPRF phi;
 	private static Fr gamma, t;
 	private static GT K;
-	private static Fr alpha;
 	private static int lambda;
 	private static G1 g1;
 	private static G2 g2;
@@ -42,7 +40,7 @@ public class IBBESystemVariantRevised {
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		
 		//generate random exponents alpha, beta, gamma, t
-		alpha = new Fr();
+		Fr alpha = new Fr();
 		alpha.setByCSPRNG();
 		
 		Fr beta = new Fr();
@@ -370,7 +368,6 @@ public class IBBESystemVariantRevised {
 			printRuntimes(N, subsetSize, lambda);
 		}
 	}
-	
 	
 	
 	public static void main(String[] args) {
