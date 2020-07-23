@@ -15,6 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 //mention that K is precomputed in the setup function
 //Additional changes: fixed computation of g^P(alpha)
 //Added e(g1, gHat2)^(alpha^(l - 1)) to the public key
+//Included conditionals to ensure that the scheme works when l = 1
 public class IBBESystemVariantRevised {
 
 	private static CustomPRF phi;
