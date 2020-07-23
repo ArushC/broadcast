@@ -18,7 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class IBBESystemVariantRevised {
 
 	private static CustomPRF phi;
-	private static Fr gamma, t;
+	private static Fr t;
 	private static GT K;
 	private static int lambda;
 	private static G1 g1;
@@ -46,7 +46,7 @@ public class IBBESystemVariantRevised {
 		Fr beta = new Fr();
 		beta.setByCSPRNG();
 		
-		gamma = new Fr();
+		Fr gamma = new Fr();
 		gamma.setByCSPRNG();
 		
 		t = new Fr();
@@ -61,7 +61,7 @@ public class IBBESystemVariantRevised {
 		Mcl.mul(gHat2, g2, beta);
 		
 		//precompute K
-		precompute(g1, gHat2, alpha, l, t);
+		precompute(g1, gHat2, alpha, gamma, l);
 		
 		//add n, l, g1^(gamma), g1^(gamma * alpha) to PK
 		ArrayList<Object> PK = new ArrayList<Object>();
@@ -288,7 +288,7 @@ public class IBBESystemVariantRevised {
 	
 	
 	//precomputes K = e(gHat2, g1)^(alpha * gamma^(l - 1) * t)
-	private static void precompute(G1 g1, G2 gHat2, Fr alpha, int l, Fr t) {
+	private static void precompute(G1 g1, G2 gHat2, Fr alpha, Fr gamma, int l) {
 
 		K = new GT();
 		Mcl.pairing(K, g1, gHat2);
@@ -367,8 +367,7 @@ public class IBBESystemVariantRevised {
 			int subsetSize = (int) (0.01 * percent * N);
 			printRuntimes(N, subsetSize, lambda);
 		}
-	}
-	
+	}	
 	
 	public static void main(String[] args) {
 		File lib = new File("../../lib/libmcljava.dylib");
