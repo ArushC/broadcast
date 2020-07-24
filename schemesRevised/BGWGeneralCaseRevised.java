@@ -1,23 +1,21 @@
 package schemesRevised;
 
+import helperclasses.Tools;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
-
-import net.sourceforge.sizeof.SizeOf;
 
 import com.herumi.mcl.*;
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.2)
 //Changes made: optimized selection of G1 and G2, included gg^(alpha^i) for all i in the public key,
 //both g1 and g2 are included in the public key
-//MAKE SURE TO MENTION IN PAPER: precomputation of K in the setup phase
+//MAKE SURE TO MENTION IN PAPER: precomputation
 public class BGWGeneralCaseRevised {
 
-	private static Fr alpha, t;
-	private static G1 g;
-	private static G2 gg;
+	private static Fr t;
 	private static int n, A, B;
 	private static GT K; //to be precomputed in the setup function
 	
@@ -34,21 +32,21 @@ public class BGWGeneralCaseRevised {
 		A = (int) Math.ceil(((double) n) / B);
 
 		//initialize random generator g in G
-		g = new G1();
+		G1 g = new G1();
 		Mcl.hashAndMapToG1(g, "abc".getBytes());
 		
 		//get corresponding element in G2
-		gg = new G2();
+		G2 gg = new G2();
 		Mcl.hashAndMapToG2(gg, "def".getBytes());
 		
 		//random alpha and t in Z_p 
-		alpha = new Fr();
+		Fr alpha = new Fr();
 		alpha.setByCSPRNG(); 
 		t = new Fr();
 		t.setByCSPRNG();
 		
 		//precompute K
-		precompute();
+		precompute(g, gg, alpha);
 		
 		//Instantiate public key PK
 		Object[] PK = new Object[4 * B + 2];
@@ -98,11 +96,11 @@ public class BGWGeneralCaseRevised {
 	}
 	
 	//precomputes K = e(gB+1, g)^t
-	private static void precompute() {
+	private static void precompute(G1 g, G2 gg, Fr alpha) {
 		//calculate e(g, g_(B+1))
 		GT e = new GT();
 		G2 gBPlus1 = new G2();
-		Fr exp = power(alpha, B+1);
+		Fr exp = Tools.power(alpha, B+1);
 		Mcl.mul(gBPlus1, gg, exp); //gn = g^(alpha^n), so gn+1 = g^(alpha^(n+1)) = g^(exp)
 		Mcl.pairing(e, g, gBPlus1);
 		K = new GT();
@@ -155,7 +153,7 @@ public class BGWGeneralCaseRevised {
 		
 		//calculate C_0 (first element in Hdr) and add to Hdr
 		G2 c0 = new G2();
-		Mcl.mul(c0, gg, t); //C_0 = g^t
+		Mcl.mul(c0, (G2) PK[1], t); //C_0 = g^t
 		Hdr.add(c0);
 		
 		//calculate rest of Hdr
@@ -217,9 +215,7 @@ public class BGWGeneralCaseRevised {
 		return K_R;
 		
 	}
-	
-	//TESTING -------------------------------------------------------------------------------
-	
+
 	//Test the runtimes of the algorithms
 	public static void testRuntimes(int percent) {
 		for (int N = 10; N <= 1000000; N *= 10) {
@@ -228,6 +224,7 @@ public class BGWGeneralCaseRevised {
 		}
 	}
 	
+		
 	//returns long[] containing elapsed time for setup, encrypt, and decrypt, respectively
 	private static long[] printRuntimes(int n, int subsetSize) {
 		
@@ -243,15 +240,15 @@ public class BGWGeneralCaseRevised {
 		ArrayList<Integer> S = new ArrayList<Integer>();
 		//randomly generate numbers to put in the subset S (NO REPEATS)
 		ArrayList<Integer> randomNums = new ArrayList<Integer>();
-		for (int i = 0; i < n; i++) { 
-			randomNums.add(i + 1);
-		}
-		for (int i = 0; i < subsetSize; i++) {
-			int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
-			int randomID = randomNums.get(randomIndex);
-			S.add(randomID);
-			randomNums.remove(randomIndex);
-		}
+			for (int i = 0; i < n; i++) { 
+				randomNums.add(i + 1);
+			}
+			for (int i = 0; i < subsetSize; i++) {
+				int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
+				int randomID = randomNums.get(randomIndex);
+				S.add(randomID);
+				randomNums.remove(randomIndex);
+			}
 
 		//Get elapsed time for encrypt
 		long startEncrypt = System.nanoTime();
@@ -291,7 +288,9 @@ public class BGWGeneralCaseRevised {
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
 		Mcl.SystemInit(Mcl.BN254);
-		testRuntimes(10);
+		testRuntimes(10);	
 	}
 
 }
+
+
