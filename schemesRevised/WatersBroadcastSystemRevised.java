@@ -50,7 +50,7 @@ public class WatersBroadcastSystemRevised {
 		//Generate random group elements u1, u2, ..., un, put them into an array
 		byte[] bts = Tools.generateRandomBytes(n + 2);
 		G1[] uElements = new G1[n];
-		for (int i = 0; i < uElements.length; i++) {
+		for (int i = 0; i < n; i++) {
 			G1 u = new G1();
 			byte[] randomBytes = Arrays.copyOfRange(bts, i, i + 3);
 			Mcl.hashAndMapToG1(u, randomBytes);
