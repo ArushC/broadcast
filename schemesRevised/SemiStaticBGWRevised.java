@@ -14,15 +14,14 @@ import helperclasses.Tools;
 //Changes made: optimized selection of G1 and G2, added both to the public key
 //KeyGen takes the public key as a parameter (a slight modification to the described scheme)
 //K is precomputed in the setup phase so that encryption does not require pairings
-//Secret key contains g1^(alpha) and g2^(alpha) 
+//Secret key contains g^(alpha) and gg^(alpha) 
 
 public class SemiStaticBGWRevised {
 
-	private static G2 gg;
-	private static G1 g;
 	private static int n;
 	private static GT K;
-	private static Fr alpha, t;
+	private static Fr t;
+	
 	//input: n = # of users
 	//output: Object[] containing the public key PK and private key SK
 	public static Object[] setup(int n) {
@@ -31,20 +30,20 @@ public class SemiStaticBGWRevised {
 		
 		SemiStaticBGWRevised.n = n; //save n so it can be used for later functions
 		
-		g = new G1();
+		G1 g = new G1();
 		Mcl.hashAndMapToG1(g, "abc".getBytes());
 		
-		gg = new G2();
+		G2 gg = new G2();
 		Mcl.hashAndMapToG2(gg, "def".getBytes());
 		
 		//generate random alpha and t, precompute K
-		alpha = new Fr();
+		Fr alpha = new Fr();
 		alpha.setByCSPRNG();
 		
 		t = new Fr();
 		t.setByCSPRNG();
 		
-		precompute();
+		precompute(g, gg, alpha);
 		
 		//add g to public key
 		ArrayList<Object> PK = new ArrayList<Object>();
@@ -90,7 +89,7 @@ public class SemiStaticBGWRevised {
 		
 		//calculate di0 and add to result
 		G2 di0 = new G2();
-		Mcl.mul(di0, gg, ri);
+		Mcl.mul(di0, (G2) PK.get(1), ri);
 		Mcl.mul(di0, di0, new Fr(-1));
 		di.add(di0);
 		
@@ -119,7 +118,7 @@ public class SemiStaticBGWRevised {
 		
 		//calculate C1
 		G2 C1 = new G2();
-		Mcl.mul(C1, gg, t);
+		Mcl.mul(C1, (G2) PK.get(1), t);
 		
 		//calculate C2
 		G1 product = new G1((G1) PK.get(S.get(0) + 2));
@@ -171,7 +170,7 @@ public class SemiStaticBGWRevised {
 	
 	
 	//precomputes K = e(g, g)^(alpha * t)
-	private static void precompute() {
+	private static void precompute(G1 g, G2 gg, Fr alpha) {
 		K = new GT();
 		Mcl.pairing(K, g, gg);
 		Fr exp = new Fr();
@@ -256,5 +255,5 @@ private static long[] printRuntimes(int N, int subsetSize) {
 		Mcl.SystemInit(Mcl.BN254);
 		testRuntimes(10);
 	}
-	
+
 }
