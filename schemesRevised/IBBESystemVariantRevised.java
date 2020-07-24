@@ -4,7 +4,6 @@ import com.herumi.mcl.*;
 import helperclasses.LagrangeInterpolationZp;
 import helperclasses.CustomPRF;
 import helperclasses.Tools;
-
 import java.io.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -12,12 +11,11 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 //The scheme: https://eprint.iacr.org/2008/268.pdf (4.3.1, page 12)
-//mention that K is precomputed in the setup function
+//mention that K is precomputed in the setup function, key generation is for a single user
 //Additional changes: fixed computation of g^P(alpha)
 //Added e(g1, gHat2)^(alpha^(l - 1)) to the public key
 public class IBBESystemVariantRevised {
 
-	private static CustomPRF phi;
 	private static Fr t;
 	private static GT K;
 	private static int lambda;
@@ -129,7 +127,7 @@ public class IBBESystemVariantRevised {
 		Fr kappa = SK[2];
 		
 		//1. compute ri = phi(kappa, i) where phi is a PRF
-		phi = new CustomPRF(kappa, i);
+		CustomPRF phi = new CustomPRF(kappa, i);
 		Fr ri = phi.compute(lambda);
 		
 		//2. compute hi = g2^((gamma - ri)/(alpha - i))
@@ -143,9 +141,7 @@ public class IBBESystemVariantRevised {
 		Mcl.mul(hi, g2, exp);
 		
 		//return (ri, hi)
-		Object[] di = new Object[2];
-		di[0] = ri;
-		di[1] = hi;
+		Object[] di = {ri, hi};
 		return di;
 		
 	}
