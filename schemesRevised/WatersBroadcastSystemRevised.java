@@ -1,20 +1,22 @@
 package schemesRevised;
 
 import helperclasses.Tools;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.io.*;
+
+import net.sourceforge.sizeof.SizeOf;
+
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2009/385.pdf (pages 28-29)
-//Added g2 to the public key (g1 is in the private key)
+//Added g2 to the public key (g1 is in the private key), both g1^(b) and g2^(b) are included in the public key
 //In paper: Explain how random elements u1, ..., uN were chosen
 //mention that the KeyGen algorithm only generates the key for one user
-public class WatersBroadcastSystemRevised {
-	
-	private static Fr b; 
+public class WatersBroadcastSystemRevised { 
 	
 	//input: security parameter lambda (Mcl.BN254 or Mcl.BLS_381)
 	//output: (public key PK, secret key MSK)
@@ -63,7 +65,7 @@ public class WatersBroadcastSystemRevised {
 		Fr a2 = new Fr();
 		a2.setByCSPRNG();
 		
-		b = new Fr();
+		Fr b = new Fr();
 		b.setByCSPRNG();
 		
 		Fr alpha = new Fr();
@@ -83,40 +85,44 @@ public class WatersBroadcastSystemRevised {
 		
 		ArrayList<Object> PK = new ArrayList<Object>();
 		
-		G2 e0 = new G2();
-		Mcl.mul(e0, gg, b);
-		
-		G2 e1 = new G2();
-		Mcl.mul(e1, gg, a1);
+		//Element #0 in the public key is gg, so skip to e1
+		G1 e1 = new G1();
+		Mcl.mul(e1, g, b);
 		
 		G2 e2 = new G2();
-		Mcl.mul(e2, gg, a2);
+		Mcl.mul(e2, gg, b);
 		
 		G2 e3 = new G2();
-		Fr exp3 = new Fr();
-		Mcl.mul(exp3, b, a1);
-		Mcl.mul(e3, gg, exp3);
+		Mcl.mul(e3, gg, a1);
 		
 		G2 e4 = new G2();
-		Fr exp4 = new Fr();
-		Mcl.mul(exp4, b, a2);
-		Mcl.mul(e4, gg, exp4);
+		Mcl.mul(e4, gg, a2);
 		
-		//e5 and e6 are just tau1 and tau2, so skip to e7
-		G1 e7 = new G1();
-		Mcl.mul(e7, tau1, b);
+		G2 e5 = new G2();
+		Fr exp5 = new Fr();
+		Mcl.mul(exp5, b, a1);
+		Mcl.mul(e5, gg, exp5);
 		
-		G1 e8 = new G1();
-		Mcl.mul(e8, tau2, b);
+		G2 e6 = new G2();
+		Fr exp6 = new Fr();
+		Mcl.mul(exp6, b, a2);
+		Mcl.mul(e6, gg, exp6);
 		
-		//e9, e10, and e11 are w, uElements, and h, respectively, so skip to e12
-		GT e12 = new GT();
-		Fr exp12 = new Fr();
-		Mcl.mul(exp12, exp3, alpha);
-		Mcl.pairing(e12, g, gg); //e(g, g)^(alpha * a1 * b) = e(g, gg)^(alpha * a1 * b)
-		Mcl.pow(e12, e12, exp12);
+		//e7 and e8 are just tau1 and tau2, so skip to e9
+		G1 e9 = new G1();
+		Mcl.mul(e9, tau1, b);
 		
-		PK.addAll(Arrays.asList(gg, e0, e1, e2, e3, e4, tau1, tau2, e7, e8, w, uElements, h, e12));
+		G1 e10 = new G1();
+		Mcl.mul(e10, tau2, b);
+		
+		//e11, e12, and e13 are w, uElements, and h, respectively, so skip to e14
+		GT e14 = new GT();
+		Fr exp14 = new Fr();
+		Mcl.mul(exp14, exp5, alpha);
+		Mcl.pairing(e14, g, gg); //e(g, g)^(alpha * a1 * b) = e(g, gg)^(alpha * a1 * b)
+		Mcl.pow(e14, e14, exp14);
+		
+		PK.addAll(Arrays.asList(gg, e1, e2, e3, e4, e5, e6, tau1, tau2, e9, e10, w, uElements, h, e14));
 		
 		//Step 5: instantiate MSK and add elements to it: g, g^alpha, g^(alpha * a1), ... etc. (see paper)
 		
@@ -160,46 +166,46 @@ public class WatersBroadcastSystemRevised {
 		//Step 2: calculate C0, C1, C2, ...
 		
 		GT C0 = new GT();
-		Mcl.pow(C0, (GT) PK.get(13), s2);
+		Mcl.pow(C0, (GT) PK.get(14), s2);
 		Mcl.mul(C0, M, C0);
 		
 		G2 C1 = new G2();
 		Fr exp1 = new Fr();
 		Mcl.add(exp1, s1, s2);
-		Mcl.mul(C1, (G2) PK.get(1), exp1);
+		Mcl.mul(C1, (G2) PK.get(2), exp1);
 		
 		G2 C2 = new G2();
-		Mcl.mul(C2, (G2) PK.get(4), s1);
+		Mcl.mul(C2, (G2) PK.get(5), s1);
 		
 		G2 C3 = new G2();
-		Mcl.mul(C3, (G2) PK.get(2), s1);
+		Mcl.mul(C3, (G2) PK.get(3), s1);
 		
 		G2 C4 = new G2();
-		Mcl.mul(C4, (G2) PK.get(5), s2);
+		Mcl.mul(C4, (G2) PK.get(6), s2);
 		
 		G2 C5 = new G2();
-		Mcl.mul(C5, (G2) PK.get(3), s2);
+		Mcl.mul(C5, (G2) PK.get(4), s2);
 		
 		G1 C6 = new G1();
 		G1 part6 = new G1();
-		Mcl.mul(part6, (G1) PK.get(7), s2);
-		Mcl.mul(C6, (G1) PK.get(6), s1);
+		Mcl.mul(part6, (G1) PK.get(8), s2);
+		Mcl.mul(C6, (G1) PK.get(7), s1);
 		Mcl.add(C6, C6, part6);
 		
 		G1 C7 = new G1();
 		G1 part17 = new G1();
-		Mcl.mul(part17, (G1) PK.get(8), s1);
+		Mcl.mul(part17, (G1) PK.get(9), s1);
 		G1 part27 = new G1();
-		Mcl.mul(part27, (G1) PK.get(9), s2);
+		Mcl.mul(part27, (G1) PK.get(10), s2);
 		G1 part37 = new G1();
 		Fr exp37 = new Fr();
 		Mcl.mul(exp37, t, new Fr(-1));
-		Mcl.mul(part37, (G1) PK.get(10), exp37);
+		Mcl.mul(part37, (G1) PK.get(11), exp37);
 		Mcl.add(C7, part17, part27);
 		Mcl.add(C7, C7, part37);
 		
 		
-		G1[] uElements = (G1[]) PK.get(11);
+		G1[] uElements = (G1[]) PK.get(12);
 		G1 E1 = new G1((G1) uElements[S.get(0) - 1]);
 		for (int i = 1; i < S.size(); i++) {
 			int j = S.get(i);
@@ -258,8 +264,7 @@ public class WatersBroadcastSystemRevised {
 		Mcl.add(D2, part12, part22);
 		Mcl.add(D2, D2, part32);
 		
-		G1 D3 = new G1();
-		Mcl.mul(D3, g, b);
+		G1 D3 = new G1((G1) MSK.get(7));
 		Mcl.mul(D3, D3, z1);
 		Mcl.mul(D3, D3, new Fr(-1));
 		
@@ -270,21 +275,20 @@ public class WatersBroadcastSystemRevised {
 		Mcl.mul(part24, g, z2);
 		Mcl.add(D4, part14, part24);
 		
-		G1 D5 = new G1();
-		Mcl.mul(D5, g, b);
+		G1 D5 = new G1((G1) MSK.get(7));
 		Mcl.mul(D5, D5, z2);
 		Mcl.mul(D5, D5, new Fr(-1));
 		
-		G2 D6 = new G2((G2) MSK.get(7));
+		G2 D6 = new G2((G2) MSK.get(8));
 		Mcl.mul(D6, D6, r2);
 		
 		G2 D7 = new G2();
 		Mcl.mul(D7, (G2) MSK.get(6), r1); //Has to be of type G2 to compute the pairing in decryption
 		
 		G1 K = new G1();
-		G1[] uElements = (G1[]) MSK.get(17);
+		G1[] uElements = (G1[]) MSK.get(18);
 		G1 part1K = new G1();
-		Mcl.add(K, (G1) MSK.get(16), uElements[k - 1]);
+		Mcl.add(K, (G1) MSK.get(17), uElements[k - 1]);
 		Mcl.mul(K, K, r1);
 		G1[] keys = new G1[uElements.length];
 		
@@ -454,5 +458,3 @@ public class WatersBroadcastSystemRevised {
 	
 		
 }
-
-
