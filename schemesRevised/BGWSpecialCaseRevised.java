@@ -15,10 +15,7 @@ import helperclasses.Tools;
 //MENTION IN PAPER: precomputation of K
 public class BGWSpecialCaseRevised {
 
-	private static Fr alpha, t;
-	private static String randomGenerator = "abc";
-	private static G1 g;
-	private static G2 gg;
+	private static Fr t;
 	private static int n;
 	private static GT K; //to be precomputed in the setup function
 	
@@ -31,21 +28,21 @@ public class BGWSpecialCaseRevised {
 		BGWSpecialCaseRevised.n = n; //save n so it can be used for other functions
 		
 		//initialize random generator g in G
-		g = new G1();
-		Mcl.hashAndMapToG1(g, randomGenerator.getBytes());
+		G1 g = new G1();
+		Mcl.hashAndMapToG1(g, "abc".getBytes());
 		
 		//get corresponding element in G2
-		gg = new G2();
-		Mcl.hashAndMapToG2(gg, randomGenerator.getBytes());
+		G2 gg = new G2();
+		Mcl.hashAndMapToG2(gg, "def".getBytes());
 		
 		//random alpha and t in Z_p 
-		alpha = new Fr();
+		Fr alpha = new Fr();
 		alpha.setByCSPRNG(); 
 		t = new Fr();
 		t.setByCSPRNG();
 		
 		//precompute K
-		precompute();
+		precompute(g, gg, alpha);
 		
 		//Instantiate public key PK
 		Object[] PK = new Object[3 * n + 3];
@@ -90,7 +87,7 @@ public class BGWSpecialCaseRevised {
 	}
 	
 	//precomputes K = e(gn+1, g)^t
-	private static void precompute() {
+	private static void precompute(G1 g, G2 gg, Fr alpha) {
 		//calculate e(g, g_(n+1))
 		GT e = new GT();
 		G2 gNPlus1 = new G2();
@@ -107,7 +104,7 @@ public class BGWSpecialCaseRevised {
 			 		
 		//calculate C_0 (first element in Hdr)
 		G2 c0 = new G2();
-		Mcl.mul(c0, gg, t); //C_0 = gg^t
+		Mcl.mul(c0, (G2) PK[1], t); //C_0 = gg^t
 		
 		//calculate C_1 (second element in Hdr)
 		G1 v = (G1) PK[PK.length - 1];
@@ -119,7 +116,7 @@ public class BGWSpecialCaseRevised {
 		}
 		
 		G1 c1 = new G1();
-		Mcl.mul(c1, product, t);   //c1 = c1^(t)
+		Mcl.mul(c1, product, t);      //c1 = c1^(t)
 		
 		//return Hdr and K
 		Object[] Hdr = new Object[2];
@@ -172,8 +169,6 @@ public class BGWSpecialCaseRevised {
 		
 	}
 	
-	//TESTING --------------------------------------------------------------------------------------------------------------------------
-
 	//returns long[] containing elapsed time for setup, encrypt, and decrypt, respectively
 	private static long[] printRuntimes(int n, int subsetSize) {
 		
@@ -244,10 +239,12 @@ public class BGWSpecialCaseRevised {
 	}
 	
 	public static void main(String[] args) {
+
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
 		Mcl.SystemInit(Mcl.BN254); // curveType = Mcl.BN254 or Mcl.BLS12_381
-		testRuntimes(10); //subset size = 10% of N
+		testRuntimes(10);
+		
 	}
 
 }
