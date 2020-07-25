@@ -130,7 +130,21 @@ public class LagrangeInterpolationZp {
 			return sum;
 	}
 	
-	
+	//returns an Fr[] containing the resultant polynomial and the remainder
+	//ex. if root = 1 then dividing by (x - 1)
+	public static Fr[] syntheticDivide(Fr[] polynomial, Fr root) {
+		Fr[] result = new Fr[polynomial.length];
+		result[0] = new Fr(polynomial[0]);
+		Fr previous = result[0];
+		for (int i = 1; i < polynomial.length; i++) {
+			Fr addend = new Fr();
+			Mcl.mul(addend, root, previous);
+			Mcl.add(addend, addend, polynomial[i]);
+			result[i] = addend;
+			previous = result[i];
+		}
+		return result;
+	}
 	
 	public static void main(String[] args) {
 		
