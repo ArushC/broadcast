@@ -298,7 +298,7 @@ public class BasicIBBESystem {
 		
 		Fr[] PZ = {new Fr(1)};
 		for (int i = 0; i < S.size(); i++) {
-			Fr IDJ = S.get(i);
+			Fr IDJ = new Fr(S.get(i));
 			Mcl.mul(IDJ, IDJ, new Fr(-1));
 			Fr[] next = {new Fr(1), IDJ};
 			PZ = LagrangeInterpolationZp.multiply(PZ, next);
