@@ -1,6 +1,5 @@
 package schemesRevised;
 import com.herumi.mcl.*;
-
 import helperclasses.LagrangeInterpolationZp;
 import helperclasses.CustomPRF;
 import helperclasses.Tools;
@@ -74,16 +73,16 @@ public class IBBESystemVariantRevised {
 		PK.add(element2);
 		
 		//second part of PK is going to be a set containing the set elements: {[gHat1^(alpha^j), gHat2^(alpha^k)}
-		//for all j in [0, l] and all k in [0, l - 2]
+		//for all j in [0, l] and all k in [0, l - 1]
 		ArrayList<Object> setElements = new ArrayList<Object>();
 		
 		Fr exp = new Fr(1);
 		for (int j = 0; j <= l; j++) {
-				Object[] elmnt = (j > l - 2) ? new Object[1] : new Object[2];
+				Object[] elmnt = (j > l - 1) ? new Object[1] : new Object[2];
 				G1 e1 = new G1();
 				Mcl.mul(e1, gHat1, exp);
 				elmnt[0] = e1;
-				if (j <= l - 2) {
+				if (j <= l - 1) {
 					G2 e2 = new G2();
 					Mcl.mul(e2, gHat2, exp);
 					elmnt[1] = e2;
@@ -92,12 +91,6 @@ public class IBBESystemVariantRevised {
 				Mcl.mul(exp, exp, alpha);
 		}
 		
-		//add e(g1, gHat2)^(alpha^(l - 1)) to PK
-		GT element3 = new GT();
-		Mcl.pairing(element3, g1, gHat2);
-		Fr exp3 = Tools.power(alpha, l - 1);
-		Mcl.pow(element3, element3, exp3);
-		PK.add(element3);
 		PK.add(setElements);
 		
 		//Generate random key kappa for a pseudorandom function psi
@@ -153,7 +146,7 @@ public class IBBESystemVariantRevised {
 		int n = (int) PK.get(0);
 		int l = (int) PK.get(1);
 		
-		ArrayList<Object> setElements = (ArrayList<Object>) PK.get(5);
+		ArrayList<Object> setElements = (ArrayList<Object>) PK.get(4);
 		Object[] setElement = (Object[]) setElements.get(0);
 		G1 gHat1 = (G1) setElement[0];
 		
@@ -181,7 +174,9 @@ public class IBBESystemVariantRevised {
 		Mcl.mul(C3, g1, t);
 		
 		GT C4 = new GT();
-		Mcl.pow(C4, (GT) PK.get(4), t);
+		G2 g2ToAlphaPower = (G2) ((Object[]) setElements.get(setElements.size() - 2))[1];
+		Mcl.pairing(C4, g1, g2ToAlphaPower);
+		Mcl.pow(C4, C4, t); //HERE CHANGE
 		
 		//add to Hdr and result
 		Object[] Hdr = {C1, C2, C3, C4};
@@ -207,7 +202,7 @@ public class IBBESystemVariantRevised {
 		G2 hi = (G2) di[1];
 		
 		//3. compute gHat2^(Pi(alpha))
-		ArrayList<Object> setElements = (ArrayList<Object>) PK.get(5);
+		ArrayList<Object> setElements = (ArrayList<Object>) PK.get(4);
 		Fr[] negated = LagrangeInterpolationZp.negate(Px); //note: need to ignore item at position 0 in this array because this is an l - 2 degree polyn.
 		Object[] setElement = (Object[]) setElements.get(0);
 		G2 gHat2 = (l > 1) ? (G2) setElement[1] : new G2(); //if l = 1, then gHat2 does not need to be extracted
