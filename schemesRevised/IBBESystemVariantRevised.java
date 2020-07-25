@@ -12,7 +12,6 @@ import java.util.concurrent.ThreadLocalRandom;
 //The scheme: https://eprint.iacr.org/2008/268.pdf (4.3.1, page 12)
 //mention that K is precomputed in the setup function, key generation is for a single user
 //Additional changes: fixed computation of g^P(alpha)
-//Added e(g1, gHat2)^(alpha^(l - 1)) to the public key
 public class IBBESystemVariantRevised {
 
 	private static Fr t;
