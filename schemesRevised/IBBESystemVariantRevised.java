@@ -1,11 +1,9 @@
 package schemesRevised;
 import com.herumi.mcl.*;
-
 import helperclasses.LagrangeInterpolationZp;
 import helperclasses.CustomPRF;
 import helperclasses.Tools;
 import java.io.*;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
@@ -13,7 +11,8 @@ import java.util.concurrent.ThreadLocalRandom;
 //The scheme: https://eprint.iacr.org/2008/268.pdf (4.3.1, page 12)
 //mention that K is precomputed in the setup function, key generation is for a single user
 //Additional changes: fixed computation of g^P(alpha)
-//Added e(g1, gHat2)^(alpha^(l - 1)) to the public key
+//Included g1^alpha in the public key (do not need g1^(alpha^2), g1^(alpha^3), ..., etc, only g1^alpha)
+//Also note that this IBBE system is not meant to work when l = 1
 public class IBBESystemVariantRevised {
 
 	private static Fr t;
@@ -73,10 +72,9 @@ public class IBBESystemVariantRevised {
 		Mcl.mul(element2, element2, alpha); //add g1^(gamma * alpha)
 		PK.add(element2);
 		
-		GT element3 = new GT(); //add e(g1, gHat2)^alpha^(l-1) to PK
-		Mcl.pairing(element3, g1, gHat2);
-		Mcl.pow(element3, element3, Tools.power(alpha, l - 1));
-		
+		G1 element3 = new G1(); //add g1^alpha
+		Mcl.mul(element3, g1, alpha);
+
 		//second part of PK is going to be a set containing the set elements: {[gHat1^(alpha^j), gHat2^(alpha^k)}
 		//for all j in [0, l] and all k in [0, l - 1]
 		ArrayList<Object> setElements = new ArrayList<Object>();
@@ -180,7 +178,8 @@ public class IBBESystemVariantRevised {
 		Mcl.mul(C3, g1, t);
 		
 		GT C4 = new GT();
-		Mcl.pow(C4, (GT) PK.get(4), t);
+		Mcl.pairing(C4, (G1) PK.get(4), (G2) (((Object[]) setElements.get(l - 2))[1]));
+		Mcl.pow(C4, C4, t);
 		
 		//add to Hdr and result
 		Object[] Hdr = {C1, C2, C3, C4};
@@ -212,17 +211,13 @@ public class IBBESystemVariantRevised {
 		G2 gHat2 = (l > 1) ? (G2) setElement[1] : new G2(); //if l = 1, then gHat2 does not need to be extracted
 		G2 fin = new G2(gHat2);
 		Mcl.mul(fin, fin, negated[negated.length - 1]);
-		//calculate gHat1^(P(alpha))
 		int index = 1;
 		for (int j = negated.length - 1; j > 1; j--) {
 			G2 addend = new G2();
 			Mcl.mul(addend, (G2) (((Object[]) setElements.get(index))[1]) , negated[j - 1]);
 			Mcl.add(fin, fin, addend);
 			index += 1;
-		}	
-		
-		if (l == 1) //special case
-			Mcl.mul(fin, fin, new Fr(0));
+		}
 		
 		Fr ei = new Fr();
 		Mcl.mul(ei, ri, new Fr(-1));
@@ -358,7 +353,7 @@ public class IBBESystemVariantRevised {
 	
 
 	public static void testRuntimes(int lambda, int percent) {
-		for (int N = 10; N <= 1000000; N *= 10) {
+		for (int N = 100; N <= 1000000; N *= 10) {
 			int subsetSize = (int) (0.01 * percent * N);
 			printRuntimes(N, subsetSize, lambda);
 		}
