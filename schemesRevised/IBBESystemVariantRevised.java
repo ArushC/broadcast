@@ -208,7 +208,7 @@ public class IBBESystemVariantRevised {
 		ArrayList<Object> setElements = (ArrayList<Object>) PK.get(5);
 		Fr[] negated = LagrangeInterpolationZp.negate(Px); //note: need to ignore item at position 0 in this array because this is an l - 2 degree polyn.
 		Object[] setElement = (Object[]) setElements.get(0);
-		G2 gHat2 = (l > 1) ? (G2) setElement[1] : new G2(); //if l = 1, then gHat2 does not need to be extracted
+		G2 gHat2 = (G2) setElement[1]; //if l = 1, then gHat2 does not need to be extracted
 		G2 fin = new G2(gHat2);
 		Mcl.mul(fin, fin, negated[negated.length - 1]);
 		int index = 1;
