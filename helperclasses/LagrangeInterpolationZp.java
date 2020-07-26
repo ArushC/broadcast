@@ -130,6 +130,17 @@ public class LagrangeInterpolationZp {
 			return sum;
 	}
 	
+	//computes f(x) given the roots of a polynomial in form (x - a)(x - b)...
+	public static Fr computeFxFromRoots(Fr[] roots, Fr x) {
+		Fr product = new Fr(1);
+		for (int i = 0; i < roots.length; i++) {
+			Fr diff = new Fr();
+			Mcl.sub(diff, x, roots[i]);
+			Mcl.mul(product, product, diff);
+		}
+		return product;
+	}
+	
 	//returns an Fr[] containing the resultant polynomial and the remainder
 	//ex. if root = 1 then dividing by (x - 1)
 	public static Fr[] syntheticDivide(Fr[] polynomial, Fr root) {
