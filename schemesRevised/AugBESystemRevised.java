@@ -7,8 +7,6 @@ import helperclasses.Tools;
 import helperclasses.Vector2D;
 import com.herumi.mcl.*;
 
-
-
 //The scheme: https://eprint.iacr.org/2009/532.pdf (5.2, page 10)
 //No changes made to the scheme described. It was written in the asymmetric pairing setting.
 public class AugBESystemRevised {
