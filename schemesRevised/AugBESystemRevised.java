@@ -7,13 +7,10 @@ import helperclasses.Tools;
 import helperclasses.Vector2D;
 import com.herumi.mcl.*;
 
-
-
 //The scheme: https://eprint.iacr.org/2009/532.pdf (5.2, page 10)
 //No changes made to the scheme described. It was written in the asymmetric pairing setting.
 public class AugBERevised {
 	
-	private static Fr[] rExponents, alphaExponents, cExponents;
 	private static int m;
 	
 	//ouput: public key PK, private keys SK
@@ -32,9 +29,9 @@ public class AugBERevised {
 		AugBERevised.m = m; //save this value so it can be used in other functions
 
 		//2. Choose random exponents and store in arrays
-		cExponents = new Fr[m];
-		alphaExponents = new Fr[m];
-		rExponents = new Fr[m];
+		Fr[] cExponents = new Fr[m];
+		Fr[] alphaExponents = new Fr[m];
+		Fr[] rExponents = new Fr[m];
 		
 		for (int i = 0; i < m; i++) {
 			Fr c = new Fr();
@@ -161,9 +158,9 @@ public class AugBERevised {
 		//3. add to the ciphertext using the helper functions
 		Object[][] C = new Object[2][m];
 		for (int k = 0; k < m; k++) //x components [0] - [m-1]
-			C[0][k] = getXCiphertextComponents(k+1, i, vc, v1, t, PK, Sx, eta, sExponents, rExponents, alphaExponents, M);
+			C[0][k] = getXCiphertextComponents(k+1, i, vc, v1, t, PK, Sx, eta, sExponents, M);
 		for (int k = 0; k < m; k++) //y components [m] - [2m - 1]
-			C[1][k] = getYCiphertextComponents(k+1, j, PK, vc, vPrimeC, eta, t, wVectors, cExponents);
+			C[1][k] = getYCiphertextComponents(k+1, j, PK, vc, vPrimeC, eta, t, wVectors);
 		
 		return C;
 	}
@@ -297,7 +294,7 @@ public class AugBERevised {
 	}
 	
 	//SEE PAGE 13 (VERY TOP): https://eprint.iacr.org/2006/298.pdf
-	private static Object[] getXCiphertextComponents(int x, int i, Vector2D vc, Vector2D v1, Fr t, Object[] PK, ArrayList<Integer> Sx, Fr eta, Fr[] sExponents, Fr[] rExponents, Fr[] alphaExponents, GT M) {
+	private static Object[] getXCiphertextComponents(int x, int i, Vector2D vc, Vector2D v1, Fr t, Object[] PK, ArrayList<Integer> Sx, Fr eta, Fr[] sExponents, GT M) {
 		
 		G1[] Rx = new G1[2]; //G1 vector
 		G1 Ax = new G1();
@@ -361,12 +358,11 @@ public class AugBERevised {
 			Vector2D vi = new Vector2D();
 			vi.setByCSPRNG();
 			
-			Vector2D expRx = vi.multiply(rExponents[x - 1]);
-			expRx = expRx.multiply(sExponents[x - 1]);
-			G1 Rxx = new G1();
-			Mcl.mul(Rxx, g1, expRx.getX());
-			G1 Rxy = new G1();
-			Mcl.mul(Rxy, g1, expRx.getY());
+			Vector2D expRx = vi.multiply(sExponents[x - 1]);
+			G1 Rxx = new G1((G1) pkThirdPart[0][x - 1]);
+			Mcl.mul(Rxx, Rxx, expRx.getX());
+			G1 Rxy = new G1((G1) pkThirdPart[0][x - 1]);
+			Mcl.mul(Rxy, Rxy, expRx.getY());
 			Rx[0] = Rxx;
 			Rx[1] = Rxy;
 			
@@ -378,12 +374,11 @@ public class AugBERevised {
 			Mcl.mul(Tx, product, expAi);
 			
 			Vector2D expRSquiggleX = vi.multiply(eta);
-			expRSquiggleX = expRSquiggleX.multiply(rExponents[x - 1]);
 			expRSquiggleX = expRSquiggleX.multiply(sExponents[x - 1]);
-			G1 RSquiggleXx = new G1();
-			Mcl.mul(RSquiggleXx, g1, expRSquiggleX.getX());
-			G1 RSquiggleXy = new G1();
-			Mcl.mul(RSquiggleXy, g1, expRSquiggleX.getY());
+			G1 RSquiggleXx = new G1((G1) pkThirdPart[0][x - 1]);
+			Mcl.mul(RSquiggleXx, RSquiggleXx, expRSquiggleX.getX());
+			G1 RSquiggleXy = new G1((G1) pkThirdPart[0][x - 1]);
+			Mcl.mul(RSquiggleXy, RSquiggleXy, expRSquiggleX.getY());
 			RSquigglex[0] = RSquiggleXx;
 			RSquigglex[1] = RSquiggleXy;
 			
@@ -400,12 +395,11 @@ public class AugBERevised {
 			
 			Vector2D vx = v1.multiply(vPrimeX);
 			
-			Vector2D expRx = vx.multiply(rExponents[x - 1]);
-			expRx = expRx.multiply(sExponents[x - 1]);
-			G1 Rxx = new G1();
-			Mcl.mul(Rxx, g1, expRx.getX());
-			G1 Rxy = new G1();
-			Mcl.mul(Rxy, g1, expRx.getY());
+			Vector2D expRx = vx.multiply(sExponents[x - 1]);
+			G1 Rxx = new G1((G1) pkThirdPart[0][x - 1]);
+			Mcl.mul(Rxx, Rxx, expRx.getX());
+			G1 Rxy = new G1((G1) pkThirdPart[0][x - 1]);
+			Mcl.mul(Rxy, Rxy, expRx.getY());
 			Rx[0] = Rxx;
 			Rx[1] = Rxy;
 			
@@ -417,12 +411,11 @@ public class AugBERevised {
 			Mcl.mul(Tx, product, expAi);
 			
 			Vector2D expRSquiggleX = vx.multiply(eta);
-			expRSquiggleX = expRSquiggleX.multiply(rExponents[x - 1]);
 			expRSquiggleX = expRSquiggleX.multiply(sExponents[x - 1]);
-			G1 RSquiggleXx = new G1();
-			Mcl.mul(RSquiggleXx, g1, expRSquiggleX.getX());
-			G1 RSquiggleXy = new G1();
-			Mcl.mul(RSquiggleXy, g1, expRSquiggleX.getY());
+			G1 RSquiggleXx = new G1((G1) pkThirdPart[0][x - 1]);
+			Mcl.mul(RSquiggleXx, RSquiggleXx, expRSquiggleX.getX());
+			G1 RSquiggleXy = new G1((G1) pkThirdPart[0][x - 1]);
+			Mcl.mul(RSquiggleXy, RSquiggleXy, expRSquiggleX.getY());
 			RSquigglex[0] = RSquiggleXx;
 			RSquigglex[1] = RSquiggleXy;
 			
@@ -435,7 +428,7 @@ public class AugBERevised {
 		return ciphertextX;	
 	}
 	
-	private static Object[] getYCiphertextComponents(int y, int j, Object[] PK, Vector2D vc, Vector2D vPrimeC, Fr eta, Fr t, Vector2D[] wVectors, Fr[] cExponents) {
+	private static Object[] getYCiphertextComponents(int y, int j, Object[] PK, Vector2D vc, Vector2D vPrimeC, Fr eta, Fr t, Vector2D[] wVectors) {
 		
 		G2[] Cy = new G2[2]; //both of these are technically 2D G2 vectors
 		G2[] CSquiggley = new G2[2];
@@ -443,22 +436,22 @@ public class AugBERevised {
 		//extract the public key
 		G1 g1 = (G1) PK[0];
 		G2 g2 = (G2) PK[1];
+		Object[][] pkThirdPart = (Object[][]) PK[2];
 		
 		//compute
 		Vector2D v = (y < j) ? vPrimeC : vc;
 		
 		Vector2D expCy1 = v.multiply(t);
-		expCy1 = expCy1.multiply(cExponents[y - 1]);
 		Vector2D expCy2 = wVectors[y - 1].multiply(eta);
-		G2 Cyx = new G2();
+		G2 Cyx = new G2((G2) pkThirdPart[2][y - 1]);
 		G2 helperCyx = new G2();
-		G2 Cyy = new G2();
+		G2 Cyy = new G2((G2) pkThirdPart[2][y - 1]);
 		G2 helperCyy = new G2(); 
 		Mcl.mul(helperCyx, g2, expCy2.getX());
-		Mcl.mul(Cyx, g2, expCy1.getX());
+		Mcl.mul(Cyx, Cyx, expCy1.getX());
 		Mcl.add(Cyx, Cyx, helperCyx); //The "dot" operation in the paper in this case is defined as addition?
 		Mcl.mul(helperCyy, g2, expCy2.getY()); 
-		Mcl.mul(Cyy, g2, expCy1.getY());
+		Mcl.mul(Cyy, Cyy, expCy1.getY());
 		Mcl.add(Cyy, Cyy, helperCyy);
 		Cy[0] = Cyx;
 		Cy[1] = Cyy;
@@ -551,10 +544,8 @@ public class AugBERevised {
 			printRuntimes(N, subsetSize, lambda);
 		}	
 	}
-			
 	
 	public static void main(String[] args) {
-		
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
 		testRuntimes(Mcl.BN254, 10);
