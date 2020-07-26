@@ -7,13 +7,14 @@ import helperclasses.Tools;
 import helperclasses.Vector2D;
 import com.herumi.mcl.*;
 
+
+
 //The scheme: https://eprint.iacr.org/2009/532.pdf (5.2, page 10)
 //No changes made to the scheme described. It was written in the asymmetric pairing setting.
-public class AugBESystemRevised {
+public class AugBERevised {
 	
 	private static Fr[] rExponents, alphaExponents, cExponents;
 	private static int m;
-	private static G2 element;
 	
 	//ouput: public key PK, private keys SK
 	public static ArrayList<Object> setupABE(int N, int lambda) {
@@ -28,7 +29,7 @@ public class AugBESystemRevised {
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		
 		int m = (int) Math.ceil(Math.pow(N, 0.5));
-		AugBESystemRevised.m = m; //save this value so it can be used in other functions
+		AugBERevised.m = m; //save this value so it can be used in other functions
 
 		//2. Choose random exponents and store in arrays
 		cExponents = new Fr[m];
@@ -254,7 +255,7 @@ public class AugBESystemRevised {
 			if (i == y)
 				continue;
 			//else
-			element = new G2();
+			G2 element = new G2();
 			Mcl.mul(element, (G2) uValues[i - 1], deltaXY);
 			SK[i + 1] = new G2(element);
 		}
