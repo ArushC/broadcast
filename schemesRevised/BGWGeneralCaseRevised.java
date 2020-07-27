@@ -1,9 +1,12 @@
 package schemesRevised;
+
 import helperclasses.Tools;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
+
 import com.herumi.mcl.*;
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.2)
@@ -39,15 +42,12 @@ public class BGWGeneralCaseRevised {
 		Fr alpha = new Fr();
 		alpha.setByCSPRNG(); 
 		
-		//precompute K
-		precompute(g, gg, alpha);
-		
 		//Instantiate public key PK
-		Object[] PK = new Object[4 * B + 2];
+		Object[] PK = new Object[3 * B + A + 2];
 		PK[0] = g;
 		PK[1] = gg;
 		
-		//from i = 1 to i = 2B (ALL)
+		//from i = 1 to i = 2B (except i = B + 1)
 		Fr exp = new Fr(alpha);
 		for (int i = 1; i <= 2*B; i++) {
 			G1 pub = new G1();
@@ -56,10 +56,13 @@ public class BGWGeneralCaseRevised {
 			if (i <= B) {
 				G2 pubG2 = new G2();
 				Mcl.mul(pubG2, gg, exp);
-				PK[3 * B + i + 1] = pubG2; //add gg^(alpha^i) to public key for i = 1, 2, ..., B
+				PK[2 * B + i + 1] = pubG2; //add gg^(alpha^i) to public key for i = 1, 2, ..., B
 			}
 			Mcl.mul(exp, exp, alpha);
 		}
+		
+		//precompute K
+		precompute((G1) PK[B + 1], (G2) PK[2 * B + 2]);
 		
 		//generate random betas in Z_p and use to generate v1, v2, ..., vA
 		ArrayList<Fr> randomBetas = new ArrayList<Fr>();
@@ -69,7 +72,7 @@ public class BGWGeneralCaseRevised {
 			G1 v = new G1();
 			Mcl.mul(v, g, beta);
 			randomBetas.add(beta);
-			PK[2 * B + i + 1] = v;
+			PK[3 * B + i + 1] = v;
 		}
 		
 		
@@ -89,14 +92,11 @@ public class BGWGeneralCaseRevised {
 		return result;
 	}
 	
-	//precomputes K = e(gB+1, g)
-	private static void precompute(G1 g, G2 gg, Fr alpha) {
+	//precomputes K = e(g_(B+1), g) as e(g_B, gg_1)
+	private static void precompute(G1 gB, G2 gg1) {
 		//calculate e(g, g_(B+1))
 		K = new GT();
-		G2 gBPlus1 = new G2();
-		Fr exp = Tools.power(alpha, B+1);
-		Mcl.mul(gBPlus1, gg, exp); //gn = g^(alpha^n), so gn+1 = g^(alpha^(n+1)) = g^(exp)
-		Mcl.pairing(K, g, gBPlus1);
+		Mcl.pairing(K, gB, gg1);
 	}
 	
 	private static ArrayList<ArrayList<Integer>> computeSLSubsets(ArrayList<Integer> S) {
@@ -155,7 +155,7 @@ public class BGWGeneralCaseRevised {
 		//calculate rest of Hdr
 		
 		for (int i = 1; i <= A; i++) {
-			G1 v = (G1) PK[2 * B + i + 1];
+			G1 v = (G1) PK[3 * B + i + 1];
 			G1 product = new G1(v);
 			for (int j : sLSubsets.get(i - 1)) {
 				Mcl.add(product, product, (G1) PK[B + 2 - j]); //product *= g_(B + 1 - j)
@@ -184,7 +184,7 @@ public class BGWGeneralCaseRevised {
 		//calculate the first pairing: e(g_b, C_a)
 		GT e1 = new GT();
 		G1 cA = (G1) Hdr.get(a);
-		G2 gB = (G2) PK[3 * B + b + 1];
+		G2 gB = (G2) PK[2 * B + b + 1];
 		Mcl.pairing(e1, cA, gB);
 		
 		//calculate the second pairing: e(c0, big messy expression) --> see the paper, page 8: https://eprint.iacr.org/2005/018.pdf 
