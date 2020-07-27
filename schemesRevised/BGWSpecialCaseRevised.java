@@ -1,10 +1,13 @@
 package schemesRevised;
+
 import java.io.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import com.herumi.mcl.*;
 import helperclasses.Tools;
+
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.1)
 //Changes made: optimized selection of G1 and G2, included gg^(alpha^i) for all i in the public key,
@@ -36,7 +39,7 @@ public class BGWSpecialCaseRevised {
 		alpha.setByCSPRNG(); 
 		
 		//precompute K
-		precompute(g, gg, alpha);
+		//precompute(g, gg, alpha);
 		
 		//Instantiate public key PK
 		Object[] PK = new Object[3 * n + 3];
@@ -56,7 +59,10 @@ public class BGWSpecialCaseRevised {
 			}
 			Mcl.mul(exp, exp, alpha);
 		}
-
+		
+		//precompute K
+		precompute((G1) PK[n + 2], gg);
+		
 		//random beta in Z_p
 		Fr beta = new Fr();
 		beta.setByCSPRNG();
@@ -81,13 +87,10 @@ public class BGWSpecialCaseRevised {
 	}
 	
 	//precomputes K = e(gn+1, g)
-	private static void precompute(G1 g, G2 gg, Fr alpha) {
-		//calculate e(g, g_(n+1))
+	private static void precompute(G1 gNPlus1, G2 gg) {
+		//calculate e(g_(n+1), gg)
 		K = new GT();
-		G2 gNPlus1 = new G2();
-		Fr exp = Tools.power(alpha, n+1);
-		Mcl.mul(gNPlus1, gg, exp); //gn = g^(alpha^n), so gn+1 = g^(alpha^(n+1)) = g^(exp)
-		Mcl.pairing(K, g, gNPlus1);
+		Mcl.pairing(K, gNPlus1, gg);
 	}
 	
 	//Input: S = subset to which the message is brodcast, PK = public key
