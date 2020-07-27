@@ -1,13 +1,10 @@
 package schemesRevised;
-
 import com.herumi.mcl.*;
-
 import java.io.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
-
 import helperclasses.Tools;
 
 //The scheme: https://eprint.iacr.org/2008/268.pdf (3.1, page 8)
@@ -20,7 +17,6 @@ public class SemiStaticBGWRevised {
 
 	private static int n;
 	private static GT K;
-	private static Fr t;
 	
 	//input: n = # of users
 	//output: Object[] containing the public key PK and private key SK
@@ -39,9 +35,6 @@ public class SemiStaticBGWRevised {
 		//generate random alpha and t, precompute K
 		Fr alpha = new Fr();
 		alpha.setByCSPRNG();
-		
-		t = new Fr();
-		t.setByCSPRNG();
 		
 		precompute(g, gg, alpha);
 		
@@ -116,6 +109,10 @@ public class SemiStaticBGWRevised {
 	
 	public static Object[] enc(ArrayList<Integer> S, ArrayList<Object> PK) {
 		
+		Fr t = new Fr();
+		t.setByCSPRNG();
+		Mcl.pow(K, K, t);
+		
 		//calculate C1
 		G2 C1 = new G2();
 		Mcl.mul(C1, (G2) PK.get(1), t);
@@ -169,13 +166,11 @@ public class SemiStaticBGWRevised {
 	}
 	
 	
-	//precomputes K = e(g, g)^(alpha * t)
+	//precomputes K = e(g, g)^alpha
 	private static void precompute(G1 g, G2 gg, Fr alpha) {
 		K = new GT();
 		Mcl.pairing(K, g, gg);
-		Fr exp = new Fr();
-		Mcl.mul(exp, alpha, t);
-		Mcl.pow(K, K, exp);
+		Mcl.pow(K, K, alpha);
 	}
 	
 		
