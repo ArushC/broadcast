@@ -10,13 +10,11 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 //The scheme: https://eprint.iacr.org/2008/268.pdf (4.1, page 10)
-//No changes were made to the described scheme
 //Note one part that was very difficult to figure out because it is not explained in the paper:
 //The only way C4 can be computed without accessing the private key is as e((g1^alpha)^F(alpha), (gHat2)^(alpha^(l-2)))^t
 //Also note that this IBBE system does not work when l = 1
 public class IBBESystemRevised {
 
-	private static Fr t;
 	private static G2 g2;
 	private static GT K;
 	private static int lambda;
@@ -46,10 +44,6 @@ public class IBBESystemRevised {
 		
 		Fr gamma = new Fr();
 		gamma.setByCSPRNG();
-		
-		t = new Fr();
-		t.setByCSPRNG();
-		
 		
 		//compute gHat1 = g1^(beta) and gHat2 = g2^(beta)
 		G1 gHat1 = new G1();
@@ -194,6 +188,10 @@ public class IBBESystemRevised {
 		
 		//compute Px
 		Fr[] Px = computePx(n, l, -1, S);
+		
+		Fr t = new Fr();
+		t.setByCSPRNG();
+		Mcl.pow(K, K, t);
 		
 		//compute C1, C2, C3, C4
 		G1 C1 = new G1(gHat1);
@@ -365,16 +363,15 @@ public class IBBESystemRevised {
 	}
 	
 	
-	//precomputes K = e(gHat2, g1)^(alpha * gamma^(l - 1) * t)
+	//precomputes K = e(gHat2, g1)^(alpha * gamma^(l - 1))
 	private static void precompute(G1 g1, G2 gHat2, Fr alpha, Fr gamma, int l) {
 		
 		K = new GT();
 		Mcl.pairing(K, g1, gHat2);
 		Fr exp = new Fr();
-		Mcl.mul(exp, gamma, t);
 		Fr alphaExp = Tools.power(alpha, l - 1);
-		Mcl.mul(exp, exp, alphaExp);
-		Mcl.pow(K, K, exp);
+		Mcl.mul(exp, gamma, alphaExp);
+		Mcl.pow(K, K, exp);	
 		
 	}
 	
