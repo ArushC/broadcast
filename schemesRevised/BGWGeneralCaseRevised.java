@@ -149,7 +149,7 @@ public class BGWGeneralCaseRevised {
 		
 		//calculate C_0 (first element in Hdr) and add to Hdr
 		G2 c0 = new G2();
-		Mcl.mul(c0, (G2) PK[1], t); //C_0 = g^t
+		Mcl.mul(c0, (G2) PK[1], t); //C_0 = gg^t
 		Hdr.add(c0);
 		
 		//calculate rest of Hdr
