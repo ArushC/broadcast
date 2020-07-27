@@ -11,14 +11,12 @@ import java.util.concurrent.ThreadLocalRandom;
 //The scheme: https://eprint.iacr.org/2008/268.pdf (4.3.1, page 12)
 //mention that K is precomputed in the setup function, key generation is for a single user
 //Additional changes: fixed computation of g^P(alpha)
-//Included g1^alpha in the public key (do not need g1^(alpha^2), g1^(alpha^3), ..., etc, only g1^alpha)
+//Included g1 and g1^alpha in the public key (do not need g1^(alpha^2), g1^(alpha^3), ..., etc, only g1 and g1^alpha)
 //Also note that this IBBE system is not meant to work when l = 1
 public class IBBESystemVariantRevised {
 
-	private static Fr t;
 	private static GT K;
 	private static int lambda;
-	private static G1 g1;
 	private static G2 g2;
 	
 	//PRECONDITION: G is of order p >= n + l, l <= n
@@ -31,7 +29,7 @@ public class IBBESystemVariantRevised {
 		//instead of creating a GroupGen function, the groups are generated here
 		
 		//generate random g1, g2
-		g1 = new G1();
+		G1 g1 = new G1();
 		Mcl.hashAndMapToG1(g1, "abc".getBytes());
 		g2 = new G2();
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
@@ -45,10 +43,6 @@ public class IBBESystemVariantRevised {
 		
 		Fr gamma = new Fr();
 		gamma.setByCSPRNG();
-		
-		t = new Fr();
-		t.setByCSPRNG();
-		
 		
 		//compute gHat1 = g1^(beta) and gHat2 = g2^(beta)
 		G1 gHat1 = new G1();
@@ -72,8 +66,10 @@ public class IBBESystemVariantRevised {
 		Mcl.mul(element2, element2, alpha); //add g1^(gamma * alpha)
 		PK.add(element2);
 		
-		G1 element3 = new G1(); //add g1^alpha
-		Mcl.mul(element3, g1, alpha);
+		PK.add(g1);
+		
+		G1 element4 = new G1(); //add g1^alpha
+		Mcl.mul(element4, g1, alpha);
 
 		//second part of PK is going to be a set containing the set elements: {[gHat1^(alpha^j), gHat2^(alpha^k)}
 		//for all j in [0, l] and all k in [0, l - 1]
@@ -94,7 +90,7 @@ public class IBBESystemVariantRevised {
 				Mcl.mul(exp, exp, alpha);
 		}
 		
-		PK.add(element3);
+		PK.add(element4);
 		PK.add(setElements);
 		
 		//Generate random key kappa for a pseudorandom function psi
@@ -150,12 +146,16 @@ public class IBBESystemVariantRevised {
 		int n = (int) PK.get(0);
 		int l = (int) PK.get(1);
 		
-		ArrayList<Object> setElements = (ArrayList<Object>) PK.get(5);
+		ArrayList<Object> setElements = (ArrayList<Object>) PK.get(6);
 		Object[] setElement = (Object[]) setElements.get(0);
 		G1 gHat1 = (G1) setElement[0];
 		
 		//compute Px
 		Fr[] Px = computePx(n, l, -1, S);
+		
+		Fr t = new Fr();
+		t.setByCSPRNG();
+		Mcl.pow(K, K, t);
 		
 		//compute C1, C2, C3, C4
 		G1 C1 = new G1(gHat1);
@@ -175,10 +175,10 @@ public class IBBESystemVariantRevised {
 		Mcl.mul(C2, (G1) PK.get(2), t);
 		
 		G1 C3 = new G1();
-		Mcl.mul(C3, g1, t);
+		Mcl.mul(C3, (G1) PK.get(4), t);
 		
 		GT C4 = new GT();
-		Mcl.pairing(C4, (G1) PK.get(4), (G2) (((Object[]) setElements.get(l - 2))[1]));
+		Mcl.pairing(C4, (G1) PK.get(5), (G2) (((Object[]) setElements.get(l - 2))[1]));
 		Mcl.pow(C4, C4, t);
 		
 		//add to Hdr and result
@@ -205,7 +205,7 @@ public class IBBESystemVariantRevised {
 		G2 hi = (G2) di[1];
 		
 		//3. compute gHat2^(Pi(alpha))
-		ArrayList<Object> setElements = (ArrayList<Object>) PK.get(5);
+		ArrayList<Object> setElements = (ArrayList<Object>) PK.get(6);
 		Fr[] negated = LagrangeInterpolationZp.negate(Px); //note: need to ignore item at position 0 in this array because this is an l - 2 degree polyn.
 		Object[] setElement = (Object[]) setElements.get(0);
 		G2 gHat2 = (G2) setElement[1]; //if l = 1, then gHat2 does not need to be extracted
@@ -283,9 +283,8 @@ public class IBBESystemVariantRevised {
 		K = new GT();
 		Mcl.pairing(K, g1, gHat2);
 		Fr exp = new Fr();
-		Mcl.mul(exp, gamma, t);
 		Fr alphaExp = Tools.power(alpha, l - 1);
-		Mcl.mul(exp, exp, alphaExp);
+		Mcl.mul(exp, gamma, alphaExp);
 		Mcl.pow(K, K, exp);
 		
 	}
