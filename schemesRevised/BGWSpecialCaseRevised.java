@@ -38,30 +38,31 @@ public class BGWSpecialCaseRevised {
 		Fr alpha = new Fr();
 		alpha.setByCSPRNG(); 
 		
-		//precompute K
-		//precompute(g, gg, alpha);
-		
 		//Instantiate public key PK
 		Object[] PK = new Object[3 * n + 3];
 		PK[0] = g;
 		PK[1] = gg;
 		
-		//from i = 1 to i = 2n (ALL), add g^(alpha^i)
+		//from i = 1 to i = 2n (except i = n + 1), add g^(alpha^i)
 		Fr exp = new Fr(alpha);
 		for (int i = 1; i <= 2*n; i++) {
-			G1 pub = new G1();
-			Mcl.mul(pub, g, exp); // g_n = g^(exp)
-			PK[i + 1] = pub;
+			if (i == n + 1) { //skip i = n + 1 (not needed in public key)
+				Mcl.mul(exp, exp, alpha);
+				continue;
+			}
 			if (i <= n) {
 				G2 pubG2 = new G2();
 				Mcl.mul(pubG2, gg, exp);
 				PK[2 * n + i + 1] = pubG2; //add g2^(alpha^i) to public key
 			}
+			G1 pub = new G1();
+			Mcl.mul(pub, g, exp); // g_n = g^(exp)
+			PK[i + 1] = pub;
 			Mcl.mul(exp, exp, alpha);
 		}
 		
 		//precompute K
-		precompute((G1) PK[n + 2], gg);
+		precompute((G1) PK[n+1], (G2) PK[2 * n + 2]);
 		
 		//random beta in Z_p
 		Fr beta = new Fr();
@@ -86,11 +87,10 @@ public class BGWSpecialCaseRevised {
 		return result;
 	}
 	
-	//precomputes K = e(gn+1, g)
-	private static void precompute(G1 gNPlus1, G2 gg) {
-		//calculate e(g_(n+1), gg)
+	//precomputes K = e(gn+1, g) as e(g^(alpha^n), gg^(alpha))
+	private static void precompute(G1 gN, G2 gg) {
 		K = new GT();
-		Mcl.pairing(K, gNPlus1, gg);
+		Mcl.pairing(K, gN, gg);
 	}
 	
 	//Input: S = subset to which the message is brodcast, PK = public key
@@ -242,7 +242,7 @@ public class BGWSpecialCaseRevised {
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
 		Mcl.SystemInit(Mcl.BN254); // curveType = Mcl.BN254 or Mcl.BLS12_381
-		testRuntimes(10);
+		testRuntimes(1);
 		
 	}
 
