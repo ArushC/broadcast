@@ -1,12 +1,9 @@
 package schemesRevised;
-
 import helperclasses.Tools;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
-
 import com.herumi.mcl.*;
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.2)
@@ -15,7 +12,6 @@ import com.herumi.mcl.*;
 //MAKE SURE TO MENTION IN PAPER: precomputation
 public class BGWGeneralCaseRevised {
 
-	private static Fr t;
 	private static int n, A, B;
 	private static GT K; //to be precomputed in the setup function
 	
@@ -42,8 +38,6 @@ public class BGWGeneralCaseRevised {
 		//random alpha and t in Z_p 
 		Fr alpha = new Fr();
 		alpha.setByCSPRNG(); 
-		t = new Fr();
-		t.setByCSPRNG();
 		
 		//precompute K
 		precompute(g, gg, alpha);
@@ -95,16 +89,14 @@ public class BGWGeneralCaseRevised {
 		return result;
 	}
 	
-	//precomputes K = e(gB+1, g)^t
+	//precomputes K = e(gB+1, g)
 	private static void precompute(G1 g, G2 gg, Fr alpha) {
 		//calculate e(g, g_(B+1))
-		GT e = new GT();
+		K = new GT();
 		G2 gBPlus1 = new G2();
 		Fr exp = Tools.power(alpha, B+1);
 		Mcl.mul(gBPlus1, gg, exp); //gn = g^(alpha^n), so gn+1 = g^(alpha^(n+1)) = g^(exp)
-		Mcl.pairing(e, g, gBPlus1);
-		K = new GT();
-		Mcl.pow(K, e, t); // K = e(g, gn+1)^t
+		Mcl.pairing(K, g, gBPlus1);
 	}
 	
 	private static ArrayList<ArrayList<Integer>> computeSLSubsets(ArrayList<Integer> S) {
@@ -150,6 +142,10 @@ public class BGWGeneralCaseRevised {
 			 		
 		ArrayList<ArrayList<Integer>> sLSubsets = computeSLSubsets(S);
 		ArrayList<Object> Hdr = new ArrayList<Object>();
+		
+		Fr t = new Fr();
+		t.setByCSPRNG();
+		Mcl.pow(K, K, t);
 		
 		//calculate C_0 (first element in Hdr) and add to Hdr
 		G2 c0 = new G2();
@@ -292,5 +288,3 @@ public class BGWGeneralCaseRevised {
 	}
 
 }
-
-
