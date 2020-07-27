@@ -1,10 +1,8 @@
 package schemesRevised;
-
 import java.io.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import com.herumi.mcl.*;
 import helperclasses.Tools;
 
@@ -87,10 +85,10 @@ public class BGWSpecialCaseRevised {
 		return result;
 	}
 	
-	//precomputes K = e(gn+1, g) as e(g^(alpha^n), gg^(alpha))
-	private static void precompute(G1 gN, G2 gg) {
+	//precomputes K = e(gn+1, g) as e(gn, gg1)
+	private static void precompute(G1 gN, G2 gg1) {
 		K = new GT();
-		Mcl.pairing(K, gN, gg);
+		Mcl.pairing(K, gN, gg1);
 	}
 	
 	//Input: S = subset to which the message is brodcast, PK = public key
