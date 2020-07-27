@@ -1,13 +1,10 @@
 package schemesRevised;
-
 import java.io.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import com.herumi.mcl.*;
 import helperclasses.Tools;
-
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.1)
 //Changes made: optimized selection of G1 and G2, included gg^(alpha^i) for all i in the public key,
@@ -15,7 +12,6 @@ import helperclasses.Tools;
 //MENTION IN PAPER: precomputation of K
 public class BGWSpecialCaseRevised {
 
-	private static Fr t;
 	private static int n;
 	private static GT K; //to be precomputed in the setup function
 	
@@ -27,19 +23,17 @@ public class BGWSpecialCaseRevised {
 		
 		BGWSpecialCaseRevised.n = n; //save n so it can be used for other functions
 		
-		//Random g in G1
+		//initialize random generator g in G
 		G1 g = new G1();
 		Mcl.hashAndMapToG1(g, "abc".getBytes());
 		
-		//Random gg in G2
+		//get corresponding element in G2
 		G2 gg = new G2();
 		Mcl.hashAndMapToG2(gg, "def".getBytes());
 		
 		//random alpha and t in Z_p 
 		Fr alpha = new Fr();
 		alpha.setByCSPRNG(); 
-		t = new Fr();
-		t.setByCSPRNG();
 		
 		//precompute K
 		precompute(g, gg, alpha);
@@ -86,22 +80,24 @@ public class BGWSpecialCaseRevised {
 		return result;
 	}
 	
-	//precomputes K = e(gn+1, g)^t
+	//precomputes K = e(gn+1, g)
 	private static void precompute(G1 g, G2 gg, Fr alpha) {
 		//calculate e(g, g_(n+1))
-		GT e = new GT();
+		K = new GT();
 		G2 gNPlus1 = new G2();
 		Fr exp = Tools.power(alpha, n+1);
 		Mcl.mul(gNPlus1, gg, exp); //gn = g^(alpha^n), so gn+1 = g^(alpha^(n+1)) = g^(exp)
-		Mcl.pairing(e, g, gNPlus1);
-		K = new GT();
-		Mcl.pow(K, e, t); // K = e(g, gn+1)^t
+		Mcl.pairing(K, g, gNPlus1);
 	}
 	
 	//Input: S = subset to which the message is brodcast, PK = public key
 	//Output: Hdr = header (broadcast ciphertext), K = message encryption key
 	public static Object[] encrypt(ArrayList<Integer> S, Object[] PK) {
 			 		
+		Fr t = new Fr();
+		t.setByCSPRNG();
+		Mcl.pow(K, K, t);
+		
 		//calculate C_0 (first element in Hdr)
 		G2 c0 = new G2();
 		Mcl.mul(c0, (G2) PK[1], t); //C_0 = gg^t
@@ -248,4 +244,3 @@ public class BGWSpecialCaseRevised {
 	}
 
 }
-
