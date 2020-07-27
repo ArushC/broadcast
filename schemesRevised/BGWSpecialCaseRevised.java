@@ -27,11 +27,11 @@ public class BGWSpecialCaseRevised {
 		
 		BGWSpecialCaseRevised.n = n; //save n so it can be used for other functions
 		
-		//initialize random generator g in G
+		//Random g in G1
 		G1 g = new G1();
 		Mcl.hashAndMapToG1(g, "abc".getBytes());
 		
-		//get corresponding element in G2
+		//Random gg in G2
 		G2 gg = new G2();
 		Mcl.hashAndMapToG2(gg, "def".getBytes());
 		
