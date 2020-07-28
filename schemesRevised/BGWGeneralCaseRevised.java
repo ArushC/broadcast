@@ -1,12 +1,9 @@
 package schemesRevised;
-
 import helperclasses.Tools;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
-
 import com.herumi.mcl.*;
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.2)
@@ -98,49 +95,36 @@ public class BGWGeneralCaseRevised {
 		K = new GT();
 		Mcl.pairing(K, gB, gg1);
 	}
+
+	private static ArrayList<Integer> getSLSubset(ArrayList<Integer> S, int l) {
 	
-	private static ArrayList<ArrayList<Integer>> computeSLSubsets(ArrayList<Integer> S) {
-		
-		ArrayList<ArrayList<Integer>> partSubsets = new ArrayList<ArrayList<Integer>>();
-		
-		for (int l = 1; l <= A; l++) {
 			ArrayList<Integer> part = new ArrayList<Integer>();
 			for (int i = 1; i <= B; i++) {
-				part.add((l - 1) * B + i);  //part = {(l - 1)B + 1, (l - 1)B + 2, ..., lB} for l = 1, 2, ..., A
+				part.add((l - 1) * B + i);  //part = {(l - 1)B + 1, (l - 1)B + 2, ..., lB}
 			}
-			partSubsets.add(part);
-		}
-		
-		ArrayList<ArrayList<Integer>> sHatLSubsets = new ArrayList<ArrayList<Integer>>(); //sHatL subsets = elements in S and each part subset
-		for (ArrayList<Integer> part : partSubsets) {
+			
 			ArrayList<Integer> sHatL = new ArrayList<Integer>();
 			for (Integer i: part) {
 				if (S.contains(i))
 					sHatL.add(i);
 			}
-			sHatLSubsets.add(sHatL);
-		}
-		
-		int l = 1;
-		ArrayList<ArrayList<Integer>> sLSubsets = new ArrayList<ArrayList<Integer>>();
-		for (ArrayList<Integer> sHatL : sHatLSubsets) {
 			ArrayList<Integer> sL = new ArrayList<Integer>();
 			for (Integer x: sHatL) {
 				sL.add(x - l * B + B); //check to make sure this is a subset of {1, ..., B}
 			}
-			l += 1;
-			sLSubsets.add(sL);
+	
+			return sL;
 		}
-		
-		return sLSubsets;
-		
-	}
 	
 	//Input: S = subset to which the message is brodcast, PK = public key
 	//Output: Hdr = header (broadcast ciphertext), K = message encryption key
 	public static Object[] encrypt(ArrayList<Integer> S, Object[] PK) {
 			 		
-		ArrayList<ArrayList<Integer>> sLSubsets = computeSLSubsets(S);
+		//generate the list of S_l subsets for l = 1, 2, ..., A
+		ArrayList<ArrayList<Integer>> sLSubsets = new ArrayList<ArrayList<Integer>>();
+		for (int l = 1; l <= A; l++)
+			sLSubsets.add(getSLSubset(S, l));
+		
 		ArrayList<Object> Hdr = new ArrayList<Object>();
 		
 		Fr t = new Fr();
@@ -149,7 +133,7 @@ public class BGWGeneralCaseRevised {
 		
 		//calculate C_0 (first element in Hdr) and add to Hdr
 		G2 c0 = new G2();
-		Mcl.mul(c0, (G2) PK[1], t); //C_0 = gg^t
+		Mcl.mul(c0, (G2) PK[1], t); //C_0 = g^t
 		Hdr.add(c0);
 		
 		//calculate rest of Hdr
@@ -189,7 +173,7 @@ public class BGWGeneralCaseRevised {
 		
 		//calculate the second pairing: e(c0, big messy expression) --> see the paper, page 8: https://eprint.iacr.org/2005/018.pdf 
 		G2 c0 = (G2) Hdr.get(0);
-		ArrayList<Integer> sA = computeSLSubsets(S).get(a - 1);
+		ArrayList<Integer> sA = getSLSubset(S, a);
 		
 		G1 product = new G1(di);
 		for (Integer j: sA) {	
