@@ -1,9 +1,12 @@
 package schemesRevised;
+
 import helperclasses.Tools;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
+
 import com.herumi.mcl.*;
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.2)
@@ -47,6 +50,10 @@ public class BGWGeneralCaseRevised {
 		//from i = 1 to i = 2B (except i = B + 1)
 		Fr exp = new Fr(alpha);
 		for (int i = 1; i <= 2*B; i++) {
+			if (i == B + 1) {
+				Mcl.mul(exp, exp, alpha);
+				continue;
+			}
 			G1 pub = new G1();
 			Mcl.mul(pub, g, exp); // g_n = g^(exp)
 			PK[i + 1] = pub;
