@@ -238,7 +238,7 @@ private static long[] printRuntimes(int N, int subsetSize) {
 
 	
 	public static void testRuntimes(int percent) {
-		for (int N = 10; N <= 1000000; N *= 10) {
+		for (int N = 100; N <= 1000000; N *= 10) {
 			int subsetSize = (int) (0.01 * percent * N);
 			printRuntimes(N, subsetSize);
 		}
