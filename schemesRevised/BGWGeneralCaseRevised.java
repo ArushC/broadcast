@@ -1,19 +1,15 @@
 package schemesRevised;
-
 import helperclasses.Tools;
-
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-
 import com.herumi.mcl.*;
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.2)
 //Changes made: optimized selection of G1 and G2, included gg^(alpha^i) for all i in the public key,
-//both g1 and g2 are included in the public key
+//both g1 and g2 are included in the public key, used HASHSETS to calculate the intersection of SHatL and SL
 //MAKE SURE TO MENTION IN PAPER: precomputation
-public class BGWGeneralCaseRevised {
+public class BGWGeneralCaseUsingHashsets {
 
 	private static int n, A, B;
 	private static GT K; //to be precomputed in the setup function
@@ -24,7 +20,7 @@ public class BGWGeneralCaseRevised {
 	//second element: list containing private keys: d1, d2, ... dn 
 	public static Object[] setup(int n) {
 		
-		BGWGeneralCaseRevised.n = n; //save n so it can be used for other functions
+		BGWGeneralCaseUsingHashsets.n = n; //save n so it can be used for other functions
 		
 		//instantiate B = floor(sqrt(n)),  A = ceil(n/B)
 		B = (int) Math.floor(Math.pow((double) n, 0.5));
@@ -103,18 +99,14 @@ public class BGWGeneralCaseRevised {
 		Mcl.pairing(K, gB, gg1);
 	}
 
-	private static ArrayList<Integer> getSLSubset(ArrayList<Integer> S, int l) {
+	private static ArrayList<Integer> getSLSubset(HashSet<Integer> S, int l) {
 	
-			ArrayList<Integer> part = new ArrayList<Integer>();
+			HashSet<Integer> sHatL = new HashSet<Integer>();
 			for (int i = 1; i <= B; i++) {
-				part.add((l - 1) * B + i);  //part = {(l - 1)B + 1, (l - 1)B + 2, ..., lB}
+				sHatL.add((l - 1) * B + i);  //part = {(l - 1)B + 1, (l - 1)B + 2, ..., lB}
 			}
 			
-			ArrayList<Integer> sHatL = new ArrayList<Integer>();
-			for (Integer i: part) {
-				if (S.contains(i))
-					sHatL.add(i);
-			}
+			sHatL.retainAll(S); //calculate intersection of sHatL and S
 			ArrayList<Integer> sL = new ArrayList<Integer>();
 			for (Integer x: sHatL) {
 				sL.add(x - l * B + B); //check to make sure this is a subset of {1, ..., B}
@@ -125,7 +117,7 @@ public class BGWGeneralCaseRevised {
 	
 	//Input: S = subset to which the message is brodcast, PK = public key
 	//Output: Hdr = header (broadcast ciphertext), K = message encryption key
-	public static Object[] encrypt(ArrayList<Integer> S, Object[] PK) {
+	public static Object[] encrypt(HashSet<Integer> S, Object[] PK) {
 			 		
 		//generate the list of S_l subsets for l = 1, 2, ..., A
 		ArrayList<ArrayList<Integer>> sLSubsets = new ArrayList<ArrayList<Integer>>();
@@ -166,7 +158,7 @@ public class BGWGeneralCaseRevised {
 	
 	//Input: S = subset, i = user id, di = user private key, Hdr = header, PK = public key
 	//Output: if i is in S, output message encryption key K. Use to decode C (brodcast body)
-	public static GT decrypt(ArrayList<Integer> S, int i, G1 di, ArrayList<Object> Hdr, Object[] PK) {
+	public static GT decrypt(HashSet<Integer> S, int i, G1 di, ArrayList<Object> Hdr, Object[] PK) {
 		
 		//get a and b (i = (a - 1)b + B)
 		int b = (i % B == 0) ? B : (i % B);
@@ -223,8 +215,8 @@ public class BGWGeneralCaseRevised {
 		//extract public/private key from setup
 		Object[] PK = (Object[]) setup[0];
 		ArrayList<G1> privateKeys = (ArrayList<G1>) setup[1];
-		
-		ArrayList<Integer> S = new ArrayList<Integer>();
+		int randomID = 0;
+		HashSet<Integer> S = new HashSet<Integer>();
 		//randomly generate numbers to put in the subset S (NO REPEATS)
 		ArrayList<Integer> randomNums = new ArrayList<Integer>();
 			for (int i = 0; i < n; i++) { 
@@ -232,7 +224,7 @@ public class BGWGeneralCaseRevised {
 			}
 			for (int i = 0; i < subsetSize; i++) {
 				int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
-				int randomID = randomNums.get(randomIndex);
+				randomID = randomNums.get(randomIndex);
 				S.add(randomID);
 				randomNums.remove(randomIndex);
 			}
@@ -243,8 +235,8 @@ public class BGWGeneralCaseRevised {
 		long elapsedEncrypt = System.nanoTime() - startEncrypt;
 		double secondsEncrypt = ((double) elapsedEncrypt) / 1E9;
 		
-		//Get random user ID i to test the decryption
-		int i = S.get(ThreadLocalRandom.current().nextInt(0, S.size()));
+		//Get user ID i to test the decryption
+		int i = randomID; //int i is the last ID that was added to the set S
 		ArrayList<Object> Hdr = (ArrayList<Object>) encrypted[0];
 		G1 di = privateKeys.get(i - 1);
 		
@@ -275,7 +267,7 @@ public class BGWGeneralCaseRevised {
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
 		Mcl.SystemInit(Mcl.BN254);
-		testRuntimes(10);	
+		testRuntimes(10);
 	}
 
 }
