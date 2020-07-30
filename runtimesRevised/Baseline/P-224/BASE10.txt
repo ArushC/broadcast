@@ -24,3 +24,8 @@ setup took: 5.56473
 encrypt took:  0.49893
 decrypt took:  8.5e-05
 
+N = 1000000, subset size = 100000
+
+setup took: 51.7402
+encrypt took:  5.55178
+decrypt took:  8.1e-05
