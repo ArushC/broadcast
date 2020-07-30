@@ -1,0 +1,5 @@
+N = 1000000, subset size = 500000
+
+setup took: 22.8511
+encrypt took:  10.7961
+decrypt took:  0.000121
