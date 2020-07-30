@@ -21,7 +21,7 @@
 using namespace std;
 using namespace std::chrono;
 
-//Use these if testing for N = 1000000 and comment out lines #153, 154, and 175
+//Use these if testing for N = 1000000 and comment out lines #149, 150, and 171
 //BIGNUM *private_key[1000000];
 //EC_POINT *public_key[1000001];
 //EC_POINT *ciphertext[1000000];
@@ -204,5 +204,5 @@ int main()
     int lambda = NID_X9_62_prime256v1;
     testRuntimes(lambda, 10); //only tests from N = 100 to N = 100000
     //printRuntimes(lambda, 1000000, 100000); //Uncomment to test N = 1000000
-                                             //and follow instructions on line #28
+                                             //and follow instructions on line #24
 }
