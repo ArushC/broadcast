@@ -203,6 +203,6 @@ int main()
     cout <<"All times are in seconds" <<endl << endl;
     int lambda = NID_X9_62_prime256v1;
     testRuntimes(lambda, 10); //only tests from N = 100 to N = 100000
-    //printRuntimes(lambda, 1000000, 100000); //Uncomment to test N = 1000000
+    //printRuntimes(lambda, 1000000, subsetSize); //Uncomment to test N = 1000000
                                              //and follow instructions on line #24
 }
