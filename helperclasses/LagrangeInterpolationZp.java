@@ -157,6 +157,18 @@ public class LagrangeInterpolationZp {
 		return result;
 	}
 	
+	//computes f(x) given the coefficients of f(x) and the value of x using Horner's Method (fastest)
+	public static Fr computeFxHorner(Fr[] coefficients, Fr x) {
+			
+			Fr result = new Fr(coefficients[0]);
+			for (int i = 1; i < coefficients.length; i++) {
+				Mcl.mul(result, result, x);
+				Mcl.add(result, result, coefficients[i]);
+			}
+				
+			return result;
+		}
+	
 	public static void main(String[] args) {
 		
 		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
