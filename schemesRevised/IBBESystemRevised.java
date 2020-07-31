@@ -1,8 +1,10 @@
 package schemesRevised;
 import com.herumi.mcl.*;
+
 import helperclasses.LagrangeInterpolationZp;
 import helperclasses.CustomPRF;
 import helperclasses.Tools;
+
 import java.io.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -272,7 +274,7 @@ public class IBBESystemRevised {
 		G2 hi = (G2) di[1];
 		
 		//3. compute g2^(Fi(alpha))
-		Fr Fi = LagrangeInterpolationZp.computeFx(tau, new Fr(i));
+		Fr Fi = LagrangeInterpolationZp.computeFxHorner(tau, new Fr(i));
 		Fr[] subtracted = tau.clone();
 		Fr constant = new Fr();
 		Mcl.sub(constant, subtracted[subtracted.length - 1], Fi);
