@@ -4,6 +4,7 @@ import java.io.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+import helperclasses.miscellaneous.Tools;
 import java.util.concurrent.ThreadLocalRandom;
 
 //The scheme: https://eprint.iacr.org/2008/268.pdf (3.1, page 8)
