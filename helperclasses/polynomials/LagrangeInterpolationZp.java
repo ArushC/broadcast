@@ -1,4 +1,4 @@
-package helperclasses;
+package helperclasses.polynomials;
 import com.herumi.mcl.*;
 
 public class LagrangeInterpolationZp {
