@@ -8,3 +8,5 @@ Instructions for how to build the library are at the bottom of the page.
 2. Assuming the entire MCL library was installed in a folder called "mcl", place these folders in the following directory: /mcl/ffi/java
 
 3. Compile and run. Programs can be run individually.
+
+Note that the most recent versions of the schemes are in the folder "schemesRevised". The folders "schemes" and "runtimes" contain older versions with implementations errors.
