@@ -1,4 +1,4 @@
-package helperclasses;
+package helperclasses.miscellaneous;
 
 import java.security.SecureRandom;
 import com.herumi.mcl.Fr;
