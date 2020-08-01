@@ -1,4 +1,4 @@
-package helperclasses;
+package helperclasses.structures;
 
 import java.util.ArrayList;
 
