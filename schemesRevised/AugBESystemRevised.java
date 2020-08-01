@@ -3,8 +3,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.io.*;
-import helperclasses.Tools;
-import helperclasses.Vector2D;
+import helperclasses.miscellaneous.Tools;
+import helperclasses.structures.Vector2D;
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2009/532.pdf (5.2, page 10)
