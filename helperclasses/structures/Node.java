@@ -1,4 +1,4 @@
-package helperclasses;
+package helperclasses.structures;
 
 public class Node{
 	private int datum;
