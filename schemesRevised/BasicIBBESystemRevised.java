@@ -5,9 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 import helperclasses.LagrangeInterpolationZp;
-import helperclasses.Tools;
-import helperclasses.VectorND;
-
+import helperclasses.miscellaneous.Tools;
+import helperclasses.structures.VectorND;
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2019/038.pdf, 3.1 (page 11)
