@@ -5,7 +5,6 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
-import helperclasses.Tools;
 
 //The scheme: https://eprint.iacr.org/2008/268.pdf (3.1, page 8)
 //Changes made: optimized selection of G1 and G2, added both to the public key
