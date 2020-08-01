@@ -4,7 +4,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import com.herumi.mcl.*;
-import helperclasses.miscellaneous.Tools;
 
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.1)
