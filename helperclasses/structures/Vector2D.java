@@ -1,4 +1,4 @@
-package helperclasses;
+package helperclasses.structures;
 import com.herumi.mcl.*;
 
 public class Vector2D {
