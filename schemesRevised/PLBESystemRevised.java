@@ -1,6 +1,6 @@
 package schemesRevised;
-import helperclasses.Tools;
-import helperclasses.Vector2D;
+import helperclasses.miscellaneous.Tools;
+import helperclasses.structures.Vector2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
