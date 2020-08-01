@@ -362,7 +362,7 @@ public class IBBESystemRevised {
 	}
 	
 	
-	//precomputes K = e(gHat2, g1)^(alpha * gamma^(l - 1))
+	//precomputes K = e(gHat2, g1)^(gamma * alpha^(l - 1))
 	private static void precompute(G1 g1, G2 gHat2, Fr alpha, Fr gamma, int l) {
 		
 		K = new GT();
