@@ -1,5 +1,4 @@
 package helperclasses;
-
 import com.herumi.mcl.*;
 
 public class LagrangeInterpolationZp {
