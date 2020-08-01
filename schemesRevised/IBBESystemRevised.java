@@ -1,10 +1,7 @@
 package schemesRevised;
 import com.herumi.mcl.*;
-
-import helperclasses.LagrangeInterpolationZp;
-import helperclasses.CustomPRF;
-import helperclasses.Tools;
-
+import helperclasses.polynomials.LagrangeInterpolationZp;
+import helperclasses.miscellaneous.CustomPRF;
 import java.io.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;
