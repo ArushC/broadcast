@@ -1,10 +1,10 @@
 package helperclasses.polynomials;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-
-//I DID NOT WRITE MOST OF THIS. I modified the code that I found here: 
-Reference: https://www.cs.princeton.edu/~wayne/kleinberg-tardos/pdf/05DivideAndConquerII.pdf
-
+//THIS CODE IS BASED ON:
+//Reference: https://www.cs.princeton.edu/~wayne/kleinberg-tardos/pdf/05DivideAndConquerII.pdf
+//I had to modify the convolve algorithm because the way it was written, it only worked when x.length == y.length
 /******************************************************************************
  *  Compilation:  javac FFT.java
  *  Execution:    java FFT n
@@ -20,7 +20,7 @@ Reference: https://www.cs.princeton.edu/~wayne/kleinberg-tardos/pdf/05DivideAndC
  *  This implementation uses the primitive root of unity w = e^(-2 pi i / n).
  *  Some resources use w = e^(2 pi i / n).
  *
- *  
+ *  Reference: https://www.cs.princeton.edu/~wayne/kleinberg-tardos/pdf/05DivideAndConquerII.pdf
  *
  *  Limitations
  *  -----------
@@ -128,64 +128,28 @@ public class FFT {
         return ifft(c);
     }
     
-    //multiply two polynomials using a linear convolution -- the function provided in the source code did not work, so I wrote my own
-    public static Complex[] convolve(Complex[] poly1, Complex[] poly2) {
-    	
-    	int max = Math.max(poly1.length, poly2.length);
-    	while (!(isPowerOfTwo(max)))
-    		max += 1;
-    	
-    	poly1 = zfill(poly1, max); //pad both to the appropriate number
-    	poly2 = zfill(poly2, max); 
-    	
-    	//compute circular convolution
-    	return cconvolve(poly1, poly2);
-    		
+ // compute the linear convolution of x and y -- modified to work when x and y are not the same size
+    public static Complex[] convolve(Complex[] x, Complex[] y) {
+        Complex ZERO = new Complex(0, 0);
+        int equalLimit = x.length + y.length - 1;
+        int padLimit = equalLimit;
+        while (!(isPowerOfTwo(padLimit))) {
+        	padLimit += 1;
+        }
+        Complex[] a = new Complex[padLimit], b = new Complex[padLimit];
+        //copy elements
+        for (int i = 0; i < x.length; i++)
+        	a[i] = x[i];
+        for (int i = 0; i < y.length; i++)
+        	b[i] = y[i];
+        //pad with zeroes
+        for (int i = x.length; i < padLimit; i++)
+        	a[i] = ZERO;
+        for (int i = y.length; i < padLimit; i++)
+        	b[i] = ZERO;
+        
+        return cconvolve(a, b);
     }
-    
-    /*public static Complex[] multiplyPoly(Polynomial... polynomials) {
-    	int N = polynomials.length, M = polynomials[0].length;
-    	if (N == 1) return polynomials[0];
-    	if (N == 2) return multiplyPoly(polynomials[0], polynomials[1]);
-    	else {
-    		int n = (int) (N/2), nOp = N - n;
-    		Complex[] firstHalf = new Complex[][M];
-    	}
-    }*/
-    
-    /*public static Complex[] multiplyPolyRecursive(Complex[][] f0, Complex[][] f1) {
-    	int N1 = f0[0].length, N2 = f1[0].length;
-    	if (f0.length == 1 && f1.length == 1) return multiplyPoly(f0[0], f1[1]);
-    	if (f0.length == 1 && f1.length == 0) return f0[0];
-    	if (f1.length == 1 && f0.length == 0) return f1[0];
-    	else {
-    		int n0 = f0.length/2, n1 = f1.length/2, nOp0 = f0.length - n1, nOp1 =  f1.length - n1;
-    		Complex[][] n0Part = new Complex[n0][N1], n1Part = new Complex[n1][N1], nOp0Part = new Complex[nOp0][N2], nOp1Part = new Complex[nOp1][N2];
-    		//copy all the elements to their arrays -- it is a pain, but this is the only way to do it
-    		for (int i = 0; i < n0; i++)
-    			n0Part[i] = f0[i];
-    		for (int i = 0; i < n1; i++)
-    			n1Part[i] = f1[i];
-    		for (int i = 0; i < nOp0; i++) {
-    			nOp0Part[i] = f0[i + n1];
-    		}
-    		for (int i = 0; i < nOp1; i++) {
-    			nOp1Part[i] = f1[i + n1];
-    		}
-    		Complex[] r1 = multiplyPolyRecursive(n0Part, nOp0Part);
-    		Complex[] r2 = multiplyPolyRecursive(n1Part, nOp1Part);
-    	}
-    }
-
-    
-    public static Complex[] multiplyPolyRecursive(Complex[][] polynomials, int low, int high) { 
-    	int N = polynomials.length;
-    	if (N == 1) return polynomials[0];
-    	else if (N == 2) return multiplyPoly(polynomials[0], polynomials[1]);
-    	else  {
-    		
-    	}
-    }*/
     
     //check if some integer is a power of two
     public static boolean isPowerOfTwo(int n) 
@@ -281,12 +245,12 @@ public class FFT {
     ***************************************************************************/
 
     public static void main(String[] args) { 
-        int n = 32;
+        int n = 4;
         Complex[] x = new Complex[n];
-
+        
         // original data
         for (int i = 0; i < n; i++) {
-            x[i] = new Complex(i, 0);
+            x[i] = new Complex(i + 1, 0);
         }
         show(x, "x");
 
@@ -309,11 +273,7 @@ public class FFT {
         // linear convolution of x with itself
         Complex[] d = convolve(x, x);
         show(d, "d = convolve(x, x)");
-        
-        Complex[] f1 = {new Complex(4, 0), new Complex(5, 0), new Complex(3, 0), new Complex(1, 0), new Complex(7, 0)};
-        Complex[] f2 = {new Complex(1, 0), new Complex(3, 0), new Complex(5, 0)};
-        Complex[] res = convolve(f1, f2);
-        show(res, "multiply f1 by f2");
+    
         }
 
 }
