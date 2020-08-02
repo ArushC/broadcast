@@ -1,9 +1,3 @@
-SUCCESSFUL DECRYPTION: n = 10, subset size = 1
-
-setup took 0.007015843 seconds
-encryption took 8.33958E-4 seconds
-decryption took 4.32826E-4 seconds (i = 9)
-
 SUCCESSFUL DECRYPTION: n = 100, subset size = 10
 
 setup took 0.019352378 seconds
