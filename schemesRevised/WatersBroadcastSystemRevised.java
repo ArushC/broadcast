@@ -1,10 +1,14 @@
 package schemesRevised;
-import helperclasses.miscellaneous.Tools;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.io.*;
+
+import miscellaneous.Tools;
+import net.sourceforge.sizeof.SizeOf;
+
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2009/385.pdf (pages 28-29)
@@ -94,14 +98,10 @@ public class WatersBroadcastSystemRevised {
 		Mcl.mul(e4, gg, a2);
 		
 		G2 e5 = new G2();
-		Fr exp5 = new Fr();
-		Mcl.mul(exp5, b, a1);
-		Mcl.mul(e5, gg, exp5);
+		Mcl.mul(e5, e3, b);
 		
 		G2 e6 = new G2();
-		Fr exp6 = new Fr();
-		Mcl.mul(exp6, b, a2);
-		Mcl.mul(e6, gg, exp6);
+		Mcl.mul(e6, e4, b);
 		
 		//e7 and e8 are just tau1 and tau2, so skip to e9
 		G1 e9 = new G1();
@@ -112,10 +112,8 @@ public class WatersBroadcastSystemRevised {
 		
 		//e11, e12, and e13 are w, uElements, and h, respectively, so skip to e14
 		GT e14 = new GT();
-		Fr exp14 = new Fr();
-		Mcl.mul(exp14, exp5, alpha);
-		Mcl.pairing(e14, g, gg); //e(g, g)^(alpha * a1 * b) = e(g, gg)^(alpha * a1 * b)
-		Mcl.pow(e14, e14, exp14);
+		Mcl.pairing(e14, g, e5); //e(g, gg)^(alpha * a1 * b) = e(g, gg^(a1 * b))^alpha
+		Mcl.pow(e14, e14, alpha);
 		
 		PK.addAll(Arrays.asList(gg, e1, e2, e3, e4, e5, e6, tau1, tau2, e9, e10, w, uElements, h, e14));
 		
@@ -298,8 +296,6 @@ public class WatersBroadcastSystemRevised {
 			}
 		}
 		
-		//calculate Ki and add to the 
-		
 		//Finally, add all to the secret key
 		ArrayList<Object> SK = new ArrayList<Object>();
 		SK.addAll(Arrays.asList(D1, D2, D3, D4, D5, D6, D7, keys));
@@ -438,7 +434,7 @@ public class WatersBroadcastSystemRevised {
 	//n = # of times to test
 	//lambda = Mcl.BLS12_381 or Mcl.BN254
 	public static void testRuntimes(int lambda, int percent) {
-		for (int N = 10; N <= 1000000; N *= 10) {
+		for (int N = 100; N <= 1000000; N *= 10) {
 			int subsetSize = (int) (0.01 * percent * N);
 			printRuntimes(lambda, N, subsetSize);
 		}
@@ -453,3 +449,5 @@ public class WatersBroadcastSystemRevised {
 	
 		
 }
+
+
