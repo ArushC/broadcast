@@ -148,6 +148,32 @@ public class NDMatrix {
 		return new NDMatrix(resVals);			
 	}
 	
+	//based on the algorithm given on this website: https://www.codeproject.com/Articles/405128/Matrix-Operations-in-Java
+	//very bad runtime -- O(n!)
+	public static Fr laPlaceDeterminant(NDMatrix matrix) {
+	    if (matrix.rows != matrix.columns)
+	        throw new IllegalArgumentException("ERROR: cannot calculate determinant of a nonsquare matrix");
+	    if (matrix.rows == 1) {
+		return matrix.getElements()[0][0];
+	    } 
+	    else if (matrix.rows == 2) {
+	    	Fr cPos = new Fr();
+	    	Mcl.mul(cPos, matrix.getElements()[0][0],matrix.getElements()[1][1]);
+	    	Fr cNeg = new Fr();
+	    	Mcl.sub(cNeg, matrix.getElements()[0][1], matrix.getElements()[1][0]);
+	        Mcl.sub(cPos, cPos, cNeg);
+	        return cPos;
+	    }
+	    Fr sum = new Fr(0);
+	    for (int i = 0; i < matrix.columns; i++) {
+	    	Fr addend = new Fr();
+	    	Mcl.mul(addend, (i % 2 == 0) ? new Fr(1) : new Fr(-1) , matrix.getElements()[0][i]);
+	    	Mcl.mul(addend, addend, laPlaceDeterminant(matrix.getMinor(0, i)));
+	    	Mcl.add(sum, sum, addend);
+	    }
+	    return sum;
+	} 
+	
 	//Helper function to initialize the rows/column vectors if the matrix is defined by its elements
 	private void initVectors() {
 		
