@@ -130,26 +130,22 @@ public class NDMatrix {
 		initVectors(); //reinitialize vectors
 	}
 	
-	public NDMatrix getMinor(int i, int j) {
-		Fr[][] resElements = new Fr[elements.length - 1][elements[0].length - 1];
-		for (int p = 0; p < this.elements.length; p++)
-			for (int q = 0; q < this.elements[0].length; q++) {
-				if (p == i || q == j)
-					continue;
-				else if (p < i && q < j){
-					resElements[p][q] = new Fr(elements[p][q]);
+	public NDMatrix minorMatrix(int i, int j)  {
+		int c = 0, d = 0;
+		Fr[][] resVals = new Fr[rows - 1][columns - 1];
+		for (int a = 0; a < rows; a++) {
+			if (a != i) {
+				d = 0;
+				for (int b = 0; b < rows; b++) {
+					if (b != j) {
+						resVals[c][d] = new Fr(elements[a][b]);
+						d ++;
+					}	
 				}
-				else if (p < i && q > j) {
-					resElements[p][q-1] = new Fr(elements[p][q]);
-				}
-				else if (p > i && q > j) {
-					resElements[p-1][q-1] = new Fr(elements[p][q]);
-				}
-				else { //p > i && q < j
-					resElements[p-1][q] = new Fr(elements[p][q]);
-				}
+				c++;
 			}
-		return new NDMatrix(resElements);	
+		}		
+		return new NDMatrix(resVals);			
 	}
 	
 	//Helper function to initialize the rows/column vectors if the matrix is defined by its elements
