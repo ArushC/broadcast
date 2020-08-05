@@ -1,12 +1,15 @@
 package helperclasses.structures;
 import java.util.ArrayList;
-
 import com.herumi.mcl.*;
 
 public class NDMatrix {
 	
 	public static final int INIT_ROW_VECTORS = 0;
 	public final static int INIT_COLUMN_VECTORS = 1;
+	public static final int MATRIX_ZERO = 2;
+	public static final int MATRIX_DIAGONAL = 3;
+	public static final int MATRIX_RANDOM = 4;
+	public static final int MATRIX_IDENTITY = 5;
 	
 	private int rows, columns;
 	private Fr[][] elements;
@@ -51,7 +54,6 @@ public class NDMatrix {
 				}
 				rowVectors[i] = new VectorND(rowCoords);
 			}
-			
 		}
 		
 		else {
@@ -73,19 +75,47 @@ public class NDMatrix {
 	}
 	
 	//initialize a matrix with specified dimensions
-	public NDMatrix(int rows, int columns) {
+	public NDMatrix(int type, int rows, int columns) {
 		this.rows = rows;
 		this.columns = columns;
 		rowVectors = new VectorND[this.rows];
 		columnVectors = new VectorND[this.columns];
 		elements = new Fr[rows][columns];
-		//set the matrix to default values (0, 0, 0, ...)
-		for (int i = 0; i < elements.length; i++) {
-			for (int j = 0; j < elements[0].length; j++) {
-				elements[i][j] = new Fr(0);
+		// a zero matrix
+		if (type == NDMatrix.MATRIX_ZERO) {
+			for (int i = 0; i < elements.length; i++) {
+				for (int j = 0; j < elements[0].length; j++) {
+					elements[i][j] = new Fr(0);
+				}
 			}
+			initVectors();
 		}
-		initVectors(); //initialize the vectors based on the defined elements
+		else if (type == NDMatrix.MATRIX_RANDOM) //set randomly if it is specified
+			this.setByCSPRNG();
+		else if (type == NDMatrix.MATRIX_IDENTITY) { //otherwise instantiate as an identity matrix
+			if (!(rows == columns)) throw new IllegalArgumentException("Identity matrix must be a square matrix");
+			for (int i = 0; i < elements.length; i++) {
+				for (int j = 0; j < elements[0].length; j++) {
+					elements[i][j] = (i == j) ? new Fr(1) : new Fr(0);
+				}
+			}
+			initVectors();
+		}
+		else if (type == NDMatrix.MATRIX_DIAGONAL) { //or even a diagonal matrix...
+			for (int i = 0; i < elements.length; i++) {
+				for (int j = 0; j < elements[0].length; j++) {
+					if (i == j) {
+						Fr element = new Fr();
+						element.setByCSPRNG();
+						elements[i][j] = element;
+					}
+					else
+						elements[i][j] = new Fr(0);
+				}
+			}
+			initVectors();
+		}
+		else throw new IllegalArgumentException("INVALID TYPE: valid types include NDMatrix.MATRIX_DEFAULT, NDMatrix.MATRIX_RANDOM, etc.");
 	}
 	
 	//reinitialize the elements of the matrix randomly
@@ -172,7 +202,7 @@ public class NDMatrix {
 	public NDMatrix multiply(NDMatrix matrix) {
 		
 		if (!(this.columns == matrix.rows))
-			throw new IllegalArgumentException("Error: # of columns in first matrix not equal to # of rows in second matrix");
+			throw new IllegalArgumentException("ERROR: # of columns in first matrix not equal to # of rows in second matrix");
 		
 		int newRows = this.rows, newColumns = matrix.columns;
 		Fr[][] newElements = new Fr[newRows][newColumns];
@@ -186,6 +216,21 @@ public class NDMatrix {
 		}
 		
 		return new NDMatrix(newElements);
+	}
+	
+	//Preconditions: matrix must be a square matrix and # of rows = # of elements in vector
+	public static VectorND transform(NDMatrix matrix, VectorND vector) {
+		if (!(matrix.rows == matrix.columns))
+			throw new IllegalArgumentException("Invalid parameters for vector transformation: matrix must be square");
+		else if  (!(vector.getCoords().size() == matrix.columns))
+			throw new IllegalArgumentException("Invalid parameters for vector transformation: # of columns in matrix != vector size");
+		
+		ArrayList<Fr> res = new ArrayList<Fr>();
+		for (VectorND v: matrix.getRowVectors()) {
+			res.add(v.dotProduct(vector));
+		}
+		
+		return new VectorND(res);
 	}
 	
 	@Override
@@ -205,5 +250,6 @@ public class NDMatrix {
 	public VectorND[] getColumnVectors() {
 		return this.columnVectors;
 	}
+	
 	
 }
