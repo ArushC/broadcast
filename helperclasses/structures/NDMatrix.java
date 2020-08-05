@@ -168,7 +168,7 @@ public class NDMatrix {
 	    for (int i = 0; i < matrix.columns; i++) {
 	    	Fr addend = new Fr();
 	    	Mcl.mul(addend, (i % 2 == 0) ? new Fr(1) : new Fr(-1) , matrix.getElements()[0][i]);
-	    	Mcl.mul(addend, addend, laPlaceDeterminant(matrix.getMinor(0, i)));
+	    	Mcl.mul(addend, addend, laPlaceDeterminant(matrix.minorMatrix(0, i)));
 	    	Mcl.add(sum, sum, addend);
 	    }
 	    return sum;
