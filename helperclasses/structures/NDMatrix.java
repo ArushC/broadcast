@@ -1,6 +1,9 @@
 package helperclasses.structures;
+import java.io.File;
 import java.util.ArrayList;
-import com.herumi.mcl.*;
+import miscellaneous.Tools;
+import com.herumi.mcl.Fr;
+import com.herumi.mcl.Mcl;
 
 public class NDMatrix {
 	
@@ -10,7 +13,6 @@ public class NDMatrix {
 	public static final int MATRIX_DIAGONAL = 3;
 	public static final int MATRIX_RANDOM = 4;
 	public static final int MATRIX_IDENTITY = 5;
-	
 	private int rows, columns;
 	private Fr[][] elements;
 	private VectorND[] rowVectors, columnVectors;
@@ -92,8 +94,9 @@ public class NDMatrix {
 		}
 		else if (type == NDMatrix.MATRIX_RANDOM) //set randomly if it is specified
 			this.setByCSPRNG();
+		
 		else if (type == NDMatrix.MATRIX_IDENTITY) { //otherwise instantiate as an identity matrix
-			if (!(rows == columns)) throw new IllegalArgumentException("Identity matrix must be a square matrix");
+			if (!(rows == columns)) throw new IllegalArgumentException("ERROR: Identity matrix must be a square matrix");
 			for (int i = 0; i < elements.length; i++) {
 				for (int j = 0; j < elements[0].length; j++) {
 					elements[i][j] = (i == j) ? new Fr(1) : new Fr(0);
@@ -118,6 +121,20 @@ public class NDMatrix {
 		else throw new IllegalArgumentException("INVALID TYPE: valid types include NDMatrix.MATRIX_DEFAULT, NDMatrix.MATRIX_RANDOM, etc.");
 	}
 	
+	//instantiate a copy of another matrix
+	public NDMatrix(NDMatrix matrix) {
+		Fr[][] elements = new Fr[matrix.rows][matrix.columns];
+		for(int i = 0; i < matrix.rows; i++)
+		    elements[i] = matrix.getElements()[i].clone();
+		this.elements = elements;
+		this.rows = matrix.rows;
+		this.columns = matrix.columns;
+		rowVectors = new VectorND[this.rows];
+		columnVectors = new VectorND[this.columns];
+		initVectors();
+	}
+	
+	
 	//reinitialize the elements of the matrix randomly
 	public void setByCSPRNG() {
 		for (int i = 0; i < rows; i++) {
@@ -130,26 +147,32 @@ public class NDMatrix {
 		initVectors(); //reinitialize vectors
 	}
 	
-	public NDMatrix minorMatrix(int i, int j)  {
-		int c = 0, d = 0;
-		Fr[][] resVals = new Fr[rows - 1][columns - 1];
-		for (int a = 0; a < rows; a++) {
-			if (a != i) {
-				d = 0;
-				for (int b = 0; b < rows; b++) {
-					if (b != j) {
-						resVals[c][d] = new Fr(elements[a][b]);
-						d ++;
-					}	
-				}
-				c++;
+	//Helper function to initialize the rows/column vectors if the matrix is defined by its elements
+	private void initVectors() {
+		
+		//initialize row vectors
+		for (int i = 0; i < elements.length; i++) {
+			ArrayList<Fr> rowCoords = new ArrayList<Fr>();
+			for (int j = 0; j < elements[0].length; j++) {
+				rowCoords.add(elements[i][j]);
 			}
-		}		
-		return new NDMatrix(resVals);			
+			
+			rowVectors[i] = new VectorND(rowCoords);
+		}
+		
+		//initalize column vectors
+		for (int i = 0; i < elements[0].length; i++) {
+			ArrayList<Fr> columnCoords = new ArrayList<Fr>();
+			for (int j = 0; j < elements.length; j++) {
+				columnCoords.add(elements[j][i]);
+			}
+			columnVectors[i] = new VectorND(columnCoords);
+		}
+		
 	}
 	
 	//based on the algorithm given on this website: https://www.codeproject.com/Articles/405128/Matrix-Operations-in-Java
-	//very bad runtime -- O(n!)
+	//very bad runtime -- O(n!). The better one is given in determinantAndRef()
 	public static Fr laPlaceDeterminant(NDMatrix matrix) {
 	    if (matrix.rows != matrix.columns)
 	        throw new IllegalArgumentException("ERROR: cannot calculate determinant of a nonsquare matrix");
@@ -172,29 +195,182 @@ public class NDMatrix {
 	    	Mcl.add(sum, sum, addend);
 	    }
 	    return sum;
-	} 
+	}
 	
-	//Helper function to initialize the rows/column vectors if the matrix is defined by its elements
-	private void initVectors() {
+	// function to reduce matrix to reduced row echelon form (O(n^3))
+	//Modified from the code given on this website: https://www.nayuki.io/res/gauss-jordan-elimination-over-any-field/Matrix.java
+	public void reducedRowEchelonForm() {
 		
-		//initialize row vectors
-		for (int i = 0; i < elements.length; i++) {
-			ArrayList<Fr> rowCoords = new ArrayList<Fr>();
-			for (int j = 0; j < elements[0].length; j++) {
-				rowCoords.add(elements[i][j]);
+		// Compute row echelon form (REF)
+		int numPivots = 0;
+		Fr ZERO = new Fr(0);
+		for (int j = 0; j < columns && numPivots < rows; j++) {  // For each column
+			// Find a pivot row for this column
+			int pivotRow = numPivots;
+			while (pivotRow < rows && elements[pivotRow][j].equals(ZERO))
+				pivotRow++;
+			if (pivotRow == rows)
+				continue;  // Cannot eliminate on this column
+			swapRows(numPivots, pivotRow);
+			pivotRow = numPivots;
+			numPivots++;
+			
+			// Simplify the pivot row
+			multiplyRow(pivotRow, Tools.reciprocal(elements[pivotRow][j]));
+			
+			// Eliminate rows below
+			for (int i = pivotRow + 1; i < rows; i++) {
+				Fr negated = new Fr();
+				Mcl.mul(negated, elements[i][j], new Fr(-1));
+				addRows(pivotRow, i, negated);
 			}
-			rowVectors[i] = new VectorND(rowCoords);
+				
 		}
 		
-		//initalize column vectors
-		for (int i = 0; i < elements[0].length; i++) {
-			ArrayList<Fr> columnCoords = new ArrayList<Fr>();
-			for (int j = 0; j < elements.length; j++) {
-				columnCoords.add(elements[j][i]);
+		// Compute reduced row echelon form (RREF)
+		for (int i = numPivots - 1; i >= 0; i--) {
+			// Find pivot
+			int pivotCol = 0;
+			while (pivotCol < columns && elements[i][pivotCol].equals(ZERO))
+				pivotCol++;
+			if (pivotCol == columns)
+				continue;  // Skip this all-zero row
+			
+			// Eliminate rows above
+			for (int j = i - 1; j >= 0; j--) {
+				Fr negated = new Fr();
+				Mcl.mul(negated, elements[j][pivotCol], new Fr(-1));
+				addRows(i, j, negated);
 			}
-			columnVectors[i] = new VectorND(columnCoords);
+				
+		}
+	}
+	
+	//O(n^3)) algorithm to find determinant of a square matrix
+	//Modified from the code given on this website: https://www.nayuki.io/res/gauss-jordan-elimination-over-any-field/Matrix.java
+	public Fr determinantAndRef() {
+		if (rows != columns)
+			throw new IllegalStateException("Matrix dimensions are not square");
+		
+		Fr ZERO = new Fr(0);
+		Fr det = new Fr(1);
+		// Compute row echelon form (REF)
+		int numPivots = 0;
+		for (int j = 0; j < columns; j++) {  // For each column
+			// Find a pivot row for this column
+			int pivotRow = numPivots;
+			while (pivotRow < rows && elements[pivotRow][j].equals(ZERO))
+				pivotRow++;
+			
+			if (pivotRow < rows) {
+				// This column has a nonzero pivot
+				if (numPivots != pivotRow) {
+					swapRows(numPivots, pivotRow);
+					Mcl.mul(det, det, new Fr(-1));
+				}
+				pivotRow = numPivots;
+				numPivots++;
+				
+				// Simplify the pivot row
+				Fr temp = elements[pivotRow][j];
+				Fr rec = Tools.reciprocal(temp);
+				multiplyRow(pivotRow, rec);
+				Mcl.mul(det, temp, det);
+				
+				// Eliminate rows below
+				for (int i = pivotRow + 1; i < rows; i++)  {
+					Fr negated = new Fr();
+					Mcl.mul(negated, elements[i][j], new Fr(-1));
+					addRows(pivotRow, i, negated);
+				}
+			}
+			
+			// Update determinant
+			Mcl.mul(det, elements[j][j], det);
+		}
+		return det;
+	}
+	
+	public void invert() {
+		
+		Fr ZERO = new Fr(0);
+		Fr ONE = new Fr(1);
+		
+		if (rows != columns)
+			throw new IllegalStateException("Matrix dimensions are not square");
+		
+		// Build augmented matrix: [this | identity]
+		NDMatrix temp = new NDMatrix(NDMatrix.MATRIX_ZERO, rows, columns * 2);
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++) {
+				temp.set(i, j, elements[i][j]);
+				temp.set(i, j + columns, i == j ? new Fr(1) : new Fr(0));
+			}
 		}
 		
+		// Do the main calculation
+		temp.reducedRowEchelonForm();
+		
+		// Check that the left half is the identity matrix
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++) {
+				if (!temp.getElements()[i][j].equals(i == j ? ONE : ZERO))
+					throw new IllegalStateException("Matrix is not invertible");
+			}
+		}
+		
+		// Extract inverse matrix from: [identity | inverse]
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++)
+				set(i, j, temp.getElements()[i][j + columns]);
+		}
+	}
+	
+	//multiplies an entire row of the matrix by the factor
+	public void multiplyRow(int row, Fr factor) {
+		if (row < 0 || row >= rowVectors.length)
+			throw new IndexOutOfBoundsException("Row index out of bounds");
+		
+		VectorND v = this.rowVectors[row].multiply(factor);
+		this.setRow(row, v);	
+	}
+	
+	//destRow += srcRow * factor
+	public void addRows(int srcRow, int destRow, Fr factor) {
+		if (srcRow < 0 || srcRow >= rowVectors.length || destRow < 0 || destRow >= rowVectors.length)
+			throw new IndexOutOfBoundsException("Row index out of bounds");
+		VectorND v = this.rowVectors[srcRow].multiply(factor);
+		v = v.add(this.rowVectors[destRow]);
+		this.setRow(destRow, v);
+	}
+	
+	
+	//swap two rows -- used for rref and determinant calculation
+	public void swapRows(int row0, int row1) {
+		if (row0 < 0 || row0 >= rowVectors.length || row1 < 0 || row1 >= rowVectors.length)
+			throw new IndexOutOfBoundsException("Row index out of bounds");
+		VectorND temp = rowVectors[row0];
+		rowVectors[row0] = rowVectors[row1];
+		rowVectors[row1] = temp;
+	}
+	
+	public NDMatrix minorMatrix(int i, int j)  {
+		int c = 0, d = 0;
+		Fr[][] resVals = new Fr[rows - 1][columns - 1];
+		for (int a = 0; a < rows; a++) {
+			if (a != i) {
+				d = 0;
+				for (int b = 0; b < rows; b++) {
+					if (b != j) {
+						resVals[c][d] = new Fr(elements[a][b]);
+						d ++;
+					}	
+				}
+				c++;
+			}
+		}		
+		return new NDMatrix(resVals);
+				
 	}
 	
 	//transpose this matrix (rows = columns)
@@ -262,6 +438,7 @@ public class NDMatrix {
 		return new NDMatrix(newElements);
 	}
 	
+	
 	//Preconditions: matrix must be a square matrix and # of rows = # of elements in vector
 	public static VectorND transform(NDMatrix matrix, VectorND vector) {
 		if (!(matrix.rows == matrix.columns))
@@ -295,5 +472,8 @@ public class NDMatrix {
 		return this.columnVectors;
 	}
 	
+	public Fr[][] getElements() {
+		return this.elements;
+	}
 	
 }
