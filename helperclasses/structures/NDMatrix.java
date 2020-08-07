@@ -76,7 +76,11 @@ public class NDMatrix {
 		
 	}
 	
-	//initialize a matrix with specified dimensions
+	public NDMatrix(int rows, int columns) { //default random matrix
+		this(MATRIX_RANDOM, rows, columns);
+	}
+	
+	//matrix with specified type (diagonal, identity, zero, etc)
 	public NDMatrix(int type, int rows, int columns) {
 		this.rows = rows;
 		this.columns = columns;
