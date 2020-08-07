@@ -1,17 +1,37 @@
 package helperclasses.structures;
-
 import java.util.ArrayList;
-
+import java.util.concurrent.ThreadLocalRandom;
 import com.herumi.mcl.*;
 
 public class VectorND {
 	
 	private ArrayList<Fr> coordinates = new ArrayList<Fr>();
 	private int n;
+	public final static int VECTOR_RANDOM = 0;
+	public final static int VECTOR_ZERO = 1;
+	public final static int VECTOR_ZERO_ONE = 2;
 	
-	public VectorND(int n) {				
-		init(n);	
-		this.n = n;
+	public VectorND(int n) { //default random vector
+		this(VECTOR_RANDOM, n);
+	}
+	
+	public VectorND(int type, int n) { //initialize vector with specified type
+		
+		if (type == VECTOR_RANDOM) {
+			init(n);	
+			this.n = n;
+		}
+		else if (type == VECTOR_ZERO) {
+			for (int i = 0; i < n; i++)
+				coordinates.add(new Fr(0));
+		}
+		else if (type == VECTOR_ZERO_ONE) { //random vector consisting of only zeroes and ones
+			for (int i = 0; i < n; i++) {
+				int p = ThreadLocalRandom.current().nextInt(0, 2);
+				coordinates.add(p == 0 ? new Fr(0) : new Fr(1));
+			}
+		}
+		
 	}
 	
 	public VectorND(Fr... coords) { //accepts arbitrary number of Fr inputs
@@ -37,7 +57,6 @@ public class VectorND {
 	public void setByCSPRNG() {
 		init(n); //to set randomly, just reinitialize
 	}
-	
 	
 	public VectorND multiply(Fr scalar) {
 		
@@ -89,6 +108,7 @@ public class VectorND {
 		return res;
 		
 	}
+	
 	//Overloaded method -- one for G1, one for G2
 	public static ArrayList<G2> exponentiate(G2 g, VectorND v) {
 		
@@ -120,6 +140,5 @@ public class VectorND {
 		
 		return "(" + res + ")";
 	}
-	
 	
 }
