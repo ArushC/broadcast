@@ -1,6 +1,8 @@
 package helperclasses.structures;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
+
 import com.herumi.mcl.*;
 
 public class VectorND {
@@ -13,6 +15,11 @@ public class VectorND {
 	
 	public VectorND(int n) { //default random vector
 		this(VECTOR_RANDOM, n);
+	}
+	
+	public VectorND(VectorND vector, Fr... otherElements) {
+		this.coordinates.addAll(vector.coordinates);
+		this.coordinates.addAll(Arrays.asList(otherElements));
 	}
 	
 	public VectorND(int type, int n) { //initialize vector with specified type
