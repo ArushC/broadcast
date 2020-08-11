@@ -1,11 +1,10 @@
 package schemesRevised;
+import helperclasses.polynomials.LagrangeInterpolationZp;
+import helperclasses.structures.VectorND;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.concurrent.ThreadLocalRandom;
-import helperclasses.LagrangeInterpolationZp;
-import helperclasses.structures.VectorND;
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2019/038.pdf, 3.1 (page 11)
@@ -14,7 +13,7 @@ public class BasicIBBESystemRevised {
 
 	private static int m;
 	
-	//input: security parameter lambda, maximal subset size l
+	//input: security parameter lambda, maximal subset size m
 	//output: Object[] containing public key PP and master secret key MSK
 	public static Object[] setup(int lambda, int m) {
 		
@@ -334,10 +333,7 @@ public class BasicIBBESystemRevised {
 			d.setByCSPRNG();
 			S.add(d);
 		}
-		S.add(ID);
-		
 		//random user ID to test decryption
-		
 		S.add(ID);
 		
 		long startKeygen = System.nanoTime();
@@ -389,7 +385,8 @@ public class BasicIBBESystemRevised {
 		
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
-		testRuntimes(Mcl.BN254, 10);
+		printRuntimes(100000, 100, Mcl.BN254);
+		//testRuntimes(Mcl.BN254, 10);
 	}
 	
 }
