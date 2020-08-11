@@ -1,4 +1,4 @@
-package helperclasses.miscellaneous;
+package miscellaneous;
 
 import com.herumi.mcl.Fr;
 import com.herumi.mcl.G1;
@@ -8,7 +8,7 @@ import com.herumi.mcl.Mcl;
 public class CustomPRF {
 	
 	private String key;
-	private int input;
+	private Fr input;
 	
 	
 	//input: 1. key - an Fr that has been set randomly using setByCSPRNG()
@@ -17,13 +17,19 @@ public class CustomPRF {
 		
 		Mcl.add(key, key, new Fr(input));
 		this.key = key.toString();
-		this.input = input;
+		this.input = new Fr(input);
 		
+	}
+	
+	public CustomPRF(Fr key, Fr input) {
+		Mcl.add(key, key, input);
+		this.key = key.toString();
+		this.input = input;
 	}
 	
 	
 	public void setKey(Fr newKey) {
-		Mcl.add(newKey, newKey, new Fr(input));
+		Mcl.add(newKey, newKey, input);
 		this.key = newKey.toString();
 	}
 	
