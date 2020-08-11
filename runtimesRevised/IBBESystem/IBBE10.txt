@@ -18,3 +18,10 @@ setup took 1.138748735 seconds
 encryption took 1546.141153087 seconds
 key generation took 4.66623E-4 seconds
 decryption took 2.141806947 seconds
+
+n = 100000, l = 10000
+
+setup took 6.99080707 seconds
+key generation took 0.008658518 seconds
+encryption & decryption took > 48 hours
+
