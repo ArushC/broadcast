@@ -73,22 +73,22 @@ public class IBBESystemRevised {
 		
 		Fr exp = new Fr(1);
 		for (int j = 0; j <= l; j++) {
-			G1 e1 = new G1();
-			G1 e2 = new G1();
-			Mcl.mul(e1, g1, exp);
-			Mcl.mul(e2, gHat1, exp);
-			Object[] elmnt1 = {e1, e2};
-			g1Set.add(elmnt1);
+				G1 e1 = new G1();
+				G1 e2 = new G1();
+				Mcl.mul(e1, g1, exp);
+				Mcl.mul(e2, gHat1, exp);
+				Object[] elmnt1 = {e1, e2};
+				g1Set.add(elmnt1);
 				
-			if (j <= l - 2) {
-				G2 e3 = new G2();
-				G2 e4 = new G2();
-				Mcl.mul(e3, g2, exp);
-				Mcl.mul(e4, gHat2, exp);
-				Object[] elmnt2 = {e3, e4};
-				g2Set.add(elmnt2);
-			}	
-			Mcl.mul(exp, exp, alpha);
+				if (j <= l - 2) {
+					G2 e3 = new G2();
+					G2 e4 = new G2();
+					Mcl.mul(e3, g2, exp);
+					Mcl.mul(e4, gHat2, exp);
+					Object[] elmnt2 = {e3, e4};
+					g2Set.add(elmnt2);
+				}	
+				Mcl.mul(exp, exp, alpha);
 		}
 		Object[] pkSecondPart = {g1Set, g2Set};
 		PK.add(pkSecondPart);
@@ -106,26 +106,26 @@ public class IBBESystemRevised {
 		
 	}
 	
-	//input:  secret key SK and int i
+	//input:  secret key SK and user ID
 	//output: ArrayList<Object> d, which contains all the individual secret keys
-	public static Object[] keyGen(Fr i, Fr[] SK) {
+	public static Object[] keyGen(Fr ID, Fr[] SK) {
 		
 		//Extract from SK
 		Fr alpha = SK[0];
 		Fr gamma = SK[1];
 		Fr kappa = SK[2];
 		
-		//1. compute ri = phi(kappa, i) where phi is a PRF
-		CustomPRF phi = new CustomPRF(kappa, i);
+		//1. compute ri = phi(kappa, ID) where phi is a PRF
+		CustomPRF phi = new CustomPRF(kappa, ID);
 		Fr ri = phi.compute(lambda);
 		
-		//2. compute hi = g2^((gamma - ri)/(alpha - i))
+		//2. compute hi = g2^((gamma - ri)/(alpha - ID))
 		G2 hi = new G2();
 		Fr exp = new Fr();
 		Fr expNum = new Fr();
 		Fr expDen = new Fr();
 		Mcl.sub(expNum, gamma, ri);
-		Mcl.sub(expDen, alpha, new Fr(i));
+		Mcl.sub(expDen, alpha, ID);
 		Mcl.div(exp, expNum, expDen);
 		Mcl.mul(hi, g2, exp);
 		
@@ -250,14 +250,14 @@ public class IBBESystemRevised {
 	}
 	
 	//returns the key K1 of type GT
-	public static GT decrypt(ArrayList<Fr> S, Fr i, Object[] di, Fr[] tau, Object[] Hdr, ArrayList<Object> PK) {
+	public static GT decrypt(ArrayList<Fr> S, Fr ID, Object[] di, Fr[] tau, Object[] Hdr, ArrayList<Object> PK) {
 		
 		//1. extract from PK and compute P(x)
 		Object[] pkSecondPart = (Object[]) PK.get(4);
 		ArrayList<Object> g2Parts = (ArrayList<Object>) pkSecondPart[1];
 		int n = (int) PK.get(0);
 		int l = (int) PK.get(1);
-		Fr[] Px = computePx(n, l, i, S);
+		Fr[] Px = computePx(n, l, ID, S);
 		
 		//2. extract from Hdr and di
 		G1 C1 = (G1) Hdr[0];
@@ -268,12 +268,12 @@ public class IBBESystemRevised {
 		G2 hi = (G2) di[1];
 		
 		//3. compute g2^(Fi(alpha))
-		Fr Fi = LagrangeInterpolationZp.computeFxHorner(tau, new Fr(i));
+		Fr Fi = LagrangeInterpolationZp.computeFxHorner(tau, ID);
 		Fr[] subtracted = tau.clone();
 		Fr constant = new Fr();
 		Mcl.sub(constant, subtracted[subtracted.length - 1], Fi);
 		subtracted[subtracted.length - 1] = constant;
-		Fr[] FiPoly = LagrangeInterpolationZp.syntheticDivide(subtracted, new Fr(i));
+		Fr[] FiPoly = LagrangeInterpolationZp.syntheticDivide(subtracted, ID);
 		G2 fiFin = new G2(g2);
 		Mcl.mul(fiFin, fiFin, FiPoly[FiPoly.length - 2]); //ignore last element because it is the remainder
 		int index = 1;
@@ -330,7 +330,7 @@ public class IBBESystemRevised {
 	//HELPER FUNCTIONS -----------------------------------------------------------------------------------------------------------------------------
 	
 	//computes Px as defined in the tagEncrypt function
-	private static Fr[] computePx(int n, int l, Fr i, ArrayList<Fr> S) {
+	private static Fr[] computePx(int n, int l, Fr ID, ArrayList<Fr> S) {
 			
 		Fr NEGATIVEONE = new Fr(-1);
 		
@@ -348,7 +348,7 @@ public class IBBESystemRevised {
 		Fr[] Px = {new Fr(1)};
 		for (int j = 1; j <= l; j++) {
 			Fr item = allIJValues.get(j - 1);
-			if (item.equals(i))
+			if (item.equals(ID))
 				continue;
 			//else
 			Fr secondElement = new Fr();
@@ -395,6 +395,7 @@ public class IBBESystemRevised {
 		}
 		
 		S.add(ID);
+		
 		long startEncrypt = System.nanoTime();
 		Object[] C = enc(S, PK);
 		long elapsedEncrypt = System.nanoTime() - startEncrypt;
