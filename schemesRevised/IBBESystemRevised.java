@@ -1,12 +1,11 @@
 package schemesRevised;
-import com.herumi.mcl.*;
 import helperclasses.polynomials.LagrangeInterpolationZp;
-import helperclasses.miscellaneous.*;
-import java.io.*;
-import java.security.SecureRandom;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
+import miscellaneous.CustomPRF;
+import miscellaneous.Tools;
+import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2008/268.pdf (4.1, page 10)
 //Note one part that was very difficult to figure out because it is not explained in the paper:
@@ -74,22 +73,22 @@ public class IBBESystemRevised {
 		
 		Fr exp = new Fr(1);
 		for (int j = 0; j <= l; j++) {
-				G1 e1 = new G1();
-				G1 e2 = new G1();
-				Mcl.mul(e1, g1, exp);
-				Mcl.mul(e2, gHat1, exp);
-				Object[] elmnt1 = {e1, e2};
-				g1Set.add(elmnt1);
+			G1 e1 = new G1();
+			G1 e2 = new G1();
+			Mcl.mul(e1, g1, exp);
+			Mcl.mul(e2, gHat1, exp);
+			Object[] elmnt1 = {e1, e2};
+			g1Set.add(elmnt1);
 				
-				if (j <= l - 2) {
-					G2 e3 = new G2();
-					G2 e4 = new G2();
-					Mcl.mul(e3, g2, exp);
-					Mcl.mul(e4, gHat2, exp);
-					Object[] elmnt2 = {e3, e4};
-					g2Set.add(elmnt2);
-				}	
-				Mcl.mul(exp, exp, alpha);
+			if (j <= l - 2) {
+				G2 e3 = new G2();
+				G2 e4 = new G2();
+				Mcl.mul(e3, g2, exp);
+				Mcl.mul(e4, gHat2, exp);
+				Object[] elmnt2 = {e3, e4};
+				g2Set.add(elmnt2);
+			}	
+			Mcl.mul(exp, exp, alpha);
 		}
 		Object[] pkSecondPart = {g1Set, g2Set};
 		PK.add(pkSecondPart);
@@ -109,7 +108,7 @@ public class IBBESystemRevised {
 	
 	//input:  secret key SK and int i
 	//output: ArrayList<Object> d, which contains all the individual secret keys
-	public static Object[] keyGen(int i, Fr[] SK) {
+	public static Object[] keyGen(Fr i, Fr[] SK) {
 		
 		//Extract from SK
 		Fr alpha = SK[0];
@@ -137,39 +136,37 @@ public class IBBESystemRevised {
 	}
 	
 	//outputs a random l - 1 degree polynomial
-	public static Fr[] tagGen(ArrayList<Integer> S, ArrayList<Object> PK) {
+	public static Fr[] tagGen(ArrayList<Fr> S, ArrayList<Object> PK) {
 		
 		//extract l and n, compute k
 		int n = (int) PK.get(0);
 		int l = (int) PK.get(1);
 		int k = S.size();
 		
-		ArrayList<Fr> xVals = new ArrayList<Fr>();
-		ArrayList<Fr> yVals = new ArrayList<Fr>();
+		Fr[] xVals = new Fr[l];
+		Fr[] yVals = new Fr[l];
 		
 		for (int j = k + 1; j <= l; j++) {
-			xVals.add(new Fr(n + j));
-			yVals.add(new Fr(1)); //F(n + j) = 1 for j in [k + 1, l]
+			xVals[j - 1] = new Fr(n + j);
+			yVals[j - 1] = new Fr(1); //F(n + j) = 1 for j in [k + 1, l]
 		}
 		
 		//this is the "random" part: the x values are the i-values in {1, ..., k}, F(i) = random Fr
-		for (int i = 1; i <= k; i++) {
+		for (int i = 0; i < k; i++) {
+			Fr p = S.get(i);
 			Fr fi = new Fr();
 			fi.setByCSPRNG();
-			xVals.add(new Fr(i));
-			yVals.add(new Fr(fi));
+			xVals[i] = p;
+			yVals[i] = fi;
 		}
 		
 		//calculate the lagrange interpolation based on these points
-		Fr[] xValues = xVals.toArray(new Fr[0]);
-		Fr[] yValues = yVals.toArray(new Fr[0]);
-		Fr[] tau = LagrangeInterpolationZp.laGrange(xValues, yValues, l - 1);
-		
+		Fr[] tau = LagrangeInterpolationZp.laGrange(xVals, yVals, l - 1);
 		return tau;
 		
 	}
 	
-	public static Object[] tagEncrypt(Fr[] tau, ArrayList<Integer> S, ArrayList<Object> PK) {
+	public static Object[] tagEncrypt(Fr[] tau, ArrayList<Fr> S, ArrayList<Object> PK) {
 		
 		//extract l and n, compute k
 		int n = (int) PK.get(0);
@@ -186,7 +183,7 @@ public class IBBESystemRevised {
 		G2 gHat2 = (G2) ((Object[]) g2Parts.get(0))[1];
 		
 		//compute Px
-		Fr[] Px = computePx(n, l, -1, S);
+		Fr[] Px = computePx(n, l, new Fr(-1), S);
 		
 		Fr t = new Fr();
 		t.setByCSPRNG();
@@ -247,13 +244,13 @@ public class IBBESystemRevised {
 	}
 	
 	//returns an array containing (tau, Hdr, K)
-	public static Object[] enc(ArrayList<Integer> S, ArrayList<Object> PK) {
+	public static Object[] enc(ArrayList<Fr> S, ArrayList<Object> PK) {
 		Fr[] tau = tagGen(S, PK);
 		return tagEncrypt(tau, S, PK);
 	}
 	
 	//returns the key K1 of type GT
-	public static GT decrypt(ArrayList<Integer> S, int i, Object[] di, Fr[] tau, Object[] Hdr, ArrayList<Object> PK) {
+	public static GT decrypt(ArrayList<Fr> S, Fr i, Object[] di, Fr[] tau, Object[] Hdr, ArrayList<Object> PK) {
 		
 		//1. extract from PK and compute P(x)
 		Object[] pkSecondPart = (Object[]) PK.get(4);
@@ -333,27 +330,29 @@ public class IBBESystemRevised {
 	//HELPER FUNCTIONS -----------------------------------------------------------------------------------------------------------------------------
 	
 	//computes Px as defined in the tagEncrypt function
-	private static Fr[] computePx(int n, int l, int i, ArrayList<Integer> S) {
+	private static Fr[] computePx(int n, int l, Fr i, ArrayList<Fr> S) {
 			
+		Fr NEGATIVEONE = new Fr(-1);
+		
 		int k = S.size();
-		ArrayList<Integer> ijValues = new ArrayList<Integer>();
+		ArrayList<Fr> ijValues = new ArrayList<Fr>();
 		for (int j = k + 1; j <= l; j++) {
-			ijValues.add(n +  j);
+			ijValues.add(new Fr(n + j));
 		}
 			
-		ArrayList<Integer> allIJValues = new ArrayList<Integer>();
+		ArrayList<Fr> allIJValues = new ArrayList<Fr>();
 		allIJValues.addAll(S);
 		allIJValues.addAll(ijValues);
-			
+		
 		//compute P(x) (or Pi(x), if i is in allIJValues)
 		Fr[] Px = {new Fr(1)};
 		for (int j = 1; j <= l; j++) {
-			Fr item = new Fr(allIJValues.get(j - 1));
-			if (item.equals(new Fr(i)))
+			Fr item = allIJValues.get(j - 1);
+			if (item.equals(i))
 				continue;
 			//else
 			Fr secondElement = new Fr();
-			Mcl.mul(secondElement, item, new Fr(-1));
+			Mcl.mul(secondElement, item, NEGATIVEONE);
 			Fr[] next = {new Fr(1), secondElement};
 			Px = LagrangeInterpolationZp.multiply(Px, next);
 		}
@@ -362,7 +361,7 @@ public class IBBESystemRevised {
 	}
 	
 	
-	//precomputes K = e(gHat2, g1)^(gamma * alpha^(l - 1))
+	//precomputes K = e(gHat2, g1)^(alpha * gamma^(l - 1))
 	private static void precompute(G1 g1, G2 gHat2, Fr alpha, Fr gamma, int l) {
 		
 		K = new GT();
@@ -380,40 +379,37 @@ public class IBBESystemRevised {
 		Object[] setup = setup(n, l, lambda);
 		long elapsedSetup = System.nanoTime() - startSetup;
 		double secondsSetup = ((double) elapsedSetup) / 1E9;
-		
 		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
 		Fr[] MSK = (Fr[]) setup[1];
 		
-		ArrayList<Integer> S = new ArrayList<Integer>();
-		//randomly generate numbers to put in the subset S (NO REPEATS)
-		ArrayList<Integer> randomNums = new ArrayList<Integer>();
-		for (int i = 0; i < n; i++) { 
-			randomNums.add(i + 1);
-		}
-		for (int i = 0; i < l; i++) {
-			int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
-			int randomID = randomNums.get(randomIndex);
-			S.add(randomID);
-			randomNums.remove(randomIndex);
+		//random user ID to test decryption
+		Fr ID = new Fr();
+		ID.setByCSPRNG();
+		
+		//generate subset S
+		ArrayList<Fr> S = new ArrayList<Fr>();
+		for (int i = 0; i < l - 1; i++) {
+			Fr d = new Fr();
+			d.setByCSPRNG();
+			S.add(d);
 		}
 		
-		//generate ciphertext and keys
-		int i = S.get(ThreadLocalRandom.current().nextInt(0, S.size()));
+		S.add(ID);
 		long startEncrypt = System.nanoTime();
 		Object[] C = enc(S, PK);
 		long elapsedEncrypt = System.nanoTime() - startEncrypt;
 		double secondsEncrypt = ((double) elapsedEncrypt) / 1E9;
 		long startKeyGen = System.nanoTime();
-		Object[] di = keyGen(i, MSK);
+		Object[] di = keyGen(ID, MSK);
 		long elapsedKeyGen = System.nanoTime() - startKeyGen;
 		double secondsKeyGen = ((double) elapsedKeyGen) / 1E9;
-		
+
 		//finally, decrypt
 		Fr[] tau = (Fr[]) C[0];
 		Object[] Hdr = (Object[]) C[1];
 		GT K1 = (GT) C[2];
 		long startDecrypt = System.nanoTime();
-		GT K2 = decrypt(S, i, di, tau, Hdr, PK);
+		GT K2 = decrypt(S, ID, di, tau, Hdr, PK);
 		long elapsedDecrypt = System.nanoTime() - startDecrypt;
 		double secondsDecrypt = ((double) elapsedDecrypt) / 1E9;
 		
