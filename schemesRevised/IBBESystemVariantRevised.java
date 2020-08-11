@@ -75,17 +75,17 @@ public class IBBESystemVariantRevised {
 		
 		Fr exp = new Fr(1);
 		for (int j = 0; j <= l; j++) {
-			Object[] elmnt = (j > l - 2) ? new Object[1] : new Object[2];
-			G1 e1 = new G1();
-			Mcl.mul(e1, gHat1, exp);
-			elmnt[0] = e1;
-			if (j <= l - 2) {
-				G2 e2 = new G2();
-				Mcl.mul(e2, gHat2, exp);
-				elmnt[1] = e2;
-			}
-			setElements.add(elmnt);	
-			Mcl.mul(exp, exp, alpha);
+				Object[] elmnt = (j > l - 2) ? new Object[1] : new Object[2];
+				G1 e1 = new G1();
+				Mcl.mul(e1, gHat1, exp);
+				elmnt[0] = e1;
+				if (j <= l - 2) {
+					G2 e2 = new G2();
+					Mcl.mul(e2, gHat2, exp);
+					elmnt[1] = e2;
+				}
+				setElements.add(elmnt);	
+				Mcl.mul(exp, exp, alpha);
 		}
 		
 		PK.add(element4);
@@ -108,9 +108,9 @@ public class IBBESystemVariantRevised {
 		return result;		
 	}
 	
-	//input:  secret key SK and ID i
-	//output: ArrayList<Object> d, which contains all the individual secret keys
-	public static Object[] keyGen(Fr i, Fr[] SK) {
+	//input:  secret key SK and user ID
+	//output: ArrayList<Object> di, the user's secret key
+	public static Object[] keyGen(Fr ID, Fr[] SK) {
 		
 		//Extract from SK
 		Fr alpha = SK[0];
@@ -118,7 +118,7 @@ public class IBBESystemVariantRevised {
 		Fr kappa = SK[2];
 		
 		//1. compute ri = phi(kappa, i) where phi is a PRF
-		CustomPRF phi = new CustomPRF(kappa, i);
+		CustomPRF phi = new CustomPRF(kappa, ID);
 		Fr ri = phi.compute(lambda);
 		
 		//2. compute hi = g2^((gamma - ri)/(alpha - i))
@@ -127,7 +127,7 @@ public class IBBESystemVariantRevised {
 		Fr expNum = new Fr();
 		Fr expDen = new Fr();
 		Mcl.sub(expNum, gamma, ri);
-		Mcl.sub(expDen, alpha, new Fr(i));
+		Mcl.sub(expDen, alpha, ID);
 		Mcl.div(exp, expNum, expDen);
 		Mcl.mul(hi, g2, exp);
 		
@@ -188,12 +188,12 @@ public class IBBESystemVariantRevised {
 	
 	
 	//returns the key K1 of type GT
-	public static GT decrypt(ArrayList<Fr> S, Fr i, Object[] di, Object[] Hdr, ArrayList<Object> PK) {
+	public static GT decrypt(ArrayList<Fr> S, Fr ID, Object[] di, Object[] Hdr, ArrayList<Object> PK) {
 		
 		//1. extract from PK and compute P(x)
 		int n = (int) PK.get(0);
 		int l = (int) PK.get(1);
-		Fr[] Px = computePx(n, l, i, S); //P(x)/(x - i)
+		Fr[] Px = computePx(n, l, ID, S); //P(x)/(x - i)
 		//2. extract from Hdr and di
 		G1 C1 = (G1) Hdr[0];
 		G1 C2 = (G1) Hdr[1];
