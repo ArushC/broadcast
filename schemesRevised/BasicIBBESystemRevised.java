@@ -378,7 +378,7 @@ public class BasicIBBESystemRevised {
 	
 	//Test the runtimes of the algorithms
 	public static void testRuntimes(int lambda, int percent) {
-		for (int N = 10; N <= 1000000; N *= 10) {
+		for (int N = 100; N <= 1000000; N *= 10) {
 			int subsetSize = (int) (0.01 * percent * N);
 			printRuntimes(N, subsetSize, lambda);
 		}
