@@ -1,5 +1,7 @@
 package helperclasses.polynomials;
-import com.herumi.mcl.*;
+import java.io.File;
+import com.herumi.mcl.Fr;
+import com.herumi.mcl.Mcl;
 
 public class LagrangeInterpolationZp {
 	
@@ -68,6 +70,7 @@ public class LagrangeInterpolationZp {
 	//returns the coefficients of the LaGrange polynomial
 	//precondition: xValues.length == yValues.length
 	//default: n = (# of data points - 1)
+	//Runtime: O(n^3)
 	public static Fr[] laGrange(Fr[] xValues, Fr[] yValues, int n) {
 		
 		Fr[] coefficients = new Fr[n + 1];
@@ -86,6 +89,7 @@ public class LagrangeInterpolationZp {
 		return sum;
 		
 	}
+	
 	
 	//LaGrange helper function
 	public static Fr[] lx(int j, Fr[] xValues, int n) {
@@ -107,15 +111,64 @@ public class LagrangeInterpolationZp {
 		
 		for (int i = 0; i < numerator.length; i++) {
 			Mcl.div(numerator[i], numerator[i], denominator);
-			//System.out.println(numerator[i] + " ");
 		}
 		
 		return numerator;
 		
 	}
 	
+	//Lagrange Interpolation faster method
+	//helper function to precompute the numerator and denominator
+	private static Fr[] precomputedNumerator(Fr[] xVals, int n) {
+		Fr[] numerator = {new Fr(1)};
+		for (int m = 0; m <= n; m++) {
+			Fr secondElement = new Fr();
+			Mcl.mul(secondElement, xVals[m], new Fr(-1));
+			Fr[] next = {new Fr(1), secondElement};
+			numerator = multiply(numerator, next);
+		}
+		return numerator;
+	}
+	
+	private static Fr[] lxFaster(int j, Fr[] xVals, Fr[] numerator, int n) {
+		Fr[] numeratorDivided = LagrangeInterpolationZp.syntheticDivide(numerator, xVals[j]);
+		
+		//extract the polynomial from the divided numerator
+		Fr[] polynomial = new Fr[numeratorDivided.length - 1];
+		for (int i = 0; i < numeratorDivided.length - 1; i++)
+			polynomial[i] = numeratorDivided[i];
+		
+		Fr denominator = LagrangeInterpolationZp.computeFxHorner(polynomial, xVals[j]);
+
+		for (int i = 0; i < polynomial.length; i++) {
+			Mcl.div(polynomial[i], polynomial[i], denominator);
+			
+		}
+
+		return polynomial;
+	}
+	
+	//Time: O(n^2)
+	public static Fr[] laGrangeFaster(Fr[] xValues, Fr[] yValues, int n) {
+		
+		Fr[] coefficients = new Fr[n + 1];
+		Fr[] numerator = precomputedNumerator(xValues, n);
+		Fr[] initialYValue = {new Fr(1)};
+		Fr[] sum = {new Fr(0)};
+		
+		for (int j = 0; j <= n; j++) {
+			Fr[] yj = {yValues[j]};
+			Fr[] lx = lxFaster(j, xValues, numerator, n);
+			Fr[] product = multiply(yj, lx);
+			sum = add(sum, product);
+		}
+		
+		return sum;
+		
+	}
 	
 	//computes f(x) given the coefficients of f(x) and the value of x
+	//Time: O(n log(n))
 	public static Fr computeFx(Fr[] coefficients, Fr x) {
 		Fr sum = new Fr(0);
 		Fr xExponentiated = new Fr(1);
@@ -126,8 +179,21 @@ public class LagrangeInterpolationZp {
 			Mcl.mul(xExponentiated, xExponentiated, x);
 		}
 			
-			return sum;
+		return sum;
 	}
+	
+	//computes f(x) given the coefficients of f(x) and the value of x -- fastest method
+	//Time: O(n)
+	public static Fr computeFxHorner(Fr[] coefficients, Fr x) {
+			
+			Fr result = new Fr(coefficients[0]);
+			for (int i = 1; i < coefficients.length; i++) {
+				Mcl.mul(result, result, x);
+				Mcl.add(result, result, coefficients[i]);
+			}
+				
+			return result;
+		}
 	
 	//computes f(x) given the roots of a polynomial in form (x - a)(x - b)...
 	public static Fr computeFxFromRoots(Fr[] roots, Fr x) {
@@ -156,33 +222,28 @@ public class LagrangeInterpolationZp {
 		return result;
 	}
 	
-	//computes f(x) given the coefficients of f(x) and the value of x using Horner's Method (fastest)
-	public static Fr computeFxHorner(Fr[] coefficients, Fr x) {
-			
-			Fr result = new Fr(coefficients[0]);
-			for (int i = 1; i < coefficients.length; i++) {
-				Mcl.mul(result, result, x);
-				Mcl.add(result, result, coefficients[i]);
-			}
-				
-			return result;
-		}
-	
 	public static void main(String[] args) {
-		
-		System.load("/Users/arushchhatrapati/Documents/mcl/lib/libmcljava.dylib");
+		File lib = new File("../../lib/libmcljava.dylib");
+		System.load(lib.getAbsolutePath());
 		Mcl.SystemInit(Mcl.BN254);
-		Fr[] xValues = {new Fr(1), new Fr(2), new Fr(3), new Fr(4), new Fr(5), new Fr(6), new Fr(7)};
-		Fr[] yValues = {new Fr(3), new Fr(5), new Fr(7), new Fr(9), new Fr(1), new Fr(1), new Fr(1)};
-		Fr[] laGrange = laGrange(xValues, yValues, 6);
-		//expected: returns yValues
-		for (int count = 0; count < xValues.length; count++) {
-			System.out.print(computeFx(laGrange, xValues[count]) + " ");
+		//check how fast the new LaGrange evaluation algorithm is compared to the old one
+		Fr[] xValues = new Fr[101];
+		Fr[] yValues = new Fr[101];
+		for (int i = 0; i < 101; i++) {
+			xValues[i] = new Fr(i + 1);
+			Fr c = new Fr();
+			c.setByCSPRNG();
+			yValues[i] = c;
 		}
-	
+		long start = System.nanoTime();
+		Fr[] laGrange = laGrangeFaster(xValues, yValues, 101);
+		double secondsFaster =  ((double) (System.nanoTime() - start))/1E9;
+		long start2 = System.nanoTime();
+		Fr[] laGrange2 = laGrange(xValues, yValues, 101);
+		double secondsFaster2 =  ((double) (System.nanoTime() - start2))/1E9;
+		System.out.println("Old LaGrange: " + secondsFaster2);
+		System.out.println("New LaGrange: " + secondsFaster);
 		
 	}
-		
-	
 	
 }
