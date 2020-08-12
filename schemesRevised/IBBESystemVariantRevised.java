@@ -361,6 +361,6 @@ public class IBBESystemVariantRevised {
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
 		testRuntimes(Mcl.BN254, 10);
-		}
+	}
 	
 }
