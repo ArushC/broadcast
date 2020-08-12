@@ -2,24 +2,24 @@ RUNTIMES WERE CUT OFF AFTER 2 DAYS (48 HOURS)
 
 SUCCESSFUL DECRYPTION: n = 100, l = 10
 
-setup took 0.024096745 seconds
-encryption took 0.02067611 seconds
-key generation took 0.002355248 seconds
-decryption took 0.010187128 seconds
+setup took 0.018641474 seconds
+encryption took 0.015651855 seconds
+key generation took 0.001265804 seconds
+decryption took 0.007066805 seconds
 
 SUCCESSFUL DECRYPTION: n = 1000, l = 100
 
-setup took 0.112917811 seconds
-encryption took 2.753958948 seconds
-key generation took 0.00181111 seconds
-decryption took 0.109912815 seconds
+setup took 0.086544138 seconds
+encryption took 2.642479741 seconds
+key generation took 4.58776E-4 seconds
+decryption took 0.081223539 seconds
 
 SUCCESSFUL DECRYPTION: n = 10000, l = 1000
 
-setup took 1.138748735 seconds
-encryption took 1546.141153087 seconds
-key generation took 4.66623E-4 seconds
-decryption took 2.141806947 seconds
+setup took 0.678189269 seconds
+encryption took 1529.390325183 seconds
+key generation took 7.22008E-4 seconds
+decryption took 2.866805124 seconds
 
 n = 100000, l = 10000
 
