@@ -1,20 +1,27 @@
 SUCCESSFUL DECRYPTION: n = 100, l = 10
 
-setup took 0.018159535 seconds
-encryption took 0.00507681 seconds
-key generation took 0.00213167 seconds
-decryption took 0.003157813 seconds
+setup took 0.02243122 seconds
+encryption took 0.007949487 seconds
+key generation took 0.002097937 seconds
+decryption took 0.005496477 seconds
 
 SUCCESSFUL DECRYPTION: n = 1000, l = 100
 
-setup took 0.03359547 seconds
-encryption took 0.02963484 seconds
-key generation took 2.76284E-4 seconds
-decryption took 0.029573313 seconds
+setup took 0.048193483 seconds
+encryption took 0.045347447 seconds
+key generation took 2.72571E-4 seconds
+decryption took 0.028953331 seconds
 
 SUCCESSFUL DECRYPTION: n = 10000, l = 1000
 
-setup took 0.347844835 seconds
-encryption took 2.863401395 seconds
-key generation took 5.46838E-4 seconds
-decryption took 1.926087209 seconds
+setup took 0.328998861 seconds
+encryption took 2.899684039 seconds
+key generation took 5.1326E-4 seconds
+decryption took 1.990255487 seconds
+
+SUCCESSFUL DECRYPTION: n = 100000, l = 10000
+
+setup took 3.191895598 seconds
+encryption took 158.23413565 seconds
+key generation took 0.001309195 seconds
+decryption took 157.240318604 seconds
