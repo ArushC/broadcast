@@ -161,7 +161,7 @@ public class IBBESystemRevised {
 		}
 		
 		//calculate the lagrange interpolation based on these points
-		Fr[] tau = LagrangeInterpolationZp.laGrange(xVals, yVals, l - 1);
+		Fr[] tau = LagrangeInterpolationZp.laGrangeFaster(xVals, yVals, l - 1);
 		return tau;
 		
 	}
