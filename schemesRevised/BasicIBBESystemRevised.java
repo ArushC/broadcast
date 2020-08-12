@@ -8,7 +8,7 @@ import java.util.Collections;
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2019/038.pdf, 3.1 (page 11)
-//No changes were made to the described scheme (it is written in the Type-3 Pairing setting)
+//Changes made: switched g1 and g2 (less multiplications and exponentiations over g1 are favorable)
 public class BasicIBBESystemRevised {
 
 	private static int m;
@@ -62,10 +62,10 @@ public class BasicIBBESystemRevised {
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		
 		//calculate U1, W1, gT
-		ArrayList<G1> U1 = VectorND.exponentiate(g1, u);
+		ArrayList<G2> U1 = VectorND.exponentiate(g2, u);
 		
-		G1 W1 = new G1();
-		Mcl.mul(W1, g1, w);
+		G2 W1 = new G2();
+		Mcl.mul(W1, g2, w);
 		
 		GT gT = new GT();
 		Mcl.pairing(gT, g1, g2);
@@ -75,44 +75,44 @@ public class BasicIBBESystemRevised {
 		ArrayList<Object> PP = new ArrayList<Object>();
 		
 		//e1 = g1, skip to e2
-		G1 e2 = new G1();
-		Mcl.mul(e2, g1, b);
+		G2 e2 = new G2();
+		Mcl.mul(e2, g2, b);
 		
 		//e3, e4, e5, e6 are U1, W1, gT, g2, skip to e7
-		ArrayList<G2> e7 = VectorND.exponentiate(g2, u1);
-		ArrayList<G2> e8 = VectorND.exponentiate(g2, u2);
+		ArrayList<G1> e7 = VectorND.exponentiate(g1, u1);
+		ArrayList<G1> e8 = VectorND.exponentiate(g1, u2);
 		
-		G2 e9 = new G2();
-		Mcl.mul(e9, g2, w1);
+		G1 e9 = new G1();
+		Mcl.mul(e9, g1, w1);
 		
-		G2 e10 = new G2();
-		Mcl.mul(e10, g2, w2);
+		G1 e10 = new G1();
+		Mcl.mul(e10, g1, w2);
 		
-		G1 e11 = new G1();
-		Mcl.mul(e11, g1, beta);
+		G2 e11 = new G2();
+		Mcl.mul(e11, g2, beta);
 		Mcl.mul(e11, e11, alpha);
 		
-		G2 e12 = new G2();
-		Mcl.mul(e12, g2, beta);
+		G1 e12 = new G1();
+		Mcl.mul(e12, g1, beta);
 		Mcl.mul(e12, e12, alpha1);
 		
-		G2 e13 = new G2();
-		Mcl.mul(e13, g2, beta);
+		G1 e13 = new G1();
+		Mcl.mul(e13, g1, beta);
 		Mcl.mul(e13, e13, alpha2);
 		
-		G2 e14 = new G2();
+		G1 e14 = new G1();
 		Fr exp14 = new Fr();
 		Mcl.div(exp14, new Fr(1), beta);
-		Mcl.mul(e14, g2, exp14);
+		Mcl.mul(e14, g1, exp14);
 		
 		PP.addAll(Arrays.asList(g1, e2, U1, W1, gT, g2, e7, e8, e9, e10, e11, e12, e13, e14));
 		
 		//Add to MSK		
-		G2 e1S = new G2();
-		Mcl.mul(e1S, g2, alpha1);
+		G1 e1S = new G1();
+		Mcl.mul(e1S, g1, alpha1);
 		
-		G2 e2S = new G2();
-		Mcl.mul(e2S, g2, alpha2);
+		G1 e2S = new G1();
+		Mcl.mul(e2S, g1, alpha2);
 		
 		Object[] MSK = {e1S, e2S};
 		
@@ -132,37 +132,37 @@ public class BasicIBBESystemRevised {
 		
 		
 		//calculate K1, K2, K3, ...
-		G2 K1 = new G2();
-		G2 K1Helper = new G2();
-		Mcl.mul(K1Helper, (G2) PP.get(8), r);
-		Mcl.add(K1, (G2) MSK[0], K1Helper);
+		G1 K1 = new G1();
+		G1 K1Helper = new G1();
+		Mcl.mul(K1Helper, (G1) PP.get(8), r);
+		Mcl.add(K1, (G1) MSK[0], K1Helper);
 		
-		G2 K2 = new G2();
-		G2 K2Helper = new G2();
-		Mcl.mul(K2Helper, (G2) PP.get(9), r);
-		Mcl.add(K2, (G2) MSK[1], K2Helper);
+		G1 K2 = new G1();
+		G1 K2Helper = new G1();
+		Mcl.mul(K2Helper, (G1) PP.get(9), r);
+		Mcl.add(K2, (G1) MSK[1], K2Helper);
 		
-		G2 K3 = new G2();
-		Mcl.mul(K3, (G2) PP.get(5), r);
+		G1 K3 = new G1();
+		Mcl.mul(K3, (G1) PP.get(0), r);
 		
-		G2[] K4 = new G2[m];
-		G2[] K5 = new G2[m];
+		G1[] K4 = new G1[m];
+		G1[] K5 = new G1[m];
 		
 		Fr expDen = new Fr(ID);
 		
 		for (int i = 1; i <= m; i++) {
-			G2 K4i = new G2();
-			G2 K5i = new G2();
-			G2 K4iDen = new G2(((ArrayList<G2>) PP.get(6)).get(0));
-			G2 K5iDen = new G2(((ArrayList<G2>) PP.get(7)).get(0));
+			G1 K4i = new G1();
+			G1 K5i = new G1();
+			G1 K4iDen = new G1(((ArrayList<G1>) PP.get(6)).get(0));
+			G1 K5iDen = new G1(((ArrayList<G1>) PP.get(7)).get(0));
 			Mcl.mul(K4iDen, K4iDen, expDen);
 			Mcl.mul(K5iDen, K5iDen, expDen);
-			G2 K4NumHelper = new G2();
-			G2 K5NumHelper = new G2();
-			Mcl.mul(K4NumHelper, (G2) PP.get(8), kTags.getCoords().get(i - 1));
-			Mcl.mul(K5NumHelper, (G2) PP.get(9), kTags.getCoords().get(i - 1));
-			Mcl.add(K4i, K4NumHelper, ((ArrayList<G2>) PP.get(6)).get(i));
-			Mcl.add(K5i, K5NumHelper, ((ArrayList<G2>) PP.get(7)).get(i));
+			G1 K4NumHelper = new G1();
+			G1 K5NumHelper = new G1();
+			Mcl.mul(K4NumHelper, (G1) PP.get(8), kTags.getCoords().get(i - 1));
+			Mcl.mul(K5NumHelper, (G1) PP.get(9), kTags.getCoords().get(i - 1));
+			Mcl.add(K4i, K4NumHelper, ((ArrayList<G1>) PP.get(6)).get(i));
+			Mcl.add(K5i, K5NumHelper, ((ArrayList<G1>) PP.get(7)).get(i));
 			Mcl.sub(K4i, K4i, K4iDen);
 			Mcl.sub(K5i, K5i, K5iDen);
 			Mcl.mul(K4i, K4i, r);
@@ -191,17 +191,17 @@ public class BasicIBBESystemRevised {
 		
 		//compute C1, C2, C3
 		
-		G1 C1 = new G1();
-		Mcl.mul(C1, (G1) PP.get(0), s);
+		G2 C1 = new G2();
+		Mcl.mul(C1, (G2) PP.get(5), s);
 		
-		G1 C2 = new G1();
-		Mcl.mul(C2, (G1) PP.get(1), s);
+		G2 C2 = new G2();
+		Mcl.mul(C2, (G2) PP.get(1), s);
 		
-		G1 C3 = new G1();
-		Mcl.mul(C3, (G1) PP.get(3), ctag);
-		ArrayList<G1> U = (ArrayList<G1>) PP.get(2);
+		G2 C3 = new G2();
+		Mcl.mul(C3, (G2) PP.get(3), ctag);
+		ArrayList<G2> U = (ArrayList<G2>) PP.get(2);
 		for (int i = 0; i <= S.size(); i++) {
-			G1 prod = new G1();
+			G2 prod = new G2();
 			Mcl.mul(prod, U.get(i), y.get(i));
 			Mcl.add(C3, C3, prod);
 		}
@@ -233,17 +233,17 @@ public class BasicIBBESystemRevised {
 		}
 		
 		//compute K4 and K5 products
-		G2[] K4Values = (G2[]) SKID[3];
-		G2[] K5Values = (G2[]) SKID[4];
-		G2 K4Product = new G2();
+		G1[] K4Values = (G1[]) SKID[3];
+		G1[] K5Values = (G1[]) SKID[4];
+		G1 K4Product = new G1();
 		Mcl.mul(K4Product, K4Values[0], y.get(1)); //initialize
-		G2 K5Product = new G2();
+		G1 K5Product = new G1();
 		Mcl.mul(K5Product, K5Values[0], y.get(1)); //initialize
 		
 		for (int i = 2; i <= m; i++) {
-			G2 inner4 = new G2();
+			G1 inner4 = new G1();
 			Mcl.mul(inner4, K4Values[i - 1], y.get(i));
-			G2 inner5 = new G2();
+			G1 inner5 = new G1();
 			Mcl.mul(inner5, K5Values[i - 1], y.get(i));
 			Mcl.add(K4Product, inner4, K4Product);
 			Mcl.add(K5Product, inner5, K5Product);
@@ -251,22 +251,22 @@ public class BasicIBBESystemRevised {
 		
 		//Finally, compute the pairings
 		//First extract everything that is needed
-		G1 C1 = (G1) Hdr[0];
-		G1 C2 = (G1) Hdr[1];
-		G1 C3 = (G1) Hdr[2];
+		G2 C1 = (G2) Hdr[0];
+		G2 C2 = (G2) Hdr[1];
+		G2 C3 = (G2) Hdr[2];
 		Fr ctag = (Fr) Hdr[3];
-		G2 K1 = (G2) SKID[0];
-		G2 K2 = (G2) SKID[1];
-		G2 K3 = (G2) SKID[2];
+		G1 K1 = (G1) SKID[0];
+		G1 K2 = (G1) SKID[1];
+		G1 K3 = (G1) SKID[2];
 		
 		GT e1 = new GT();
-		Mcl.pairing(e1, C1, K4Product);
+		Mcl.pairing(e1, K4Product, C1);
 		
 		GT e2 = new GT();
-		Mcl.pairing(e2, C2, K5Product);
+		Mcl.pairing(e2, K5Product, C2);
 		
 		GT e3 = new GT();
-		Mcl.pairing(e3, C3, K3);
+		Mcl.pairing(e3, K3, C3);
 		Mcl.pow(e3, e3, new Fr(-1));
 		
 		GT A = new GT();
@@ -280,10 +280,10 @@ public class BasicIBBESystemRevised {
 		Mcl.pow(A, A, exp);
 		
 		GT e4 = new GT();
-		Mcl.pairing(e4, C1, K1);
+		Mcl.pairing(e4, K1, C1);
 		
 		GT e5 = new GT();
-		Mcl.pairing(e5, C2, K2);
+		Mcl.pairing(e5, K2, C2);
 		
 		GT K = new GT();
 		Mcl.mul(K, e4, e5);
@@ -385,9 +385,9 @@ public class BasicIBBESystemRevised {
 		
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
-		printRuntimes(100000, 100, Mcl.BN254);
-		//testRuntimes(Mcl.BN254, 10);
+		testRuntimes(Mcl.BN254, 10);
 	}
 	
 }
+
 
