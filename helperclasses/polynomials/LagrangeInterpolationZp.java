@@ -131,13 +131,9 @@ public class LagrangeInterpolationZp {
 	}
 	
 	private static Fr[] lxFaster(int j, Fr[] xVals, Fr[] numerator, int n) {
-		Fr[] numeratorDivided = LagrangeInterpolationZp.syntheticDivide(numerator, xVals[j]);
+		Fr[] polynomial = LagrangeInterpolationZp.syntheticDivideWithoutRemainder(numerator, xVals[j]);
 		
 		//extract the polynomial from the divided numerator
-		Fr[] polynomial = new Fr[numeratorDivided.length - 1];
-		for (int i = 0; i < numeratorDivided.length - 1; i++)
-			polynomial[i] = numeratorDivided[i];
-		
 		Fr denominator = LagrangeInterpolationZp.computeFxHorner(polynomial, xVals[j]);
 
 		for (int i = 0; i < polynomial.length; i++) {
@@ -222,21 +218,21 @@ public class LagrangeInterpolationZp {
 		return result;
 	}
 	
-	//returns an Fr[] containing the resultant polynomial without the remainder
-	//ex. if root = 1 then dividing by (x - 1)
-	public static Fr[] syntheticDivideWithoutRemainder(Fr[] polynomial, Fr root) {
-		Fr[] result = new Fr[polynomial.length - 1];
-		result[0] = new Fr(polynomial[0]);
-		Fr previous = result[0];
-		for (int i = 1; i < polynomial.length - 1; i++) {
-			Fr addend = new Fr();
-			Mcl.mul(addend, root, previous);
-			Mcl.add(addend, addend, polynomial[i]);
-			result[i] = addend;
-			previous = result[i];
+		//returns an Fr[] containing the resultant polynomial
+		//ex. if root = 1 then dividing by (x - 1)
+		public static Fr[] syntheticDivideWithoutRemainder(Fr[] polynomial, Fr root) {
+			Fr[] result = new Fr[polynomial.length - 1];
+			result[0] = new Fr(polynomial[0]);
+			Fr previous = result[0];
+			for (int i = 1; i < polynomial.length - 1; i++) {
+				Fr addend = new Fr();
+				Mcl.mul(addend, root, previous);
+				Mcl.add(addend, addend, polynomial[i]);
+				result[i] = addend;
+				previous = result[i];
+			}
+			return result;
 		}
-		return result;
-	}
 	
 	public static void main(String[] args) {
 		File lib = new File("../../lib/libmcljava.dylib");
@@ -252,10 +248,10 @@ public class LagrangeInterpolationZp {
 			yValues[i] = c;
 		}
 		long start = System.nanoTime();
-		Fr[] laGrange = laGrangeFaster(xValues, yValues, 101);
+		Fr[] laGrange = laGrangeFaster(xValues, yValues, 100);
 		double secondsFaster =  ((double) (System.nanoTime() - start))/1E9;
 		long start2 = System.nanoTime();
-		Fr[] laGrange2 = laGrange(xValues, yValues, 101);
+		Fr[] laGrange2 = laGrange(xValues, yValues, 100);
 		double secondsFaster2 =  ((double) (System.nanoTime() - start2))/1E9;
 		System.out.println("Old LaGrange: " + secondsFaster2);
 		System.out.println("New LaGrange: " + secondsFaster);
