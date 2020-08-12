@@ -222,6 +222,22 @@ public class LagrangeInterpolationZp {
 		return result;
 	}
 	
+	//returns an Fr[] containing the resultant polynomial without the remainder
+	//ex. if root = 1 then dividing by (x - 1)
+	public static Fr[] syntheticDivideWithoutRemainder(Fr[] polynomial, Fr root) {
+		Fr[] result = new Fr[polynomial.length - 1];
+		result[0] = new Fr(polynomial[0]);
+		Fr previous = result[0];
+		for (int i = 1; i < polynomial.length - 1; i++) {
+			Fr addend = new Fr();
+			Mcl.mul(addend, root, previous);
+			Mcl.add(addend, addend, polynomial[i]);
+			result[i] = addend;
+			previous = result[i];
+		}
+		return result;
+	}
+	
 	public static void main(String[] args) {
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
