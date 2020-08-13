@@ -1,4 +1,9 @@
+SUCCESSFUL DECRYPTION: n = 100, l = 10
 
+setup took 0.004842253 seconds
+encryption took 0.004609045 seconds
+key generation took 4.6983E-4 seconds
+decryption took 0.006604436 seconds
 
 SUCCESSFUL DECRYPTION: n = 1000, l = 100
 
