@@ -130,6 +130,18 @@ public class VectorND {
 		
 	}
 	
+	//precondition: v1.size() = v2.size()
+	public static GT vectorPairing(ArrayList<G1> v1, ArrayList<G2> v2) {
+		GT result = new GT();
+		Mcl.pairing(result, v1.get(0), v2.get(0));
+		for (int i = 1; i < v1.size(); i++) {
+			GT e = new GT();
+			Mcl.pairing(e, v1.get(i), v2.get(i));
+			Mcl.mul(result, result, e);
+		}
+		return result;
+	}
+	
 	//getter method
 	public ArrayList<Fr> getCoords() {
 		return this.coordinates;
