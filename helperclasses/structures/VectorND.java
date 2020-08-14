@@ -130,28 +130,6 @@ public class VectorND {
 		
 	}
 	
-	//precondition: v1.size() = v2.size()
-	public static ArrayList<G1> addG1(ArrayList<G1> v1, ArrayList<G1> v2) {
-		ArrayList<G1> result = new ArrayList<G1>();
-		for (int i = 0; i < result.size(); i++) {
-			G1 sum = new G1();
-			Mcl.add(sum, v1.get(i), v2.get(i));
-			result.add(sum);
-		}
-		return result;
-	}
-	
-	
-	public static ArrayList<G2> addG2(ArrayList<G2> v1, ArrayList<G2> v2) {
-		ArrayList<G2> result = new ArrayList<G2>();
-		for (int i = 0; i < result.size(); i++) {
-			G2 sum = new G2();
-			Mcl.add(sum, v1.get(i), v2.get(i));
-			result.add(sum);
-		}
-		return result;
-	}
-	
 	//getter method
 	public ArrayList<Fr> getCoords() {
 		return this.coordinates;
