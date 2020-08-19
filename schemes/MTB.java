@@ -13,7 +13,7 @@ import com.herumi.mcl.*;
 //CHANGES MADE: Instead of including R in MSK, include R^T (R transposed) and R^(-1) so that 
 //they do not have to be recomputed during each of the other phases
 
-public class MTBV2 {
+public class MTB {
 	
 	private static ArrayList<Integer> chi = new ArrayList<Integer>(); //helper keys
 	private static int u, t, n, v;
@@ -27,10 +27,10 @@ public class MTBV2 {
 		Mcl.SystemInit(lambda);
 		
 		//save so it can be used in later functions
-		MTBV2.u = u;
-		MTBV2.t = t;
-		MTBV2.n = n;
-		MTBV2.v = v;
+		MTB.u = u;
+		MTB.t = t;
+		MTB.n = n;
+		MTB.v = v;
 		chi.addAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 		
 		//choose random beta, gamma
