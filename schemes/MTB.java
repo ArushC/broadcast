@@ -10,7 +10,7 @@ import java.util.Set;
 import com.herumi.mcl.*;
 
 //
-//The scheme: (include link to Zhandry's paper here once it is published), section 9.2
+//The scheme: https://eprint.iacr.org/2020/954, section 9.2
 //CHANGES MADE: include R^(-1) in the master secret key so it does not have to be recomputed during secret key extraction
 //NOTE: The scheme described in Zhandry's paper does not work. The pairings do not cancel out during decryption
 //We modified the construction slightly by doing the following:
@@ -304,10 +304,7 @@ public class MTB {
 		return res;
 	}
 	
-	public static GT decMTB(Object[] SK, Object[] MSK, Set<Integer> S, Set<Integer> U, Object[] c) {
-		
-		Fr gamma = (Fr) MSK[1]; 
-		NDMatrix RInverted = (NDMatrix) MSK[3];
+	public static GT decMTB(Object[] SK, Set<Integer> S, Set<Integer> U, Object[] c) {
 		
 		//extract from the ciphertext and secret key
 		ArrayList<Object> sk = (ArrayList<Object>) SK[0];
@@ -319,11 +316,9 @@ public class MTB {
 		
 		Set<Integer> SDiff = new HashSet<Integer>(S);
 		Set<Integer> UDiff = new HashSet<Integer>(U);
-		Set<Integer> intersect = new HashSet<Integer>(U);
 		
 		SDiff.removeAll(U); //SDiff = S \ U
 		UDiff.removeAll(S); //UDiff = U \ S
-		intersect.retainAll(S);
 		
 		//compute the polynomial Q
 		Fr[] Q = {new Fr(1)};
@@ -427,7 +422,7 @@ public class MTB {
 		Object[] enc = encMTB(MSK, S, y);
 		Object[] C = (Object[]) enc[0];
 		GT encapsulatedKey = (GT) enc[1];
-		GT encapsulatedKey1 = decMTB(SK, MSK, S, U, C);
+		GT encapsulatedKey1 = decMTB(SK, S, U, C);
 		System.out.println("Encapsulated Key Actual: " + encapsulatedKey);
 		System.out.println("Decrypted Encapsulated Key: " + encapsulatedKey1);
 
