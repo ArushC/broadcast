@@ -9,10 +9,12 @@ import java.util.HashSet;
 import java.util.Set;
 import com.herumi.mcl.*;
 
+//
 //The scheme: (include link to Zhandry's paper here once it is published), section 9.2
-//CHANGES MADE: Instead of including R in MSK, include R^T (R transposed) and R^(-1) so that 
-//they do not have to be recomputed during each of the other phases
-
+//CHANGES MADE: include R^(-1) in the master secret key so it does not have to be recomputed during secret key extraction
+//NOTE: The scheme described in Zhandry's paper does not work. The pairings do not cancel out during decryption
+//We modified the construction slightly by doing the following:
+//1. 
 public class MTB {
 	
 	private static ArrayList<Integer> chi = new ArrayList<Integer>(); //helper keys
@@ -20,8 +22,6 @@ public class MTB {
 	private static G1 g1;
 	private static G2 g2;
 	
-	//input: v = number of users, n = vector dimension, u = t = 1
-	//the larger t is, the less likely it is that decryption for a random user will be possible
 	public static Object[] genMTB(int u, int v, int t, int n, int lambda) {
 		
 		Mcl.SystemInit(lambda);
@@ -48,8 +48,6 @@ public class MTB {
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		
 		Object[] MSK = new Object[chi.size() + 4]; //instantiate master secret key
-		MSK[0] = beta;
-		MSK[1] = gamma;
 		
 		NDMatrix R = new NDMatrix(NDMatrix.MATRIX_RANDOM, n + 2, n + 2);
 		
@@ -58,9 +56,13 @@ public class MTB {
 		RInverted.invert();
 		MSK[3] = RInverted;
 		
-		R.transpose();
+		//transpose and add R
+		R = R.transpose();
+		
+		MSK[0] = beta;
+		MSK[1] = gamma;
 		MSK[2] = R;
-
+		
 		//add tau_theta for each theta in chi to the master secret key
 		for (int theta: chi) {
 			Fr tauTheta = new Fr();
@@ -76,9 +78,7 @@ public class MTB {
 		Mcl.pow(e1, e1, beta);
 		
 		VectorND exp2NT = new VectorND(VectorND.VECTOR_ZERO, n + 2);
-		Fr e1Exp2NT = new Fr();
-		Mcl.mul(e1Exp2NT, beta, gamma);
-		exp2NT.getCoords().set(0, e1Exp2NT);
+		exp2NT.getCoords().set(0, gamma);
 		VectorND exp2 = NDMatrix.transform(RInverted, exp2NT);
 		ArrayList<G1> e2 = VectorND.exponentiate(g1, exp2);
 		
@@ -163,7 +163,6 @@ public class MTB {
 		VectorND expHVNT = new VectorND(VectorND.VECTOR_ZERO, n + 2);
 		Fr e1ExpHVNT = new Fr();
 		Mcl.sub(e1ExpHVNT, beta, tTheta);
-		Mcl.div(e1ExpHVNT, e1ExpHVNT, beta);
 		Mcl.div(e1ExpHVNT, e1ExpHVNT, gamma);
 		expHVNT.getCoords().set(0, e1ExpHVNT);
 		VectorND expHV = NDMatrix.transform(R, expHVNT);
@@ -213,8 +212,7 @@ public class MTB {
 		//compute C1
 		VectorND expC1NT = new VectorND(VectorND.VECTOR_ZERO, n + 2);
 		Fr e1ExpC1NT = new Fr();
-		Mcl.mul(e1ExpC1NT, alpha, beta);
-		Mcl.mul(e1ExpC1NT, e1ExpC1NT, gamma);
+		Mcl.mul(e1ExpC1NT, alpha, gamma);
 		expC1NT.getCoords().set(0, e1ExpC1NT);
 		VectorND expC1 = NDMatrix.transform(RInverted, expC1NT);
 		ArrayList<G1> c1 = VectorND.exponentiate(g1, expC1);
@@ -266,36 +264,46 @@ public class MTB {
 			Mcl.div(next[0], next[0], new Fr(s));
 			coefficients = LagrangeInterpolationZp.multiply(coefficients, next);
 		}
+		
 		//then use the coefficients to calculate c2
 		ArrayList<G2> c2 = new ArrayList<G2>((ArrayList<G2>) PK.get(2));
 		int k = coefficients.length;
-		G2 helper = new G2();
-		Mcl.mul(helper, c2.get(0), coefficients[k - 1]);
-		c2.set(0, helper);
-		for (int i = k - 2; i >= 0; i--) {
-			ArrayList<G2> element = new ArrayList<G2>((ArrayList<G2>) PK.get(k - i + 1));
-			G2 p = new G2();
-			Mcl.mul(p, element.get(0), coefficients[i]);
-			element.set(0, p);
-			//add the element by the vector c2
-			for (int j = 0; j < element.size(); j++) {
-				G2 q = new G2();
-				Mcl.add(q, c2.get(j), element.get(j));
-				c2.set(j, q);
-			}
+		for (int z = 0; z < c2.size(); z++) {
+			G2 helper = new G2();
+			Mcl.mul(helper, c2.get(z), coefficients[k - 1]);
+			c2.set(z, helper);
 		}
 		
-		//multiply first element of c2 by alpha
-		G2 e1C2 = new G2();
-		Mcl.mul(e1C2, c2.get(0), alpha);
-		c2.set(0, e1C2);
+		for (int i = k - 2; i >= 0; i--) {
+			ArrayList<G2> element = new ArrayList<G2>((ArrayList<G2>) PK.get(k - i + 1));
+			for (int y  = 0; y < c2.size(); y++) {
+				G2 p = new G2();
+				Mcl.mul(p, element.get(y), coefficients[i]);
+				element.set(y, p);
+			}
+			for (int j = 0; j < element.size(); j++) {
+				G2 b = new G2();
+				Mcl.add(b, c2.get(j), element.get(j));
+				c2.set(j, b);
+			}
+			
+		}
+		
+		for (int l = 0; l < c2.size(); l++) {
+			G2 b = new G2();
+			Mcl.mul(b, c2.get(l), alpha);
+			c2.set(l, b);
+		}
 		
 		Object[] c = {c1, c2};
 		Object[] res = {c, encapsulatedKey};
 		return res;
 	}
 	
-	public static GT decMTB(Object[] SK, Set<Integer> S, Set<Integer> U, Object[] c) {
+	public static GT decMTB(Object[] SK, Object[] MSK, Set<Integer> S, Set<Integer> U, Object[] c) {
+		
+		Fr gamma = (Fr) MSK[1]; 
+		NDMatrix RInverted = (NDMatrix) MSK[3];
 		
 		//extract from the ciphertext and secret key
 		ArrayList<Object> sk = (ArrayList<Object>) SK[0];
@@ -307,9 +315,11 @@ public class MTB {
 		
 		Set<Integer> SDiff = new HashSet<Integer>(S);
 		Set<Integer> UDiff = new HashSet<Integer>(U);
+		Set<Integer> intersect = new HashSet<Integer>(U);
 		
 		SDiff.removeAll(U); //SDiff = S \ U
 		UDiff.removeAll(S); //UDiff = U \ S
+		intersect.retainAll(S);
 		
 		//compute the polynomial Q
 		Fr[] Q = {new Fr(1)};
@@ -333,18 +343,21 @@ public class MTB {
 		Mcl.add(lastCoefficient, PNumerator[PNumerator.length - 1], new Fr(1));
 		PNumerator[PNumerator.length - 1] = lastCoefficient;
 		Fr[] P = LagrangeInterpolationZp.syntheticDivideWithoutRemainder(PNumerator, new Fr(0));
-		
-
 		ArrayList<G2> JThetaP = new ArrayList<G2>((ArrayList<G2>) hkTheta.get(1));
 		int p = P.length;
-		G2 helperJTP = new G2();
-		Mcl.mul(helperJTP, JThetaP.get(0), P[p - 1]);
-		JThetaP.set(0, helperJTP);
+		for (int z = 0; z < JThetaP.size(); z++) {
+			G2 helperJTP = new G2();
+			Mcl.mul(helperJTP, JThetaP.get(z), P[p - 1]);
+			JThetaP.set(z, helperJTP);
+		}
+		
 		for (int i = p - 2; i >= 0; i--) {
 			ArrayList<G2> element = new ArrayList<G2>((ArrayList<G2>) hkTheta.get(p - i));
-			G2 a = new G2();
-			Mcl.mul(a, element.get(0), P[i]);
-			element.set(0, a);
+			for (int y = 0; y < element.size(); y++) {
+				G2 a = new G2();
+				Mcl.mul(a, element.get(y), P[i]);
+				element.set(y, a);
+			}
 			//add the element by the vector JThetaP
 			for (int j = 0; j < element.size(); j++) {
 				G2 b = new G2();
@@ -356,14 +369,20 @@ public class MTB {
 		//compute HThetaR
 		ArrayList<G1> HThetaR = new ArrayList<G1>((ArrayList<G1>) sk.get(0));
 		int r = R.length;
-		G1 helperHTR = new G1();
-		Mcl.mul(helperHTR, HThetaR.get(0), R[r - 1]);
-		HThetaR.set(0, helperHTR);
+		for (int z = 0; z < HThetaR.size(); z++)  {
+			G1 helperHTR = new G1();
+			Mcl.mul(helperHTR, HThetaR.get(z), R[r - 1]);
+			HThetaR.set(z, helperHTR);
+		}
+
 		for (int i = r - 2; i >= 0; i--) {
 			ArrayList<G1> element = new ArrayList<G1>((ArrayList<G1>) sk.get(r - i - 1));
-			G1 a = new G1();
-			Mcl.mul(a, element.get(0), R[i]);
-			element.set(0, a);
+			for (int y = 0; y < element.size(); y++) {
+				G1 a = new G1();
+				Mcl.mul(a, element.get(y), R[i]);
+				element.set(y, a);
+			}
+			
 			//add the element by the vector JThetaP
 			for (int j = 0; j < element.size(); j++) {
 				G1 b = new G1();
@@ -372,7 +391,6 @@ public class MTB {
 			}
 		}
 		
-		//finally, compute the pairings
 		GT e1 = VectorND.vectorPairing(c1, hTheta);
 		GT e2 = VectorND.vectorPairing(c1, JThetaP);
 		GT e3 = VectorND.vectorPairing(HThetaR, c2);
@@ -390,9 +408,9 @@ public class MTB {
 		Object[] MSK = (Object[]) gen[1];
 		
 		Set<Integer> S = new HashSet<Integer>();
-		S.addAll(Arrays.asList(1, 4, 3, 2, 6));
+		S.addAll(Arrays.asList(1, 4, 6, 7, 10));
 		Set<Integer> U = new HashSet<Integer>();
-		U.addAll(Arrays.asList(1, 2, 3, 5));
+		U.addAll(Arrays.asList(1, 2, 3, 4));
 		
 		VectorND y = new VectorND(VectorND.VECTOR_ZERO_ONE, 10);
 		//calculate attribute x (such that x dot y = 0) -- note both x & y are binary
@@ -405,15 +423,12 @@ public class MTB {
 		Object[] enc = encMTB(MSK, S, y);
 		Object[] C = (Object[]) enc[0];
 		GT encapsulatedKey = (GT) enc[1];
-		GT encapsulatedKey1 = decMTB(SK, S, U, C);
+		GT encapsulatedKey1 = decMTB(SK, MSK, S, U, C);
 		System.out.println("Encapsulated Key Actual: " + encapsulatedKey);
 		System.out.println("Decrypted Encapsulated Key: " + encapsulatedKey1);
-		
-		
-	}
 
-	
-	
-	
+	}
 	
 }
+
+
