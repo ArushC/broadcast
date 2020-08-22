@@ -14,7 +14,9 @@ import com.herumi.mcl.*;
 //CHANGES MADE: include R^(-1) in the master secret key so it does not have to be recomputed during secret key extraction
 //NOTE: The scheme described in Zhandry's paper does not work. The pairings do not cancel out during decryption
 //We modified the construction slightly by doing the following:
-//1. 
+//1. in the public key, second element: g1^((beta * gamma, 0, 0) * R^(-1)) --> g1^((beta, 0, 0) * R^(-1))
+//2. in the vector exponent of hTheta: ((beta - tTheta)/(beta * gamma)) --> (beta - tTheta)/gamma
+//3. in the vector exponent of c1: (alpha * beta * gamma) --> (alpha * gamma)
 public class MTB {
 	
 	private static ArrayList<Integer> chi = new ArrayList<Integer>(); //helper keys
@@ -22,6 +24,8 @@ public class MTB {
 	private static G1 g1;
 	private static G2 g2;
 	
+	//input: v = number of users, n = vector dimension, u = t = 1
+	//the larger t is, the less likely it is that decryption for a random user will be possible
 	public static Object[] genMTB(int u, int v, int t, int n, int lambda) {
 		
 		Mcl.SystemInit(lambda);
