@@ -1,15 +1,3 @@
-package schemes;
-import helperclasses.polynomials.LagrangeInterpolationZp;
-import helperclasses.structures.NDMatrix;
-import helperclasses.structures.VectorND;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import com.herumi.mcl.*;
-
-//
 //The scheme: https://eprint.iacr.org/2020/954, section 9.2
 //CHANGES MADE: include R^(-1) in the master secret key so it does not have to be recomputed during secret key extraction
 //NOTE: The scheme described in Zhandry's paper does not work. The pairings do not cancel out during decryption
@@ -19,7 +7,7 @@ import com.herumi.mcl.*;
 //3. in the vector exponent of c1: (alpha * beta * gamma) --> (alpha * gamma)
 public class MTB {
 	
-	private static ArrayList<Integer> chi = new ArrayList<Integer>(); //helper keys
+	private static int MAX_HELPER_KEYS;
 	private static int u, t, n, v;
 	private static G1 g1;
 	private static G2 g2;
@@ -35,7 +23,7 @@ public class MTB {
 		MTB.t = t;
 		MTB.n = n;
 		MTB.v = v;
-		chi.addAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+		MAX_HELPER_KEYS = v;
 		
 		//choose random beta, gamma
 		Fr beta = new Fr();
@@ -51,7 +39,7 @@ public class MTB {
 		g2 = new G2();
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		
-		Object[] MSK = new Object[chi.size() + 4]; //instantiate master secret key
+		Object[] MSK = new Object[MAX_HELPER_KEYS + 4]; //instantiate master secret key
 		
 		NDMatrix R = new NDMatrix(NDMatrix.MATRIX_RANDOM, n + 2, n + 2);
 		
@@ -67,11 +55,12 @@ public class MTB {
 		MSK[1] = gamma;
 		MSK[2] = R;
 		
-		//add tau_theta for each theta in chi to the master secret key
-		for (int theta: chi) {
+		//add all tau_theta to the master secret key
+		//note that theta = {1, 2, ..., v} because we set the bound on the number of helper keys equal to v
+		for (int i = 1; i <= MAX_HELPER_KEYS; i++) {
 			Fr tauTheta = new Fr();
 			tauTheta.setByCSPRNG();
-			MSK[theta + 3] = tauTheta; //assuming first is tau_1, ..., tau_n
+			MSK[i + 3] = tauTheta; //assuming first is tau_1, ..., tau_n
 		}
 		
 		//calculate the public key
@@ -111,26 +100,26 @@ public class MTB {
 		NDMatrix R = (NDMatrix) MSK[2];
 		NDMatrix RInverted = (NDMatrix) MSK[3];
 		
-		//the function f will iterate over ints in U, first int that could be a valid index will be used, otherwise use 0
-		//in the same loop, compute the product in the denominator of the exponent
-		int index = 0;
+		//the function f will take the ints in U in order and define F(x) as the polynomial defined by those integers
+		//Then it will compute the polynomial value for the first int in U to map to theta (mod U.size())
+		//note that in this loop, we simultaneously compute the product in the numerator of the secret keys
+		int count = 0;
 		Fr product = new Fr(1);
+		Fr[] coefficients = new Fr[U.size()];
 		Fr ONE = new Fr(1);
-		boolean firstFound = false;
+		
 		for (int s: U) {
-			
-			if (s < chi.size() && !firstFound) {
-				index = s;
-				firstFound = true;
-			}
-			
+			coefficients[count] = new Fr(s);
 			Fr c = new Fr();
 			Mcl.div(c, gamma, new Fr(s));	
 			Mcl.sub(c, ONE, c);
 			Mcl.mul(product, product, c);
+			count++;
 		}
 		
-		int theta = chi.get(index);
+		Fr p = new Fr(coefficients[0]);
+		BigInteger index = new BigInteger(LagrangeInterpolationZp.computeFxHorner(coefficients, p).toString()).mod(new BigInteger(Integer.toString(U.size())));
+		int theta =  index.add(new BigInteger("1")).intValue();
 		Fr tTheta = (Fr) MSK[theta + 3]; //get tTheta
 		
 		ArrayList<Object> sk = new ArrayList<Object>();
@@ -253,9 +242,13 @@ public class MTB {
 		alpha.setByCSPRNG();
 		
 		ArrayList<G1> c1 = new ArrayList<G1>((ArrayList<G1>) PK.get(1));
-		G1 e1C1 = new G1();
-		Mcl.mul(e1C1, c1.get(0), alpha);
-		c1.set(0, e1C1);
+		
+		for (int l = 0; l < c1.size(); l++) {
+			G1 elC1 = new G1();
+			Mcl.mul(elC1, c1.get(l), alpha);
+			c1.set(l, elC1);
+		}
+		
 		
 		GT encapsulatedKey = new GT((GT) PK.get(0));
 		Mcl.pow(encapsulatedKey, encapsulatedKey, alpha);
@@ -279,6 +272,7 @@ public class MTB {
 		}
 		
 		for (int i = k - 2; i >= 0; i--) {
+			if (coefficients.length == 1) break;
 			ArrayList<G2> element = new ArrayList<G2>((ArrayList<G2>) PK.get(k - i + 1));
 			for (int y  = 0; y < c2.size(); y++) {
 				G2 p = new G2();
@@ -313,7 +307,6 @@ public class MTB {
 		ArrayList<G1> c1 = (ArrayList<G1>) c[0];
 		ArrayList<G2> c2 = (ArrayList<G2>) c[1];
 		
-		
 		Set<Integer> SDiff = new HashSet<Integer>(S);
 		Set<Integer> UDiff = new HashSet<Integer>(U);
 		
@@ -338,10 +331,11 @@ public class MTB {
 		
 		//compute the polynomial P
 		Fr[] PNumerator = LagrangeInterpolationZp.negate(Q);
-		Fr lastCoefficient = new Fr();
-		Mcl.add(lastCoefficient, PNumerator[PNumerator.length - 1], new Fr(1));
-		PNumerator[PNumerator.length - 1] = lastCoefficient;
-		Fr[] P = LagrangeInterpolationZp.syntheticDivideWithoutRemainder(PNumerator, new Fr(0));
+		Fr[] P = new Fr[PNumerator.length - 1];
+		for (int i = 0; i < PNumerator.length - 1; i++)
+			P[i] = PNumerator[i]; //divides perfectly, so the coefficients of P are just the  
+								  //coefficients of PNumerator, excluding the last coefficient
+		
 		ArrayList<G2> JThetaP = new ArrayList<G2>((ArrayList<G2>) hkTheta.get(1));
 		int p = P.length;
 		for (int z = 0; z < JThetaP.size(); z++) {
@@ -375,6 +369,7 @@ public class MTB {
 		}
 
 		for (int i = r - 2; i >= 0; i--) {
+			if (U.size() == 1) break;
 			ArrayList<G1> element = new ArrayList<G1>((ArrayList<G1>) sk.get(r - i - 1));
 			for (int y = 0; y < element.size(); y++) {
 				G1 a = new G1();
@@ -398,18 +393,18 @@ public class MTB {
 		return e1;
 	}
 		
-	
+	//TEST THE MTB SCHEME
 	public static void main(String[] args) {
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
-		Object[] gen = genMTB(10, 100, 1, 10, Mcl.BN254);
+		Object[] gen = genMTB(10, 1000, 1, 10, Mcl.BN254);
 		ArrayList<Object> PK = (ArrayList<Object>) gen[0];
 		Object[] MSK = (Object[]) gen[1];
 		
 		Set<Integer> S = new HashSet<Integer>();
 		S.addAll(Arrays.asList(1, 4, 6, 7, 10));
 		Set<Integer> U = new HashSet<Integer>();
-		U.addAll(Arrays.asList(1, 2, 3, 4));
+		U.addAll(Arrays.asList(1));
 		
 		VectorND y = new VectorND(VectorND.VECTOR_ZERO_ONE, 10);
 		//calculate attribute x (such that x dot y = 0) -- note both x & y are binary
@@ -419,15 +414,11 @@ public class MTB {
 			xVals.add(y.getCoords().get(i).equals(ZERO) ? new Fr(1) : new Fr(0));
 		VectorND x = new VectorND(xVals);
 		Object[] SK = extractMTB(MSK, U, x);
-		Object[] enc = encMTB(MSK, S, y);
+		Object[] enc = encMTB(PK, S);
 		Object[] C = (Object[]) enc[0];
 		GT encapsulatedKey = (GT) enc[1];
 		GT encapsulatedKey1 = decMTB(SK, S, U, C);
 		System.out.println("Encapsulated Key Actual: " + encapsulatedKey);
 		System.out.println("Decrypted Encapsulated Key: " + encapsulatedKey1);
-
 	}
-	
 }
-
-
