@@ -476,7 +476,7 @@ class RiskyBroadcastMultischeme {
 		int j = (int) Math.ceil(((double) ID) / N);
 		int i = (ID % N == 0) ? N : (ID % N);
 		Object[] MSK = (Object[]) tk.get(0);
-		int iStarJ = (int) tk.get(i);
+		int iStarJ = (int) tk.get(j);
 		
 		//calculate wJI value
 		VectorND wJI;
