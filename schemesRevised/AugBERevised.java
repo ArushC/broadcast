@@ -533,8 +533,6 @@ public class AugBERevised {
 			
 			//Finally, print out the results
 			String success = (M1.equals(M)) ? "SUCCESSFUL DECRYPTION" : "FAILED DECRYPTION";
-			if (success == "FAILED DECRYPTION")
-					System.out.println(S);
 			System.out.println(success + ": " + "N = " + N + ", subset size = " + subsetSize);
 			System.out.println(); //padding
 			System.out.println("setup took " + secondsSetup + " seconds");
