@@ -1,20 +1,23 @@
 package schemesRevised;
-import helperclasses.miscellaneous.Tools;
 import helperclasses.structures.Vector2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
+import miscellaneous.Tools;
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/eprint-bin/getfile.pl?entry=2009/532&version=20091104:184423&file=532.pdf
-//No changes were made to the described scheme
-public class PLBESystemRevised {
+//Changes made: added a master secret key to the scheme which contains the public paramaters, in addition to:
+//r1, r2, ..., r_m, c1, c2, ..., c_m, alpha1, alpha2, ..., alpha_m
+//also added a key generation function to the PLBE scheme
+public class PLBERevised {
 	
 	private static int m;
 	
 	//ouput: public key PK, private key for each user in the system
-	public static ArrayList<Object> setupPLBE(int N, int lambda) {
+	public static Object[] setupPLBE(int N, int lambda) {
 		
 		Mcl.SystemInit(lambda);
 		
@@ -26,7 +29,7 @@ public class PLBESystemRevised {
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		
 		int m = (int) Math.ceil(Math.pow(N, 0.5));
-		PLBESystemRevised.m = m; //save this value so it can be used in other functions
+		PLBERevised.m = m; //save this value so it can be used in other functions
 
 		//2. Choose random exponents and store in arrays
 		Fr[] cExponents = new Fr[m];
@@ -78,27 +81,33 @@ public class PLBESystemRevised {
 		}
 		
 		PK[2] = pkThirdPart;
-		ArrayList<Object> result = new ArrayList<Object>();
-		result.add(PK);
 		
-		//Now add all the secret keys to result: K_u, where u = 1, 2, ..., N (This will take O(n) time)
-		
-		for (int u = 1; u <= N; u++) {
-			//1. extract x and y from u (u = (x-1)m + y)
-			int y = (u % m == 0) ? m : (u % m);
-			int x = (int) Math.ceil(((double) u) / m);
-			G2 kP2 = new G2();
-			Mcl.mul(kP2, g2, rExponents[x - 1]);
-			Mcl.mul(kP2, kP2, cExponents[y - 1]);
-			G2 Ku = new G2();
-			Mcl.mul(Ku, g2, alphaExponents[x - 1]);
-			Mcl.add(Ku, Ku, kP2);
-			result.add(Ku);
-		}
-		
+		Object[] MSK = {PK, rExponents, cExponents, alphaExponents};
+		Object[] result = {PK, MSK};
 		return result;
 	}
 	
+	//generates the key for user u
+	public static G2 keyGenPLBE(int u, Object[] MSK) {
+		
+		//extract from MSK
+		Object[] PK = (Object[]) MSK[0];
+		G1 g1 = (G1) PK[0];
+		G2 g2 = (G2) PK[1];
+		Fr[] rExponents = (Fr[]) MSK[1];
+		Fr[] cExponents = (Fr[]) MSK[2];
+		Fr[] alphaExponents = (Fr[]) MSK[3];
+		
+		int y = (u % m == 0) ? m : (u % m);
+		int x = (int) Math.ceil(((double) u) / m);
+		G2 kP2 = new G2();
+		Mcl.mul(kP2, g2, rExponents[x - 1]);
+		Mcl.mul(kP2, kP2, cExponents[y - 1]);
+		G2 SK = new G2();
+		Mcl.mul(SK, g2, alphaExponents[x - 1]);
+		Mcl.add(SK, SK, kP2);
+		return SK;
+	}
 	
 
 	//input: Object[] PK, message M
@@ -500,7 +509,7 @@ public class PLBESystemRevised {
 			
 			//Get elapsed time for setup(n) 
 			long startSetup = System.nanoTime();
-			ArrayList<Object> setup = setupPLBE(N, lambda);
+			Object[] setup = setupPLBE(N, lambda);
 			long elapsedSetup = System.nanoTime() - startSetup;
 			double secondsSetup = ((double) elapsedSetup) / 1E9;
 			
@@ -512,9 +521,11 @@ public class PLBESystemRevised {
 			Mcl.hashAndMapToG2(g2, Tools.generateRandomBytes(3));
 			Mcl.pairing(M, g1, g2);
 			
-			//extract public key from setup
-			Object[] PK = (Object[]) setup.get(0);
+			//extract PK & MSK from setup
+			Object[] PK = (Object[]) setup[0];
+			Object[] MSK = (Object[]) setup[1];
 			
+				
 			long startEncrypt = System.nanoTime();
 			Object[][] C = encryptPLBE(PK, M);
 			long elapsedEncrypt = System.nanoTime() - startEncrypt;
@@ -523,8 +534,13 @@ public class PLBESystemRevised {
 			//Get random user ID u to test the decryption
 			int u = ThreadLocalRandom.current().nextInt(0, N);
 			
-			//Get elapsed time for decrypt
-			G2 SK = (G2) setup.get(u);
+			//Get elapsed time for keygen
+			long startKeyGen = System.nanoTime();
+			G2 SK = keyGenPLBE(u, MSK);
+			long elapsedKeyGen = System.nanoTime() - startKeyGen;
+			double secondsKeyGen = ((double) elapsedKeyGen) / 1E9;
+			
+			//get elabsed time for decrypt
 			long startDecrypt = System.nanoTime();
 			GT M1 = decryptPLBE(C, SK, u);
 			long elapsedDecrypt = System.nanoTime() - startDecrypt;
@@ -536,6 +552,7 @@ public class PLBESystemRevised {
 			System.out.println(); //padding
 			System.out.println("setup took " + secondsSetup + " seconds");
 			System.out.println("encryption took " + secondsEncrypt + " seconds");
+			System.out.println("key generation took " + secondsKeyGen + " seconds");
 			System.out.println("decryption took " + secondsDecrypt + " seconds (u = " + u + ")");
 			System.out.println(); //more padding
 			
@@ -550,7 +567,7 @@ public class PLBESystemRevised {
 		
 	//Test the runtimes of the algorithms
 	public static void testRuntimes(int lambda) {
-		for (int N = 10; N <= 1000000; N *= 10) {
+		for (int N = 100; N <= 1000000; N *= 10) {
 			printRuntimes(N, lambda);
 		}	
 	}
