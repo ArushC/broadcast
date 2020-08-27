@@ -1,20 +1,26 @@
 package schemesRevised;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
 import java.io.*;
-import helperclasses.miscellaneous.Tools;
+
+import miscellaneous.Tools;
 import helperclasses.structures.Vector2D;
+
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2009/532.pdf (5.2, page 10)
-//No changes made to the scheme described. It was written in the asymmetric pairing setting.
+//Changes made: added a master secret key to the scheme which contains the public paramaters, in addition to:
+//r1, r2, ..., r_m, c1, c2, ..., c_m, alpha1, alpha2, ..., alpha_m
+//also added a key generation function to the ABE scheme
+
 public class AugBERevised {
 	
 	private static int m;
 	
 	//ouput: public key PK, private keys SK
-	public static ArrayList<Object> setupABE(int N, int lambda) {
+	public static Object[] setupABE(int N, int lambda) {
 		
 		Mcl.SystemInit(lambda);
 		
@@ -87,24 +93,66 @@ public class AugBERevised {
 		
 		PK[2] = pkThirdPart;
 		
-		ArrayList<Object> result = new ArrayList<Object>();
-		result.add(PK);
+		//define a master secret key to contain rExponents, alphaExponents, cExponents, in addition to the public parameters
+		Object[] MSK = {PK, rExponents, alphaExponents, cExponents};
 		
-		//Now add all the secret keys to result: SK_u, where u = 1, 2, ..., N (This will take O(n) time)
-		Object[] uValues = pkThirdPart[3];
-		
-		for (int i = 0; i < N; i++) {
-			Object[] SK = getSK(i + 1, g1, g2, uValues, alphaExponents, rExponents, cExponents);
-			result.add(SK);
-		}
-		
+		Object[] result = {PK, MSK};
 		return result;
 	}
 	
-	
+	//generates the key for user u
+	private static Object[] keyGenABE(int u, Object[] MSK) {
+			
+		//extract from MSK
+		Object[] PK = (Object[]) MSK[0];
+		G1 g1 = (G1) PK[0];
+		G2 g2 = (G2) PK[1];
+		Object[] uValues = (Object[]) (((Object[][]) PK[2])[3]);
+		Fr[] rExponents = (Fr[]) MSK[1];
+		Fr[] alphaExponents = (Fr[]) MSK[2];
+		Fr[] cExponents = (Fr[]) MSK[3];
+			
+		//1. extract x and y from u (u = (x-1)m + y), generate random delta(x, y)
+		int y = (u % m == 0) ? m : (u % m);
+		int x = (int) Math.ceil(((double) u) / m);
+			
+		Fr deltaXY = new Fr();
+		deltaXY.setByCSPRNG();
+			
+		//2. instantiate and add the first two elements to the arraylist
+		Object[] SK = new Object[m+2];
+			
+		G2 e1 = new G2();
+		G2 part21 = new G2();
+		G2 part31 = new G2();
+		Mcl.mul(part21, g2, rExponents[x - 1]);
+		Mcl.mul(part21, part21, cExponents[y - 1]);
+		Mcl.mul(part31, (G2) uValues[y - 1], deltaXY);
+		Mcl.mul(e1, g2, alphaExponents[x - 1]);
+		Mcl.add(e1, e1, part21);
+		Mcl.add(e1, e1, part31);
+			
+		G1 e2 = new G1();
+		Mcl.mul(e2, g1, deltaXY);
+			
+		SK[0] = e1;
+		SK[1] = e2;
+
+		//3. add u1^(deltaXY), ..., (u_(y-1))^(deltaXY), (u_(y+1))^(deltaXY), ... (u_m)^(deltaXY)  //CURRENTLY DO NOT KNOW WHETHER TO ADD (u_(y))^(deltaXY)
+		for (int i = 1; i <= m; i++) {
+			if (i == y)
+				continue;
+			//else
+			G2 element = new G2();
+			Mcl.mul(element, (G2) uValues[i - 1], deltaXY);
+			SK[i + 1] = new G2(element);
+		}
+			
+		return SK;	
+	}
 	
 	//input: subset S, public key PK, subset of users S, encrypt to position u = (i, j), message M in GT
-	public static Object[][] encryptABE(ArrayList<Integer> S, Object[] PK, int u, GT M) {
+	public static Object[][] encryptABE(HashSet<Integer> S, Object[] PK, int u, GT M) {
 		
 		//extract data
 		int j = (u % m == 0) ? m : (u % m);
@@ -153,7 +201,7 @@ public class AugBERevised {
 		Vector2D vPrimeC = vc.add(product);
 		
 		//2. get Sx (all the y-values in S) -- helper function below
-		ArrayList<Integer> Sx = getSx(S);
+		HashSet<Integer> Sx = getSx(S);
 		
 		//3. add to the ciphertext using the helper functions
 		Object[][] C = new Object[2][m];
@@ -167,7 +215,7 @@ public class AugBERevised {
 	
 	
 	
-	public static GT decryptABE(Object[][] C, ArrayList<Integer> S, Object[] SK, int u)     {
+	public static GT decryptABE(Object[][] C, HashSet<Integer> S, Object[] SK, int u)     {
 		
 		//extract data
 		int y = (u % m == 0) ? m : (u % m);
@@ -175,7 +223,7 @@ public class AugBERevised {
 		
 		//1. compute KPrimeXY
 		G2 product = new G2((G2) SK[0]);
-		ArrayList<Integer> Sx = getSx(S);
+		HashSet<Integer> Sx = getSx(S);
 		for (int k: Sx) {
 			if (k == y)
 				continue;	
@@ -218,47 +266,6 @@ public class AugBERevised {
 		return result;
 	}
 	
-	private static Object[] getSK(int u, G1 g1, G2 g2, Object[] uValues, Fr[] alphaExponents, Fr[] rExponents, Fr[] cExponents) {
-		
-		//1. extract x and y from u (u = (x-1)m + y), generate random delta(x, y)
-		int y = (u % m == 0) ? m : (u % m);
-		int x = (int) Math.ceil(((double) u) / m);
-		
-		Fr deltaXY = new Fr();
-		deltaXY.setByCSPRNG();
-		
-		//2. instantiate and add the first two elements to the arraylist
-		Object[] SK = new Object[m+2];
-		
-		G2 e1 = new G2();
-		G2 part21 = new G2();
-		G2 part31 = new G2();
-		Mcl.mul(part21, g2, rExponents[x - 1]);
-		Mcl.mul(part21, part21, cExponents[y - 1]);
-		Mcl.mul(part31, (G2) uValues[y - 1], deltaXY);
-		Mcl.mul(e1, g2, alphaExponents[x - 1]);
-		Mcl.add(e1, e1, part21);
-		Mcl.add(e1, e1, part31);
-		
-		G1 e2 = new G1();
-		Mcl.mul(e2, g1, deltaXY);
-		
-		SK[0] = e1;
-		SK[1] = e2;
-
-		//3. add u1^(deltaXY), ..., (u_(y-1))^(deltaXY), (u_(y+1))^(deltaXY), ... (u_m)^(deltaXY)  //CURRENTLY DO NOT KNOW WHETHER TO ADD (u_(y))^(deltaXY)
-		
-		for (int i = 1; i <= m; i++) {
-			if (i == y)
-				continue;
-			//else
-			G2 element = new G2();
-			Mcl.mul(element, (G2) uValues[i - 1], deltaXY);
-			SK[i + 1] = new G2(element);
-		}
-		
-		return SK;	
-	}
 	
 	
 	private static GT computeVectorPairing(G1[] g1Vals, G2[] g2Vals) {
@@ -278,10 +285,10 @@ public class AugBERevised {
 		return result;
 	}
 	
-	private static ArrayList<Integer> getSx(ArrayList<Integer> S) {
+	private static HashSet<Integer> getSx(HashSet<Integer> S) {
 		//note the k-values returned must be UNIQUE
-		ArrayList<Integer> Sx = new ArrayList<Integer>();
-		ArrayList<Integer> uniqueKValues = new ArrayList<Integer>();
+		HashSet<Integer> Sx = new HashSet<Integer>();
+		HashSet<Integer> uniqueKValues = new HashSet<Integer>();
 		for (int u: S)  {
 			int y = (u % m == 0) ? m : (u % m);
 			if (!(uniqueKValues.contains(y))) {
@@ -294,7 +301,7 @@ public class AugBERevised {
 	}
 	
 	//SEE PAGE 13 (VERY TOP): https://eprint.iacr.org/2006/298.pdf
-	private static Object[] getXCiphertextComponents(int x, int i, Vector2D vc, Vector2D v1, Fr t, Object[] PK, ArrayList<Integer> Sx, Fr eta, Fr[] sExponents, GT M) {
+	private static Object[] getXCiphertextComponents(int x, int i, Vector2D vc, Vector2D v1, Fr t, Object[] PK, HashSet<Integer> Sx, Fr eta, Fr[] sExponents, GT M) {
 		
 		G1[] Rx = new G1[2]; //G1 vector
 		G1 Ax = new G1();
@@ -308,9 +315,9 @@ public class AugBERevised {
 		Object[][] pkThirdPart = (Object[][]) PK[2];
 		
 		//Compute the product for Tx
-		G2 product = new G2((G2) pkThirdPart[3][Sx.get(0)-1]);
-		for (int l = 1; l < Sx.size(); l++) {
-			int k = Sx.get(l);
+		G2 product = new G2();
+		Mcl.mul(product, product, new Fr(0));
+		for (int k: Sx) {
 			G2 uk = new G2((G2) pkThirdPart[3][k-1]);
 			Mcl.add(product, product, uk);
 		}
@@ -474,7 +481,7 @@ public class AugBERevised {
 			
 			//Get elapsed time for setup(n) 
 			long startSetup = System.nanoTime();
-			ArrayList<Object> setup = setupABE(N, lambda);
+			Object[] setup = setupABE(N, lambda);
 			long elapsedSetup = System.nanoTime() - startSetup;
 			double secondsSetup = ((double) elapsedSetup) / 1E9;
 			
@@ -486,18 +493,20 @@ public class AugBERevised {
 			Mcl.hashAndMapToG2(g2, Tools.generateRandomBytes(3));
 			Mcl.pairing(M, g1, g2);
 			
-			//extract public key from setup and initialize S
-			Object[] PK = (Object[]) setup.get(0);
-			ArrayList<Integer> S = new ArrayList<Integer>();
+			//extract PK & MSK from setup and initialize S
+			Object[] PK = (Object[]) setup[0];
+			Object[] MSK = (Object[]) setup[1];
+			HashSet<Integer> S = new HashSet<Integer>();
 			
 			//randomly generate numbers to put in the subset S (NO REPEATS)
 			ArrayList<Integer> randomNums = new ArrayList<Integer>();
+			int randomID = 0;
 				for (int i = 0; i < N; i++) { 
 					randomNums.add(i + 1);
 				}
 				for (int i = 0; i < subsetSize; i++) {
 					int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
-					int randomID = randomNums.get(randomIndex);
+					randomID = randomNums.get(randomIndex);
 					S.add(randomID);
 					randomNums.remove(randomIndex);
 				}
@@ -508,10 +517,15 @@ public class AugBERevised {
 			double secondsEncrypt = ((double) elapsedEncrypt) / 1E9;
 					
 			//Get random user ID u to test the decryption
-			int u = S.get(ThreadLocalRandom.current().nextInt(0, S.size()));
+			int u = randomID;
 			
-			//Get elapsed time for decrypt
-			Object[] SK = (Object[]) setup.get(u);
+			//Get elapsed time for keygen
+			long startKeyGen = System.nanoTime();
+			Object[] SK = keyGenABE(u, MSK);
+			long elapsedKeyGen = System.nanoTime() - startKeyGen;
+			double secondsKeyGen = ((double) elapsedKeyGen) / 1E9;
+			
+			//get elabsed time for decrypt
 			long startDecrypt = System.nanoTime();
 			GT M1 = decryptABE(C, S, SK, u);
 			long elapsedDecrypt = System.nanoTime() - startDecrypt;
@@ -519,10 +533,13 @@ public class AugBERevised {
 			
 			//Finally, print out the results
 			String success = (M1.equals(M)) ? "SUCCESSFUL DECRYPTION" : "FAILED DECRYPTION";
+			if (success == "FAILED DECRYPTION")
+					System.out.println(S);
 			System.out.println(success + ": " + "N = " + N + ", subset size = " + subsetSize);
 			System.out.println(); //padding
 			System.out.println("setup took " + secondsSetup + " seconds");
 			System.out.println("encryption took " + secondsEncrypt + " seconds");
+			System.out.println("key generation took " + secondsKeyGen + " seconds");
 			System.out.println("decryption took " + secondsDecrypt + " seconds (u = " + u + ")");
 			System.out.println(); //more padding
 			
