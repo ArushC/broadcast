@@ -8,7 +8,7 @@ import com.herumi.mcl.*;
 //Changes made: optimized selection of G1 and G2, included gg^(alpha^i) for all i in the public key,
 //both g1 and g2 are included in the public key, used HASHSETS to calculate the intersection of SHatL and SL
 //MAKE SURE TO MENTION IN PAPER: precomputation
-public class BGWGeneralCaseUsingHashsets {
+public class BGWGeneralCaseRevised {
 
 	private static int n, A, B;
 	private static GT K; //to be precomputed in the setup function
@@ -19,7 +19,7 @@ public class BGWGeneralCaseUsingHashsets {
 	//second element: list containing private keys: d1, d2, ... dn 
 	public static Object[] setup(int n) {
 		
-		BGWGeneralCaseUsingHashsets.n = n; //save n so it can be used for other functions
+		BGWGeneralCaseRevised.n = n; //save n so it can be used for other functions
 		
 		//instantiate B = floor(sqrt(n)),  A = ceil(n/B)
 		B = (int) Math.floor(Math.pow((double) n, 0.5));
