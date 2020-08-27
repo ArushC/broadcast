@@ -2,7 +2,6 @@ package schemesRevised;
 import helperclasses.polynomials.LagrangeInterpolationZp;
 import helperclasses.structures.NDMatrix;
 import helperclasses.structures.VectorND;
-
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-
 import com.herumi.mcl.*;
 
 //
@@ -347,29 +345,6 @@ public class RiskyMTBRevised {
 		Mcl.mul(e1, e1, e3);
 		return e1;
 	}
-		
-	//TEST THE MTB SCHEME
-	/*public static void main(String[] args) {
-		File lib = new File("../../lib/libmcljava.dylib");
-		System.load(lib.getAbsolutePath());
-		Object[] gen = genMTB(10, 1000, 1, 10, Mcl.BN254);
-		ArrayList<Object> PK = (ArrayList<Object>) gen[0];
-		Object[] MSK = (Object[]) gen[1];
-		
-		Set<Integer> S = new HashSet<Integer>();
-		S.addAll(Arrays.asList(1, 4, 6, 7, 10));
-		Set<Integer> U = new HashSet<Integer>();
-		U.addAll(Arrays.asList(1));
-		VectorND x = new VectorND(VectorND.VECTOR_ZERO, 10);
-		ArrayList<Object> sk = extractMTB(MSK, U, x);
-		ArrayList<Object> helperKey = (ArrayList<Object>) PK.get(PK.size() - 1);
-		Object[] enc = encMTB(PK, S);
-		Object[] C = (Object[]) enc[0];
-		GT encapsulatedKey = (GT) enc[1];
-		GT encapsulatedKey1 = decMTB(sk, helperKey, S, U, C);
-		System.out.println("Encapsulated Key Actual: " + encapsulatedKey);
-		System.out.println("Decrypted Encapsulated Key: " + encapsulatedKey1);
-	}*/
 	
 	//note that this scheme sets up M instances of a broadcast encryption system with N users, for a total of N * M users
 	//encryption happens to the jth instance. In each instance, only the users in that instance with i-values in the subset S can decrypt
@@ -451,32 +426,9 @@ public class RiskyMTBRevised {
 	}
 	
 	public static void main(String[] args) {
-		
-		//note: N = number of users in a single instance of the scheme, M = number of instances
-		//encryption happens to the jth instance. In each instance, only the users with i-values in the subset S can decrypt
 		File lib = new File("../../lib/libmcljava.dylib");
 		System.load(lib.getAbsolutePath());
 		testRuntimes(10, Mcl.BN254);
-		//printRuntimes(10, 10, 1, Mcl.BN254);
-		int N = 10;
-		int M = 10;
-		int ID = 998;
-		int j = (int) Math.ceil(((double) ID) / N);
-		int i = (ID % N == 0) ? N : (ID % N);
-		System.out.println("j = " + j + ", i = " + i);
-		Set<Integer> S = new HashSet<Integer>();
-		S.add(8); //note S contains i coordinates
-		Object[] setup = RiskyBroadcastMultischeme.setup(N, M, Mcl.BN254);
-		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
-		ArrayList<Object> tk = (ArrayList<Object>) setup[1];
-		Object[] enc = RiskyBroadcastMultischeme.enc(PK, j, S);
-		GT encapsulatedKey = (GT) enc[1];
-		Object[] c = (Object[]) enc[0];
-		ArrayList<Object> skID = RiskyBroadcastMultischeme.keyGen(ID, tk);
-		ArrayList<Object> helperKey = (ArrayList<Object>) PK.get(PK.size() - 1);
-		GT encapsulatedKey1 = RiskyBroadcastMultischeme.decrypt(skID, helperKey, S, ID, c);
-		System.out.println("Encapsulated Key Actual: " + encapsulatedKey);
-		System.out.println("Decrypted Encapsulated Key: " + encapsulatedKey1);
 	}
 	
 }
