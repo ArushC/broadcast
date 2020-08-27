@@ -532,7 +532,7 @@ public class PLBERevised {
 			double secondsEncrypt = ((double) elapsedEncrypt) / 1E9;
 					
 			//Get random user ID u to test the decryption
-			int u = ThreadLocalRandom.current().nextInt(0, N);
+			int u = ThreadLocalRandom.current().nextInt(1, N + 1);
 			
 			//Get elapsed time for keygen
 			long startKeyGen = System.nanoTime();
