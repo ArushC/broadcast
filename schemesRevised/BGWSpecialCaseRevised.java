@@ -185,7 +185,7 @@ public class BGWSpecialCaseRevised {
 			randomNums.add(i + 1);
 		}
 		for (int i = 0; i < subsetSize; i++) {
-			int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
+			int randomIndex = ThreadLocalRandom.current().nextInt(0, randomNums.size());
 			int randomID = randomNums.get(randomIndex);
 			S.add(randomID);
 			randomNums.remove(randomIndex);
