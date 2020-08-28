@@ -1,0 +1,61 @@
+All times are in seconds
+
+N = 10000, subset size = 1000
+
+setup took: 0.2748
+encrypt took:  0.036453
+decrypt took:  6.1e-05
+
+N = 20000, subset size = 2000
+
+setup took: 0.635386
+encrypt took:  0.049484
+decrypt took:  4.5e-05
+
+N = 30000, subset size = 3000
+
+setup took: 0.687078
+encrypt took:  0.074158
+decrypt took:  4.2e-05
+
+N = 40000, subset size = 4000
+
+setup took: 0.901946
+encrypt took:  0.083913
+decrypt took:  4.6e-05
+
+N = 50000, subset size = 5000
+
+setup took: 1.10976
+encrypt took:  0.125916
+decrypt took:  3e-05
+
+N = 60000, subset size = 6000
+
+setup took: 1.3782
+encrypt took:  0.133387
+decrypt took:  4.2e-05
+
+N = 70000, subset size = 7000
+
+setup took: 1.56807
+encrypt took:  0.156402
+decrypt took:  4.7e-05
+
+N = 80000, subset size = 8000
+
+setup took: 1.84319
+encrypt took:  0.177804
+decrypt took:  4.2e-05
+
+N = 90000, subset size = 9000
+
+setup took: 2.017
+encrypt took:  0.196418
+decrypt took:  2.7e-05
+
+N = 100000, subset size = 10000
+
+setup took: 2.25115
+encrypt took:  0.213127
+decrypt took:  2.5e-05
