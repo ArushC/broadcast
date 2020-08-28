@@ -1,0 +1,69 @@
+SUCCESSFUL DECRYPTION: N = 100000, subset size = 5000
+
+setup took 0.476010326 seconds
+encryption took 0.974724043 seconds
+key generation took 0.05791558 seconds
+decryption took 0.005792508 seconds (u = 32138)
+
+SUCCESSFUL DECRYPTION: N = 200000, subset size = 10000
+
+setup took 0.609754723 seconds
+encryption took 1.524889057 seconds
+key generation took 0.079842831 seconds
+decryption took 0.007112973 seconds (u = 152687)
+
+SUCCESSFUL DECRYPTION: N = 300000, subset size = 15000
+
+setup took 0.776881589 seconds
+encryption took 2.164333403 seconds
+key generation took 0.177054064 seconds
+decryption took 0.011137846 seconds (u = 188220)
+
+SUCCESSFUL DECRYPTION: N = 400000, subset size = 20000
+
+setup took 0.97246513 seconds
+encryption took 2.233093334 seconds
+key generation took 0.104982153 seconds
+decryption took 0.006594583 seconds (u = 17023)
+
+SUCCESSFUL DECRYPTION: N = 500000, subset size = 25000
+
+setup took 1.14195239 seconds
+encryption took 3.071841382 seconds
+key generation took 0.147723438 seconds
+decryption took 0.007234667 seconds (u = 111512)
+
+SUCCESSFUL DECRYPTION: N = 600000, subset size = 30000
+
+setup took 1.141967071 seconds
+encryption took 4.007692638 seconds
+key generation took 0.142971313 seconds
+decryption took 0.006934647 seconds (u = 348207)
+
+SUCCESSFUL DECRYPTION: N = 700000, subset size = 35000
+
+setup took 1.107748409 seconds
+encryption took 4.355215736 seconds
+key generation took 0.145742563 seconds
+decryption took 0.007178955 seconds (u = 176744)
+
+SUCCESSFUL DECRYPTION: N = 800000, subset size = 40000
+
+setup took 1.294734393 seconds
+encryption took 4.326853796 seconds
+key generation took 0.163143213 seconds
+decryption took 0.007436676 seconds (u = 560431)
+
+SUCCESSFUL DECRYPTION: N = 900000, subset size = 45000
+
+setup took 1.281667251 seconds
+encryption took 4.698639632 seconds
+key generation took 0.150927467 seconds
+decryption took 0.007590286 seconds (u = 880846)
+
+SUCCESSFUL DECRYPTION: N = 1000000, subset size = 50000
+
+setup took 1.530599876 seconds
+encryption took 5.311060327 seconds
+key generation took 0.16039818 seconds
+decryption took 0.008204941 seconds (u = 694893)
