@@ -1,0 +1,69 @@
+SUCCESSFUL DECRYPTION: n = 10000, subset size = 100
+
+setup took 0.356058988 seconds
+encryption took 0.002660296 seconds
+key generation took 1.386144063 seconds
+decryption took 0.012552635 seconds
+
+SUCCESSFUL DECRYPTION: n = 20000, subset size = 200
+
+setup took 0.766089313 seconds
+encryption took 0.00445015 seconds
+key generation took 1.981686703 seconds
+decryption took 0.006494929 seconds
+
+SUCCESSFUL DECRYPTION: n = 30000, subset size = 300
+
+setup took 0.852288868 seconds
+encryption took 0.002275581 seconds
+key generation took 3.36862227 seconds
+decryption took 0.0067138 seconds
+
+SUCCESSFUL DECRYPTION: n = 40000, subset size = 400
+
+setup took 1.247059953 seconds
+encryption took 0.002992112 seconds
+key generation took 4.038966973 seconds
+decryption took 0.006789498 seconds
+
+SUCCESSFUL DECRYPTION: n = 50000, subset size = 500
+
+setup took 1.503825503 seconds
+encryption took 0.002576674 seconds
+key generation took 5.309772362 seconds
+decryption took 0.011129247 seconds
+
+SUCCESSFUL DECRYPTION: n = 60000, subset size = 600
+
+setup took 2.110633314 seconds
+encryption took 0.004189767 seconds
+key generation took 6.30637724 seconds
+decryption took 0.007279876 seconds
+
+SUCCESSFUL DECRYPTION: n = 70000, subset size = 700
+
+setup took 2.124468183 seconds
+encryption took 0.006806761 seconds
+key generation took 6.980935423 seconds
+decryption took 0.007663676 seconds
+
+SUCCESSFUL DECRYPTION: n = 80000, subset size = 800
+
+setup took 2.328313524 seconds
+encryption took 0.005724413 seconds
+key generation took 7.667484945 seconds
+decryption took 0.007325786 seconds
+
+SUCCESSFUL DECRYPTION: n = 90000, subset size = 900
+
+setup took 2.625985122 seconds
+encryption took 0.004051181 seconds
+key generation took 8.465458172 seconds
+decryption took 0.007488315 seconds
+
+SUCCESSFUL DECRYPTION: n = 100000, subset size = 1000
+
+setup took 3.158992696 seconds
+encryption took 0.005810264 seconds
+key generation took 10.309791442 seconds
+decryption took 0.00880067 seconds
