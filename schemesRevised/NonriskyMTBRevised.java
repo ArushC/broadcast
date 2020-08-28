@@ -14,7 +14,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.herumi.mcl.*;
 
-//
 //The scheme: https://eprint.iacr.org/2020/954, section 9.2
 //CHANGES MADE: include R^(-1) in the master secret key so it does not have to be recomputed during secret key extraction
 //NOTE: The scheme described in Zhandry's paper does not work. The pairings do not cancel out during decryption
