@@ -9,4 +9,4 @@ Instructions for how to build the library are at the bottom of the page.
 
 3. Compile and run. Programs can be run individually.
 
-Note that the most recent versions of the schemes are in the folder "schemesRevised". The folders "schemes" and "runtimes" contain older versions with implementations errors.
+IMPORTANT NOTE: the most recent schemes and runtimes are in the folders "schemesRevised" and "runtimesRevised", respectively. The folders "schemes" and "runtimes" contain older versions of these files (which contain implementation errors).
