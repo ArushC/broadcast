@@ -1,0 +1,69 @@
+SUCCESSFUL DECRYPTION: n = 100000, subset size = 1000
+
+setup took 2.90834899 seconds
+encryption took 0.004812476 seconds
+key generation took 11.9562947 seconds
+decryption took 0.009429814 seconds
+
+SUCCESSFUL DECRYPTION: n = 200000, subset size = 2000
+
+setup took 6.042336268 seconds
+encryption took 0.00544566 seconds
+key generation took 19.990887831 seconds
+decryption took 0.010019107 seconds
+
+SUCCESSFUL DECRYPTION: n = 300000, subset size = 3000
+
+setup took 9.244656821 seconds
+encryption took 0.006724921 seconds
+key generation took 35.394067129 seconds
+decryption took 0.016368973 seconds
+
+SUCCESSFUL DECRYPTION: n = 400000, subset size = 4000
+
+setup took 12.763786326 seconds
+encryption took 0.006947376 seconds
+key generation took 41.240202117 seconds
+decryption took 0.01332203 seconds
+
+SUCCESSFUL DECRYPTION: n = 500000, subset size = 5000
+
+setup took 16.123763537 seconds
+encryption took 0.007401578 seconds
+key generation took 49.000973137 seconds
+decryption took 0.015817706 seconds
+
+SUCCESSFUL DECRYPTION: n = 600000, subset size = 6000
+
+setup took 20.146021831 seconds
+encryption took 0.01088945 seconds
+key generation took 60.34133198 seconds
+decryption took 0.01566294 seconds
+
+SUCCESSFUL DECRYPTION: n = 700000, subset size = 7000
+
+setup took 22.034521205 seconds
+encryption took 0.016714793 seconds
+key generation took 79.44967227 seconds
+decryption took 0.02749421 seconds
+
+SUCCESSFUL DECRYPTION: n = 800000, subset size = 8000
+
+setup took 24.021705654 seconds
+encryption took 0.011874974 seconds
+key generation took 83.396021463 seconds
+decryption took 0.019453077 seconds
+
+SUCCESSFUL DECRYPTION: n = 900000, subset size = 9000
+
+setup took 27.830465066 seconds
+encryption took 0.016847024 seconds
+key generation took 101.138188423 seconds
+decryption took 0.039883506 seconds
+
+SUCCESSFUL DECRYPTION: n = 1000000, subset size = 10000
+
+setup took 29.987576398 seconds
+encryption took 0.057247017 seconds
+key generation took 107.893000807 seconds
+decryption took 0.037624267 seconds
