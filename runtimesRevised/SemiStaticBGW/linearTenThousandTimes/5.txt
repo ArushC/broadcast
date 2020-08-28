@@ -1,0 +1,69 @@
+SUCCESSFUL DECRYPTION: N = 10000, subset size = 500
+
+setup took 0.451292017 seconds
+encryption took 0.001567303 seconds
+key generation took 0.977352625 seconds
+decryption took 0.002493781 seconds
+
+SUCCESSFUL DECRYPTION: N = 20000, subset size = 1000
+
+setup took 0.59005691 seconds
+encryption took 0.00176085 seconds
+key generation took 1.938661778 seconds
+decryption took 0.003214101 seconds
+
+SUCCESSFUL DECRYPTION: N = 30000, subset size = 1500
+
+setup took 0.999511309 seconds
+encryption took 0.002122223 seconds
+key generation took 3.045964669 seconds
+decryption took 0.003682485 seconds
+
+SUCCESSFUL DECRYPTION: N = 40000, subset size = 2000
+
+setup took 1.454905473 seconds
+encryption took 0.00273547 seconds
+key generation took 4.142909796 seconds
+decryption took 0.003984809 seconds
+
+SUCCESSFUL DECRYPTION: N = 50000, subset size = 2500
+
+setup took 1.631058056 seconds
+encryption took 0.004096523 seconds
+key generation took 4.917929824 seconds
+decryption took 0.00545914 seconds
+
+SUCCESSFUL DECRYPTION: N = 60000, subset size = 3000
+
+setup took 1.732733425 seconds
+encryption took 0.00378532 seconds
+key generation took 5.940189007 seconds
+decryption took 0.005346115 seconds
+
+SUCCESSFUL DECRYPTION: N = 70000, subset size = 3500
+
+setup took 2.127089057 seconds
+encryption took 0.00420444 seconds
+key generation took 7.30958288 seconds
+decryption took 0.006057806 seconds
+
+SUCCESSFUL DECRYPTION: N = 80000, subset size = 4000
+
+setup took 3.662664507 seconds
+encryption took 0.005959417 seconds
+key generation took 9.721191944 seconds
+decryption took 0.006553223 seconds
+
+SUCCESSFUL DECRYPTION: N = 90000, subset size = 4500
+
+setup took 2.631595374 seconds
+encryption took 0.008772814 seconds
+key generation took 11.296926521 seconds
+decryption took 0.012803986 seconds
+
+SUCCESSFUL DECRYPTION: N = 100000, subset size = 5000
+
+setup took 3.349036634 seconds
+encryption took 0.009581127 seconds
+key generation took 11.60976321 seconds
+decryption took 0.013807518 seconds
