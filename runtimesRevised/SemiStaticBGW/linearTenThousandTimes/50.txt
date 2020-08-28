@@ -1,0 +1,69 @@
+SUCCESSFUL DECRYPTION: N = 10000, subset size = 5000
+
+setup took 0.40754397 seconds
+encryption took 0.006058156 seconds
+key generation took 1.06462987 seconds
+decryption took 0.00911402 seconds
+
+SUCCESSFUL DECRYPTION: N = 20000, subset size = 10000
+
+setup took 0.595504957 seconds
+encryption took 0.010028556 seconds
+key generation took 1.891448298 seconds
+decryption took 0.013868753 seconds
+
+SUCCESSFUL DECRYPTION: N = 30000, subset size = 15000
+
+setup took 1.05992815 seconds
+encryption took 0.014919649 seconds
+key generation took 3.099456894 seconds
+decryption took 0.019687056 seconds
+
+SUCCESSFUL DECRYPTION: N = 40000, subset size = 20000
+
+setup took 1.368270227 seconds
+encryption took 0.019671791 seconds
+key generation took 4.017804326 seconds
+decryption took 0.02588555 seconds
+
+SUCCESSFUL DECRYPTION: N = 50000, subset size = 25000
+
+setup took 1.621194702 seconds
+encryption took 0.034155858 seconds
+key generation took 4.928680066 seconds
+decryption took 0.044393377 seconds
+
+SUCCESSFUL DECRYPTION: N = 60000, subset size = 30000
+
+setup took 1.779395304 seconds
+encryption took 0.026119534 seconds
+key generation took 5.834819581 seconds
+decryption took 0.034627555 seconds
+
+SUCCESSFUL DECRYPTION: N = 70000, subset size = 35000
+
+setup took 2.487722271 seconds
+encryption took 0.030392604 seconds
+key generation took 6.954731516 seconds
+decryption took 0.039914553 seconds
+
+SUCCESSFUL DECRYPTION: N = 80000, subset size = 40000
+
+setup took 2.825617441 seconds
+encryption took 0.056267039 seconds
+key generation took 9.801732163 seconds
+decryption took 0.080689586 seconds
+
+SUCCESSFUL DECRYPTION: N = 90000, subset size = 45000
+
+setup took 2.747482123 seconds
+encryption took 0.044238131 seconds
+key generation took 10.645909255 seconds
+decryption took 0.054453678 seconds
+
+SUCCESSFUL DECRYPTION: N = 100000, subset size = 50000
+
+setup took 2.830350926 seconds
+encryption took 0.043052864 seconds
+key generation took 9.294173626 seconds
+decryption took 0.055863624 seconds
