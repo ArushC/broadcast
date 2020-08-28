@@ -509,92 +509,92 @@ class NonriskyBroadcastMultischeme {
 	private static int N, M;
 	
 	//N = # of users in broadcast system, M = # of instances of the system, lambda = security parameter
-		public static Object[] setup(int N, int M, int lambda) {
+	public static Object[] setup(int N, int M, int lambda) {
 			
-			//save to be used in later functions
-			NonriskyBroadcastMultischeme.N = N;
-			NonriskyBroadcastMultischeme.M = M;
+		//save to be used in later functions
+		NonriskyBroadcastMultischeme.N = N;
+		NonriskyBroadcastMultischeme.M = M;
 			
-			int n = 2;
-			int v = N;
-			int u = 1, t = 1;
-			Object[] setup = NonriskyMTBRevised.genMTB(u, v, t, n, lambda);
-			ArrayList<Object> PK = (ArrayList<Object>) setup[0];
-			Object[] MSK = (Object[]) setup[1];
-			ArrayList<Object> secretKeys = new ArrayList<Object>();
+		int n = 2;
+		int v = N;
+		int u = 1, t = 1;
+		Object[] setup = NonriskyMTBRevised.genMTB(u, v, t, n, lambda);
+		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
+		Object[] MSK = (Object[]) setup[1];
+		ArrayList<Object> secretKeys = new ArrayList<Object>();
 			
-			//initialize the tracing key
-			ArrayList<Object> tk = new ArrayList<Object>();
-			tk.add(MSK);
+		//initialize the tracing key
+		ArrayList<Object> tk = new ArrayList<Object>();
+		tk.add(MSK);
 			
-			//for each j in M, choose random iStarJ in {1, 2, ..., N}
-			for (int j = 1; j <= M; j++) {
-				int iStarJ = ThreadLocalRandom.current().nextInt(1, N + 1);
-				tk.add(iStarJ);
-			}
+		//for each j in M, choose random iStarJ in {1, 2, ..., N}
+		for (int j = 1; j <= M; j++) {
+			int iStarJ = ThreadLocalRandom.current().nextInt(1, N + 1);
+			tk.add(iStarJ);
+		}
 			
-			Object[] result = {PK, tk};
-			return result;
+		Object[] result = {PK, tk};
+		return result;
 
-		}
+	}
 		
-		//setup authority generates the key for an individual user
-		public static Object[] keyGen(int ID, ArrayList<Object> tk) {
+	//setup authority generates the key for an individual user
+	public static Object[] keyGen(int ID, ArrayList<Object> tk) {
 			
-			//extract from ID and tracing key
-			int j = (int) Math.ceil(((double) ID) / N);
-			int i = (ID % N == 0) ? N : (ID % N);
-			Object[] MSK = (Object[]) tk.get(0);
-			int iStarJ = (int) tk.get(j);
+		//extract from ID and tracing key
+		int j = (int) Math.ceil(((double) ID) / N);
+		int i = (ID % N == 0) ? N : (ID % N);
+		Object[] MSK = (Object[]) tk.get(0);
+		int iStarJ = (int) tk.get(j);
 			
-			//calculate wJI value
-			VectorND wJI;
-			if (i < iStarJ) {
-				wJI = new VectorND(new Fr(1), new Fr(1));
-			}
-			else if (i == iStarJ) {
-				wJI = new VectorND(new Fr(1), new Fr(0));
-			}
-			else {
-				wJI = new VectorND(new Fr(0), new Fr(0));
-			}
-			
-			//finally, generate the key
-			Set<Integer> U = new HashSet<Integer>();
-			U.add(ID);
-			Object[] skID = NonriskyMTBRevised.extractMTB(MSK, U, wJI);
-			return skID;
+		//calculate wJI value
+		VectorND wJI;
+		if (i < iStarJ) {
+			wJI = new VectorND(new Fr(1), new Fr(1));
 		}
+		else if (i == iStarJ) {
+			wJI = new VectorND(new Fr(1), new Fr(0));
+		}
+		else {
+			wJI = new VectorND(new Fr(0), new Fr(0));
+		}
+			
+		//finally, generate the key
+		Set<Integer> U = new HashSet<Integer>();
+		U.add(ID);
+		Object[] skID = NonriskyMTBRevised.extractMTB(MSK, U, wJI);
+		return skID;
+	}
 		
-		public static Object[] enc(ArrayList<Object> PK, int j, Set<Integer> S) {
+	public static Object[] enc(ArrayList<Object> PK, int j, Set<Integer> S) {
 			
-			Set<Integer> TjS = new HashSet<Integer>();
+		Set<Integer> TjS = new HashSet<Integer>();
 			
-			for (int i: S) {
-				int ID = (j - 1) * N + i;
-				TjS.add(ID);
-			}
-			
-			return NonriskyMTBRevised.encMTB(PK, TjS);
-			
+		for (int i: S) {
+			int ID = (j - 1) * N + i;
+			TjS.add(ID);
 		}
+			
+		return NonriskyMTBRevised.encMTB(PK, TjS);
+			
+	}
 		
-		//decrypt for user u with secret key skID
-		public static GT decrypt(Object[] skID, Set<Integer> S, int userID, Object[] c) {
+	//decrypt for user u with secret key skID
+	public static GT decrypt(Object[] skID, Set<Integer> S, int userID, Object[] c) {
 			
-			int j = (int) Math.ceil(((double) userID) / N);
+		int j = (int) Math.ceil(((double) userID) / N);
 			
-			Set<Integer> TjS = new HashSet<Integer>();
+		Set<Integer> TjS = new HashSet<Integer>();
 			
-			for (int i: S) {
-				int ID = (j - 1) * N + i;
-				TjS.add(ID);
-			}
-			
-			Set<Integer> U = new HashSet<Integer>();
-			U.add(userID);
-			
-			return NonriskyMTBRevised.decMTB(skID, TjS, U, c);
+		for (int i: S) {
+			int ID = (j - 1) * N + i;
+			TjS.add(ID);
 		}
+			
+		Set<Integer> U = new HashSet<Integer>();
+		U.add(userID);
+			
+		return NonriskyMTBRevised.decMTB(skID, TjS, U, c);
+	}
 	
 }
