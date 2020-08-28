@@ -1,0 +1,69 @@
+SUCCESSFUL DECRYPTION: N = 10000, subset size = 100
+
+setup took 0.51651567 seconds
+encryption took 9.53346E-4 seconds
+key generation took 1.112016727 seconds
+decryption took 0.002820005 seconds
+
+SUCCESSFUL DECRYPTION: N = 20000, subset size = 200
+
+setup took 0.628378339 seconds
+encryption took 0.001150599 seconds
+key generation took 2.104304507 seconds
+decryption took 0.002888733 seconds
+
+SUCCESSFUL DECRYPTION: N = 30000, subset size = 300
+
+setup took 1.06344857 seconds
+encryption took 9.13025E-4 seconds
+key generation took 2.86446448 seconds
+decryption took 0.00165028 seconds
+
+SUCCESSFUL DECRYPTION: N = 40000, subset size = 400
+
+setup took 1.493515257 seconds
+encryption took 0.001029714 seconds
+key generation took 4.024140154 seconds
+decryption took 0.00176913 seconds
+
+SUCCESSFUL DECRYPTION: N = 50000, subset size = 500
+
+setup took 1.695781856 seconds
+encryption took 0.001262263 seconds
+key generation took 5.796613474 seconds
+decryption took 0.002162701 seconds
+
+SUCCESSFUL DECRYPTION: N = 60000, subset size = 600
+
+setup took 1.730317763 seconds
+encryption took 0.002224402 seconds
+key generation took 6.363466463 seconds
+decryption took 0.00379375 seconds
+
+SUCCESSFUL DECRYPTION: N = 70000, subset size = 700
+
+setup took 2.325072653 seconds
+encryption took 0.001431371 seconds
+key generation took 6.534221878 seconds
+decryption took 0.002849113 seconds
+
+SUCCESSFUL DECRYPTION: N = 80000, subset size = 800
+
+setup took 3.241305586 seconds
+encryption took 0.001492944 seconds
+key generation took 8.011073088 seconds
+decryption took 0.002624586 seconds
+
+SUCCESSFUL DECRYPTION: N = 90000, subset size = 900
+
+setup took 2.658371604 seconds
+encryption took 0.00158546 seconds
+key generation took 9.676166495 seconds
+decryption took 0.002649876 seconds
+
+SUCCESSFUL DECRYPTION: N = 100000, subset size = 1000
+
+setup took 3.235343943 seconds
+encryption took 0.001839427 seconds
+key generation took 10.811904609 seconds
+decryption took 0.003340707 seconds
