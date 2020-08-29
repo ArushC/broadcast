@@ -1,0 +1,69 @@
+SUCCESSFUL DECRYPTION: n = 10000, l = 500
+
+setup took 0.218781484 seconds
+encryption took 0.223406182 seconds
+key generation took 2.55112E-4 seconds
+decryption took 0.264113762 seconds
+
+SUCCESSFUL DECRYPTION: n = 20000, l = 1000
+
+setup took 0.305947558 seconds
+encryption took 1.43105078 seconds
+key generation took 2.59867E-4 seconds
+decryption took 2.685857404 seconds
+
+SUCCESSFUL DECRYPTION: n = 30000, l = 1500
+
+setup took 0.760813845 seconds
+encryption took 3.42069838 seconds
+key generation took 4.91183E-4 seconds
+decryption took 4.19887032 seconds
+
+SUCCESSFUL DECRYPTION: n = 40000, l = 2000
+
+setup took 0.840711559 seconds
+encryption took 5.700937543 seconds
+key generation took 2.54483E-4 seconds
+decryption took 6.126746506 seconds
+
+SUCCESSFUL DECRYPTION: n = 50000, l = 2500
+
+setup took 0.697564022 seconds
+encryption took 10.212286949 seconds
+key generation took 2.55457E-4 seconds
+decryption took 11.070257626 seconds
+
+SUCCESSFUL DECRYPTION: n = 60000, l = 3000
+
+setup took 1.301119206 seconds
+encryption took 13.24347765 seconds
+key generation took 2.6804E-4 seconds
+decryption took 13.382402247 seconds
+
+SUCCESSFUL DECRYPTION: n = 70000, l = 3500
+
+setup took 0.948457451 seconds
+encryption took 18.616570034 seconds
+key generation took 2.67308E-4 seconds
+decryption took 19.589917187 seconds
+
+SUCCESSFUL DECRYPTION: n = 80000, l = 4000
+
+setup took 1.659464025 seconds
+encryption took 26.044411589 seconds
+key generation took 4.957E-4 seconds
+decryption took 24.587635364 seconds
+
+SUCCESSFUL DECRYPTION: n = 90000, l = 4500
+
+setup took 1.74927017 seconds
+encryption took 30.018785603 seconds
+key generation took 2.79093E-4 seconds
+decryption took 35.342683937 seconds
+
+SUCCESSFUL DECRYPTION: n = 100000, l = 5000
+
+setup took 1.728299053 seconds
+encryption took 40.432367641 seconds
+key generation took 2.73102E-4 seconds
+decryption took 38.639606558 seconds
