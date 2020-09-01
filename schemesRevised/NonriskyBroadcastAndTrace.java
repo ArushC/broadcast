@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-
 import com.herumi.mcl.Fr;
 import com.herumi.mcl.GT;
 import com.herumi.mcl.Mcl;
@@ -19,7 +18,7 @@ public class NonriskyBroadcastAndTrace {
 	public static Object[] setup(int N, int M, int T, int lambda) {
 		
 		//set up N/T instances of an (N/T) * (MT) broadcast multischeme
-		int nOverT = N/T;
+		int nOverT = (int) Math.ceil(((double) N)/T);
 		
 		//save to be used in later functions
 		NonriskyBroadcastAndTrace.nOverT = nOverT;
@@ -61,13 +60,12 @@ public class NonriskyBroadcastAndTrace {
 			
 			//X = 1, 2, ..., N/T instances of the broadcast multischeme
 			for (int X = 1; X <= nOverT; X++) {
-				
-				
-				int newJ = j + MT * (X - 1);
+
+				int newJ = j + MT * (X - 1); //calculate j and ID for the Xth instance
 				int newID = (newJ - 1) * nOverT + i;
-				System.out.println("New ID for instance X = " + X + ": " + newID);
 				
 				int iStarJ = (int) tk.get(newJ);
+				
 				//calculate wJI value
 				VectorND wJI;
 				if (i < iStarJ) {
@@ -117,7 +115,6 @@ public class NonriskyBroadcastAndTrace {
 				int ID = (l - 1) * nOverT + i;
 				TjS.add(ID);
 			}
-			System.out.println("TjS, l = " + l + ": " + TjS);
 			ciphertext.add(RiskyMTBRevised.encMTB(PK, TjS));
 		}
 			
@@ -151,43 +148,97 @@ public class NonriskyBroadcastAndTrace {
 			int ID = (jOfXInstance - 1) * nOverT + i;
 			TjS.add(ID);
 		}
-			
-		System.out.println("TjS decryption, j = " + jOfXInstance + ": " + TjS);
+
 		Set<Integer> U = new HashSet<Integer>();
 		U.add(IDXInstance);	
 		return RiskyMTBRevised.decMTB(ski, helperKey, TjS, U, c);
 	}
 	
-	public static void main(String[] args) {
-		File lib = new File("../../lib/libmcljava.dylib");
-		System.load(lib.getAbsolutePath());
-		int N = 27;
-		int M = 3;
-		int T = (int) Math.round(Math.pow(N, 2.0/3));
+	//To get the N^(1/3) scheme, set a = 2/3. In general, we get a scheme of size (N^(1 - a), N^(1 - a), N^a)
+	public static void printRuntimes(int N, int M, double a, int subsetSize, int lambda) {
+		
+		int T = (int) Math.ceil(Math.pow(N, a));
+		long startSetup = System.nanoTime();
 		Object[] setup = NonriskyBroadcastAndTrace.setup(N, M, T, Mcl.BN254);
-		int ID = 54;
+		long elapsedSetup = System.nanoTime() - startSetup;
+		double secondsSetup = ((double) elapsedSetup)/1E9;
+		
+		//random ID for the encryption & decryption
+		int ID = ThreadLocalRandom.current().nextInt(1, N + 1);
 		int k = (ID % N == 0) ? ID/N : ID/N + 1;
-		int j = (int) Math.ceil(((double) ID) / nOverT); //FIX N OVER T
+		int j = (int) Math.ceil(((double) ID) / nOverT);
 		int i = (ID % nOverT == 0) ? nOverT : (ID % nOverT);
-		System.out.println("k = " + k + ", j = " + j + ", i = " + i);
+		
 		Set<Integer> S = new HashSet<Integer>();
-		S.addAll(Arrays.asList(1, 3, 19, 26, 27));
+		S.add(ID);
+		
+		//randomly generate numbers to put in the subset S (NO REPEATS)
+		ArrayList<Integer> randomNums = new ArrayList<Integer>();
+		int randomID = 0;
+		for (int z = 0; z < N; z++) {
+			if (z + 1 == ID) continue; //already in the subset
+			randomNums.add(z + 1);
+		}
+		for (int z = 1; z < subsetSize; z++) {
+			int randomIndex = ThreadLocalRandom.current().nextInt(0, randomNums.size());
+			randomID = randomNums.get(randomIndex);
+			S.add(randomID);
+			randomNums.remove(randomIndex);
+		}
+		
+		//extract public/tracing key and helper key
 		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
 		ArrayList<Object> tk = (ArrayList<Object>) setup[1];
+		ArrayList<Object> helperKey = (ArrayList<Object>) PK.get(PK.size() - 1);
+		
+		long startEnc = System.nanoTime();
 		Object[] C = NonriskyBroadcastAndTrace.enc(PK, k, S);
+		long elapsedEnc = System.nanoTime() - startEnc;
+		double secondsEnc = ((double) elapsedEnc)/1E9;
+		
+		//extract from ciphertext
 		int X = (int) C[1];
-		System.out.println("X = " + X);
 		ArrayList<Object> ciphertext = (ArrayList<Object>) C[0];
 		int ciphertextIndex = (j % T == 0) ? (T - 1) : (j % T - 1);
 		Object[] enc = (Object[]) ciphertext.get(ciphertextIndex);
 		GT encapsulatedKey = (GT) enc[1];
 		Object[] c = (Object[]) enc[0];
-		System.out.println("Encapsulated Key: " + encapsulatedKey);
-		ArrayList<Object> skID = NonriskyBroadcastAndTrace.keyGen(ID, tk);
-		ArrayList<Object> helperKey = (ArrayList<Object>) PK.get(PK.size() - 1);
-		GT encapsulatedKey1 = NonriskyBroadcastAndTrace.decrypt(ID, skID, helperKey, S, X, c);
-		System.out.println("Encapsulated Key 1: " + encapsulatedKey1);
 		
+		long startKeyGen = System.nanoTime();
+		ArrayList<Object> skID = NonriskyBroadcastAndTrace.keyGen(ID, tk);
+		long elapsedKeyGen = System.nanoTime() - startKeyGen;
+		double secondsKeyGen = ((double) elapsedKeyGen)/1E9;
+		
+		//Finally, decrypt
+		long startDec = System.nanoTime();
+		GT encapsulatedKey1 = NonriskyBroadcastAndTrace.decrypt(ID, skID, helperKey, S, X, c);
+		long elapsedDec = System.nanoTime() - startDec;
+		double secondsDec = ((double) elapsedDec)/1E9;
+		
+		String success = (encapsulatedKey.equals(encapsulatedKey1)) ? "SUCCESSFUL DECRYPTION (" + (N * M) + " total users)": "FAILED DECRYPTION";
+		System.out.println(success + ": " + "N = " + N + ", M = " + M + ", T = " + T + ", subset size = " + subsetSize);
+		System.out.println(); //padding
+		System.out.println("setup took " + secondsSetup + " seconds");
+		System.out.println("encryption took " + secondsEnc + " seconds");
+		System.out.println("key generation took " + secondsKeyGen + " seconds");
+		System.out.println("decryption took " + secondsDec + " seconds (u = " + ID + ")");
+		System.out.println(); //more padding
+		
+	}
+	
+	//test runtimes for M = 1 instances and a given value of a
+	public static void testRuntimes(double a, int percent, int lambda) {
+		for (int N = 100; N <= 1000000; N *= 10) {
+			int subsetSize = (int) (0.01 * percent * N);
+			printRuntimes(N, 1, a, subsetSize, lambda);
+		}
+	}
+	
+	public static void main(String[] args) {
+		File lib = new File("../../lib/libmcljava.dylib");
+		System.load(lib.getAbsolutePath());
+		double a = 2.0/3;
+		testRuntimes(a, 10, Mcl.BN254);
 	}
 	
 }
