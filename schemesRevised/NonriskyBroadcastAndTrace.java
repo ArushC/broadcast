@@ -137,7 +137,7 @@ public class NonriskyBroadcastAndTrace {
 		//calculate the subset of the given instance
 		HashSet<Integer> sSubset = new HashSet<Integer>();
 		for (int i = 1; i <= nOverT; i++)
-			sSubset.add(((jID - 1) * nOverT + i) % N);
+			sSubset.add(((jID - 1) * nOverT + i) % N == 0 ? N : ((jID - 1) * nOverT + i));
 		
 		sSubset.retainAll(S); //contains IDs of users in the given instance instead of i-values (faster)
 		
@@ -165,13 +165,13 @@ public class NonriskyBroadcastAndTrace {
 		int M = 3;
 		int T = (int) Math.round(Math.pow(N, 2.0/3));
 		Object[] setup = NonriskyBroadcastAndTrace.setup(N, M, T, Mcl.BN254);
-		int ID = 28;
+		int ID = 26;
 		int k = (ID == N) ? ID/N : ID/N + 1;
 		int j = (int) Math.ceil(((double) ID) / nOverT); //FIX N OVER T
 		int i = (ID % nOverT == 0) ? nOverT : (ID % nOverT);
 		System.out.println("k = " + k + ", j = " + j + ", i = " + i);
 		Set<Integer> S = new HashSet<Integer>();
-		S.addAll(Arrays.asList(1, 3, 19, 27));
+		S.addAll(Arrays.asList(1, 3, 19, 26, 27));
 		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
 		ArrayList<Object> tk = (ArrayList<Object>) setup[1];
 		Object[] C = NonriskyBroadcastAndTrace.enc(PK, k, S);
@@ -183,19 +183,10 @@ public class NonriskyBroadcastAndTrace {
 		GT encapsulatedKey = (GT) enc[1];
 		Object[] c = (Object[]) enc[0];
 		System.out.println("Encapsulated Key: " + encapsulatedKey);
-		//int newJ = j + MT * (X - 1);
-		//System.out.println("New ID in Main Function: " + newID);
 		ArrayList<Object> skID = NonriskyBroadcastAndTrace.keyGen(ID, tk);
 		ArrayList<Object> helperKey = (ArrayList<Object>) PK.get(PK.size() - 1);
-		
 		GT encapsulatedKey1 = NonriskyBroadcastAndTrace.decrypt(ID, skID, helperKey, S, X, c);
 		System.out.println("Encapsulated Key 1: " + encapsulatedKey1);
-		//GT encapsulatedKey1 = NonriskyBroadcastAndTrace.decrypt(skID, helperKey, S, ID, ciphertextIndex, c);
-		//GT encapsulatedKey = (GT) enc[1];
-		//Object[] C = (Object[]) enc[0];
-		//ArrayList<Object> skID = RiskyBroadcastMultischeme.keyGen(ID, tk);
-		//ArrayList<Object> helperKey = (ArrayList<Object>) PK.get(PK.size() - 1);
-		//GT encapsulatedKey1 = RiskyBroadcastMultischeme.decrypt(skID, helperKey, S, ID, c);
 		
 	}
 	
