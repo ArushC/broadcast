@@ -39,7 +39,7 @@ public class NonriskyBroadcastAndTrace {
 		tk.add(MSK);
 		
 		//for each instance, choose random iStarJ in {1, 2, ..., N/T}
-		for (int j = 1; j <= N * M; j++) {
+		for (int j = 1; j <= nOverT * MT; j++) {
 			int iStarJ = ThreadLocalRandom.current().nextInt(1, nOverT + 1);
 			tk.add(iStarJ);
 		}
