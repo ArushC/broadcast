@@ -137,7 +137,7 @@ public class NonriskyBroadcastAndTrace {
 		//calculate the subset of the given instance
 		HashSet<Integer> sSubset = new HashSet<Integer>();
 		for (int i = 1; i <= nOverT; i++)
-			sSubset.add(((jID - 1) * nOverT + i) % N == 0 ? N : ((jID - 1) * nOverT + i));
+			sSubset.add((((jID - 1) * nOverT + i) % N) == 0 ? N : ((jID - 1) * nOverT + i) % N);
 		
 		sSubset.retainAll(S); //contains IDs of users in the given instance instead of i-values (faster)
 		
@@ -165,8 +165,8 @@ public class NonriskyBroadcastAndTrace {
 		int M = 3;
 		int T = (int) Math.round(Math.pow(N, 2.0/3));
 		Object[] setup = NonriskyBroadcastAndTrace.setup(N, M, T, Mcl.BN254);
-		int ID = 26;
-		int k = (ID == N) ? ID/N : ID/N + 1;
+		int ID = 54;
+		int k = (ID % N == 0) ? ID/N : ID/N + 1;
 		int j = (int) Math.ceil(((double) ID) / nOverT); //FIX N OVER T
 		int i = (ID % nOverT == 0) ? nOverT : (ID % nOverT);
 		System.out.println("k = " + k + ", j = " + j + ", i = " + i);
