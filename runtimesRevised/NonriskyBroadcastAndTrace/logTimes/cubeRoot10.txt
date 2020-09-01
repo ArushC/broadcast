@@ -1,36 +1,36 @@
 Testing runtimes with a = 2/3:
 
-SUCCESSFUL DECRYPTION (100 total users): N = 100, M = 1, T = 22, subset size = 10
+SUCCESSFUL DECRYPTION (100 total users): N = 100, M = 1, T = 10, subset size = 10
 
-setup took 0.063990689 seconds
-encryption took 0.075788352 seconds
-key generation took 0.007006813 seconds
-decryption took 0.010540236 seconds (u = 12)
+setup took 0.069884233 seconds
+encryption took 0.023567013 seconds
+key generation took 0.004442661 seconds
+decryption took 0.007016894 seconds (u = 13)
 
-SUCCESSFUL DECRYPTION (1000 total users): N = 1000, M = 1, T = 100, subset size = 100
+SUCCESSFUL DECRYPTION (1000 total users): N = 1000, M = 1, T = 32, subset size = 100
 
-setup took 0.041475508 seconds
-encryption took 0.282924766 seconds
-key generation took 0.004227596 seconds
-decryption took 0.009521961 seconds (u = 195)
+setup took 0.052088777 seconds
+encryption took 0.145318681 seconds
+key generation took 0.018247906 seconds
+decryption took 0.011211593 seconds (u = 826)
 
-SUCCESSFUL DECRYPTION (10000 total users): N = 10000, M = 1, T = 465, subset size = 1000
+SUCCESSFUL DECRYPTION (10000 total users): N = 10000, M = 1, T = 100, subset size = 1000
 
-setup took 0.044059463 seconds
-encryption took 2.251963672 seconds
-key generation took 0.01884753 seconds
-decryption took 0.017929076 seconds (u = 4732)
+setup took 0.15793359 seconds
+encryption took 1.12818021 seconds
+key generation took 0.047815507 seconds
+decryption took 0.017041305 seconds (u = 2899)
 
-SUCCESSFUL DECRYPTION (100000 total users): N = 100000, M = 1, T = 2155, subset size = 10000
+SUCCESSFUL DECRYPTION (100000 total users): N = 100000, M = 1, T = 317, subset size = 10000
 
-setup took 0.12341034 seconds
-encryption took 12.706159816 seconds
-key generation took 0.024295604 seconds
-decryption took 0.013898334 seconds (u = 11182)
+setup took 0.552358751 seconds
+encryption took 8.520186377 seconds
+key generation took 0.235756729 seconds
+decryption took 0.06599339 seconds (u = 33480)
 
-SUCCESSFUL DECRYPTION (1000000 total users): N = 1000000, M = 1, T = 10000, subset size = 100000
+SUCCESSFUL DECRYPTION (1000000 total users): N = 1000000, M = 1, T = 1000, subset size = 100000
 
-setup took 0.281078356 seconds
-encryption took 96.931753946 seconds
-key generation took 0.060180466 seconds
-decryption took 0.025669984 seconds (u = 973400)
+setup took 2.306997889 seconds
+encryption took 98.74388012 seconds
+key generation took 1.082808057 seconds
+decryption took 0.163732106 seconds (u = 500424)
