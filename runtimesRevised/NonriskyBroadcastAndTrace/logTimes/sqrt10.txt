@@ -1,4 +1,4 @@
-Testing runtimes with a = 2/3:
+Testing runtimes with a = 1/2:
 
 SUCCESSFUL DECRYPTION (100 total users): N = 100, M = 1, T = 10, subset size = 10
 
