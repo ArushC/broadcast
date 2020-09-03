@@ -472,7 +472,6 @@ public class PLBERevised {
 		G2[] CSquiggley = new G2[2];
 		
 		//extract the public key
-		G1 g1 = (G1) PK[0];
 		G2 g2 = (G2) PK[1];
 		Object[][] pkThirdPart = (Object[][]) PK[2];
 		
