@@ -20,6 +20,8 @@ public class AugBERevised {
 	
 	private static int m;
 	
+	private static int m;
+	
 	//ouput: public key PK, private keys SK
 	public static Object[] setupABE(int N, int lambda) {
 		
@@ -70,16 +72,16 @@ public class AugBERevised {
 		//Add everything in this one gigantic for loop (repeat this single-column addition m times)
 		for (int i = 0; i < m; i++) {
 			
-			G2 Ei = new G2(); //CHECK THIS if nothing else is the issue
-			Mcl.mul(Ei, g2, rExponents[i]);
+			G1 Ei = new G1(); //CHECK THIS if nothing else is the issue
+			Mcl.mul(Ei, g1, rExponents[i]);
 			
 			GT Gi = new GT();
 			Mcl.pairing(Gi, g1, g2);
 			Mcl.pow(Gi, Gi, alphaExponents[i]);
 		
 			
-			G1 Hi = new G1();
-			Mcl.mul(Hi, g1, cExponents[i]);
+			G2 Hi = new G2();
+			Mcl.mul(Hi, g2, cExponents[i]);
 			
 			G1 ui = new G1();
 			byte[] randomBytes = Arrays.copyOfRange(b, i, i + 3);
@@ -236,22 +238,22 @@ public class AugBERevised {
 		//2. extract everything that is needed
 		Object[] xCiphertext = (Object[]) C[0][x - 1];
 		Object[] yCiphertext = (Object[]) C[1][y-1];
-		G2[] Rx = (G2[]) xCiphertext[0];
+		G1[] Rx = (G1[]) xCiphertext[0];
 		G2 Ax = (G2) xCiphertext[1];
 		G1 Tx = (G1) xCiphertext[2];
-		G2[] RSquigglex = (G2[]) xCiphertext[3];
+		G1[] RSquigglex = (G1[]) xCiphertext[3];
 		GT Bx = (GT) xCiphertext[4];
-		G1[] Cy = (G1[]) yCiphertext[0];
-		G1[] CSquiggley = (G1[]) yCiphertext[1];
+		G2[] Cy = (G2[]) yCiphertext[0];
+		G2[] CSquiggley = (G2[]) yCiphertext[1];
 		G2 dDoublePrimeXY = (G2) SK[1];
 		
 		//3. compute the pairings
 		GT numerator = new GT();
-		GT e1 = computeVectorPairing(Cy, Rx);
+		GT e1 = computeVectorPairing(Rx, Cy);
 		Mcl.mul(numerator, Bx, e1);
 		
 		GT denominator = new GT();
-		GT e2 = computeVectorPairing(CSquiggley, RSquigglex);
+		GT e2 = computeVectorPairing(RSquigglex, CSquiggley);
 		GT e3 = new GT();
 		Mcl.pairing(e3, Tx, dDoublePrimeXY);
 		Mcl.pow(e3, e3, new Fr(-1));
@@ -304,10 +306,10 @@ public class AugBERevised {
 	//SEE PAGE 13 (VERY TOP): https://eprint.iacr.org/2006/298.pdf
 	private static Object[] getXCiphertextComponents(int x, int i, Vector2D vc, Vector2D v1, Fr t, Object[] PK, HashSet<Integer> Sx, Fr eta, Fr[] sExponents, GT M) {
 		
-		G2[] Rx = new G2[2]; //G1 vector
+		G1[] Rx = new G1[2]; //G1 vector
 		G2 Ax = new G2();
 		G1 Tx = new G1();
-		G2[] RSquigglex = new G2[2]; //another G1 vector
+		G1[] RSquigglex = new G1[2]; //another G1 vector
 		GT Bx = new GT();
 		
 		//extract from the public key
@@ -336,10 +338,10 @@ public class AugBERevised {
 			Fr bx = new Fr();
 			bx.setByCSPRNG();
 			
-			G2 Rxx = new G2();
-			Mcl.mul(Rxx, g2, zx.getX());
-			G2 Rxy = new G2();
-			Mcl.mul(Rxy, g2, zx.getY());
+			G1 Rxx = new G1();
+			Mcl.mul(Rxx, g1, zx.getX());
+			G1 Rxy = new G1();
+			Mcl.mul(Rxy, g1, zx.getY());
 			Rx[0] = Rxx;
 			Rx[1] = Rxy;
 			
@@ -348,10 +350,10 @@ public class AugBERevised {
 			Mcl.mul(Tx, product, ax);
 			
 			Vector2D expRSquiggleX = zx.multiply(eta);
-			G2 RSquiggleXx = new G2();
-			Mcl.mul(RSquiggleXx, g2, expRSquiggleX.getX());
-			G2 RSquiggleXy = new G2();
-			Mcl.mul(RSquiggleXy, g2, expRSquiggleX.getY());
+			G1 RSquiggleXx = new G1();
+			Mcl.mul(RSquiggleXx, g1, expRSquiggleX.getX());
+			G1 RSquiggleXy = new G1();
+			Mcl.mul(RSquiggleXy, g1, expRSquiggleX.getY());
 			RSquigglex[0] = RSquiggleXx;
 			RSquigglex[1] = RSquiggleXy;
 			
@@ -366,9 +368,9 @@ public class AugBERevised {
 			vi.setByCSPRNG();
 			
 			Vector2D expRx = vi.multiply(sExponents[x - 1]);
-			G2 Rxx = new G2((G2) pkThirdPart[0][x - 1]);
+			G1 Rxx = new G1((G1) pkThirdPart[0][x - 1]);
 			Mcl.mul(Rxx, Rxx, expRx.getX());
-			G2 Rxy = new G2((G2) pkThirdPart[0][x - 1]);
+			G1 Rxy = new G1((G1) pkThirdPart[0][x - 1]);
 			Mcl.mul(Rxy, Rxy, expRx.getY());
 			Rx[0] = Rxx;
 			Rx[1] = Rxy;
@@ -382,9 +384,9 @@ public class AugBERevised {
 			
 			Vector2D expRSquiggleX = vi.multiply(eta);
 			expRSquiggleX = expRSquiggleX.multiply(sExponents[x - 1]);
-			G2 RSquiggleXx = new G2((G2) pkThirdPart[0][x - 1]);
+			G1 RSquiggleXx = new G1((G1) pkThirdPart[0][x - 1]);
 			Mcl.mul(RSquiggleXx, RSquiggleXx, expRSquiggleX.getX());
-			G2 RSquiggleXy = new G2((G2) pkThirdPart[0][x - 1]);
+			G1 RSquiggleXy = new G1((G1) pkThirdPart[0][x - 1]);
 			Mcl.mul(RSquiggleXy, RSquiggleXy, expRSquiggleX.getY());
 			RSquigglex[0] = RSquiggleXx;
 			RSquigglex[1] = RSquiggleXy;
@@ -403,9 +405,9 @@ public class AugBERevised {
 			Vector2D vx = v1.multiply(vPrimeX);
 			
 			Vector2D expRx = vx.multiply(sExponents[x - 1]);
-			G2 Rxx = new G2((G2) pkThirdPart[0][x - 1]);
+			G1 Rxx = new G1((G1) pkThirdPart[0][x - 1]);
 			Mcl.mul(Rxx, Rxx, expRx.getX());
-			G2 Rxy = new G2((G2) pkThirdPart[0][x - 1]);
+			G1 Rxy = new G1((G1) pkThirdPart[0][x - 1]);
 			Mcl.mul(Rxy, Rxy, expRx.getY());
 			Rx[0] = Rxx;
 			Rx[1] = Rxy;
@@ -419,9 +421,9 @@ public class AugBERevised {
 			
 			Vector2D expRSquiggleX = vx.multiply(eta);
 			expRSquiggleX = expRSquiggleX.multiply(sExponents[x - 1]);
-			G2 RSquiggleXx = new G2((G2) pkThirdPart[0][x - 1]);
+			G1 RSquiggleXx = new G1((G1) pkThirdPart[0][x - 1]);
 			Mcl.mul(RSquiggleXx, RSquiggleXx, expRSquiggleX.getX());
-			G2 RSquiggleXy = new G2((G2) pkThirdPart[0][x - 1]);
+			G1 RSquiggleXy = new G1((G1) pkThirdPart[0][x - 1]);
 			Mcl.mul(RSquiggleXy, RSquiggleXy, expRSquiggleX.getY());
 			RSquigglex[0] = RSquiggleXx;
 			RSquigglex[1] = RSquiggleXy;
@@ -437,11 +439,11 @@ public class AugBERevised {
 	
 	private static Object[] getYCiphertextComponents(int y, int j, Object[] PK, Vector2D vc, Vector2D vPrimeC, Fr eta, Fr t, Vector2D[] wVectors) {
 		
-		G1[] Cy = new G1[2]; //both of these are technically 2D G2 vectors
-		G1[] CSquiggley = new G1[2];
+		G2[] Cy = new G2[2]; //both of these are technically 2D G2 vectors
+		G2[] CSquiggley = new G2[2];
 		
 		//extract the public key
-		G1 g1 = (G1) PK[0];
+		G2 g2 = (G2) PK[1];
 		Object[][] pkThirdPart = (Object[][]) PK[2];
 		
 		//compute
@@ -449,24 +451,24 @@ public class AugBERevised {
 		
 		Vector2D expCy1 = v.multiply(t);
 		Vector2D expCy2 = wVectors[y - 1].multiply(eta);
-		G1 Cyx = new G1((G1) pkThirdPart[2][y - 1]);
-		G1 helperCyx = new G1();
-		G1 Cyy = new G1((G1) pkThirdPart[2][y - 1]);
-		G1 helperCyy = new G1(); 
-		Mcl.mul(helperCyx, g1, expCy2.getX());
+		G2 Cyx = new G2((G2) pkThirdPart[2][y - 1]);
+		G2 helperCyx = new G2();
+		G2 Cyy = new G2((G2) pkThirdPart[2][y - 1]);
+		G2 helperCyy = new G2(); 
+		Mcl.mul(helperCyx, g2, expCy2.getX());
 		Mcl.mul(Cyx, Cyx, expCy1.getX());
 		Mcl.add(Cyx, Cyx, helperCyx); //The "dot" operation in the paper in this case is defined as addition?
-		Mcl.mul(helperCyy, g1, expCy2.getY()); 
+		Mcl.mul(helperCyy, g2, expCy2.getY()); 
 		Mcl.mul(Cyy, Cyy, expCy1.getY());
 		Mcl.add(Cyy, Cyy, helperCyy);
 		Cy[0] = Cyx;
 		Cy[1] = Cyy;
 		
 		Vector2D expCSquiggley = wVectors[y - 1];
-		G1 CSquiggleyx = new G1();
-		G1 CSquiggleyy = new G1();
-		Mcl.mul(CSquiggleyx, g1, expCSquiggley.getX());
-		Mcl.mul(CSquiggleyy, g1, expCSquiggley.getY());
+		G2 CSquiggleyx = new G2();
+		G2 CSquiggleyy = new G2();
+		Mcl.mul(CSquiggleyx, g2, expCSquiggley.getX());
+		Mcl.mul(CSquiggleyy, g2, expCSquiggley.getY());
 		CSquiggley[0] = CSquiggleyx;
 		CSquiggley[1] = CSquiggleyy;
 		
