@@ -1,9 +1,7 @@
 package schemesRevised;
 import helperclasses.polynomials.LagrangeInterpolationZp;
-
 import helperclasses.structures.NDMatrix;
 import helperclasses.structures.VectorND;
-
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
