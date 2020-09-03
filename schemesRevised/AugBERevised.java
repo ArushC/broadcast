@@ -13,7 +13,7 @@ import com.herumi.mcl.*;
 //The scheme: https://eprint.iacr.org/2009/532.pdf (5.2, page 10)
 //Changes made: added a master secret key to the scheme which contains the public parameters, in addition to:
 //r1, r2, ..., r_m, c1, c2, ..., c_m, alpha1, alpha2, ..., alpha_m
-//also added a key generation function to the ABE scheme
+//also added a key generation function to the ABBE scheme
 //finally, changed the elements in g1 and g2 to obtain the most efficient scheme
 
 public class AugBERevised {
@@ -23,7 +23,7 @@ public class AugBERevised {
 	private static int m;
 	
 	//ouput: public key PK, private keys SK
-	public static Object[] setupABE(int N, int lambda) {
+	public static Object[] setupABBE(int N, int lambda) {
 		
 		Mcl.SystemInit(lambda);
 		
@@ -104,7 +104,7 @@ public class AugBERevised {
 	}
 	
 	//generates the key for user u
-	private static Object[] keyGenABE(int u, Object[] MSK) {
+	private static Object[] keyGenABBE(int u, Object[] MSK) {
 			
 		//extract from MSK
 		Object[] PK = (Object[]) MSK[0];
@@ -155,7 +155,7 @@ public class AugBERevised {
 	}
 	
 	//input: subset S, public key PK, subset of users S, encrypt to position u = (i, j), message M in GT
-	public static Object[][] encryptABE(HashSet<Integer> S, Object[] PK, int u, GT M) {
+	public static Object[][] encryptABBE(HashSet<Integer> S, Object[] PK, int u, GT M) {
 		
 		//extract data
 		int j = (u % m == 0) ? m : (u % m);
@@ -218,7 +218,7 @@ public class AugBERevised {
 	
 	
 	
-	public static GT decryptABE(Object[][] C, HashSet<Integer> S, Object[] SK, int u)     {
+	public static GT decryptABBE(Object[][] C, HashSet<Integer> S, Object[] SK, int u)     {
 		
 		//extract data
 		int y = (u % m == 0) ? m : (u % m);
@@ -482,7 +482,7 @@ public class AugBERevised {
 			
 			//Get elapsed time for setup(n) 
 			long startSetup = System.nanoTime();
-			Object[] setup = setupABE(N, lambda);
+			Object[] setup = setupABBE(N, lambda);
 			long elapsedSetup = System.nanoTime() - startSetup;
 			double secondsSetup = ((double) elapsedSetup) / 1E9;
 			
@@ -513,7 +513,7 @@ public class AugBERevised {
 				}
 				
 			long startEncrypt = System.nanoTime();
-			Object[][] C = encryptABE(S, PK, 1, M);
+			Object[][] C = encryptABBE(S, PK, 1, M);
 			long elapsedEncrypt = System.nanoTime() - startEncrypt;
 			double secondsEncrypt = ((double) elapsedEncrypt) / 1E9;
 					
@@ -522,13 +522,13 @@ public class AugBERevised {
 			
 			//Get elapsed time for keygen
 			long startKeyGen = System.nanoTime();
-			Object[] SK = keyGenABE(u, MSK);
+			Object[] SK = keyGenABBE(u, MSK);
 			long elapsedKeyGen = System.nanoTime() - startKeyGen;
 			double secondsKeyGen = ((double) elapsedKeyGen) / 1E9;
 			
 			//get elabsed time for decrypt
 			long startDecrypt = System.nanoTime();
-			GT M1 = decryptABE(C, S, SK, u);
+			GT M1 = decryptABBE(C, S, SK, u);
 			long elapsedDecrypt = System.nanoTime() - startDecrypt;
 			double secondsDecrypt = ((double) elapsedDecrypt) / 1E9;
 			
