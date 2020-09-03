@@ -1,6 +1,5 @@
 package schemesRevised;
 import helperclasses.structures.VectorND;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +30,7 @@ public class NonriskyBroadcastAndTrace {
 		int n = 2;
 		int v = nOverT;
 		int u = 1, t = 1;
-		Object[] setup = RiskyMTBRevised.genMTB(u, v, t, n, lambda);
+		Object[] setup = MTBRevised.genMTB(u, v, t, n, lambda);
 		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
 		Object[] MSK = (Object[]) setup[1];
 		ArrayList<Object> secretKeys = new ArrayList<Object>();
@@ -83,7 +82,7 @@ public class NonriskyBroadcastAndTrace {
 				//finally, generate the key for the Xth instance
 				Set<Integer> U = new HashSet<Integer>();
 				U.add(newID);
-				ArrayList<Object> ski = RiskyMTBRevised.extractMTB(MSK, U, wJI);
+				ArrayList<Object> ski = MTBRevised.extractMTB(MSK, U, wJI);
 				skID.add(ski);
 
 			}
@@ -117,7 +116,7 @@ public class NonriskyBroadcastAndTrace {
 				int ID = (l - 1) * nOverT + i;
 				TjS.add(ID);
 			}
-			ciphertext.add(RiskyMTBRevised.encMTB(PK, TjS));
+			ciphertext.add(MTBRevised.encMTB(PK, TjS));
 		}
 			
 		Object[] res = {ciphertext, X};
@@ -153,7 +152,7 @@ public class NonriskyBroadcastAndTrace {
 
 		Set<Integer> U = new HashSet<Integer>();
 		U.add(IDXInstance);	
-		return RiskyMTBRevised.decMTB(ski, helperKey, TjS, U, c);
+		return MTBRevised.decMTB(ski, helperKey, TjS, U, c);
 	}
 	
 	//To get the N^(1/3) scheme, set a = 2/3. In general, we get a scheme of size (N^(1 - a), N^(1 - a), N^a)
