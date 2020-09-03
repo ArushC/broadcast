@@ -11,6 +11,8 @@ import com.herumi.mcl.Fr;
 import com.herumi.mcl.GT;
 import com.herumi.mcl.Mcl;
 
+//Zhandry's O(N^(1 - a), N^(1 - a), N^a) scheme -- setting a = 2/3 yields a scheme with public/private key of N^(1/3)
+//The scheme: https://eprint.iacr.org/2020/954, section 9.3, post risk-mitigation compiler & user-expansion compiler
 public class NonriskyBroadcastAndTrace {
 	
 	private static int nOverT, MT, T, N;
