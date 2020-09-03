@@ -1,7 +1,9 @@
 package schemesRevised;
 import helperclasses.polynomials.LagrangeInterpolationZp;
+
 import helperclasses.structures.NDMatrix;
 import helperclasses.structures.VectorND;
+
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import com.herumi.mcl.*;
 
+
 //The scheme: https://eprint.iacr.org/2020/954, section 9.3, page 58
 //"we use a single helper key for all users and include the helper key in the public parameters
 //to obtain a risky broadcast multi-scheme of size (N, 1, 1)"
@@ -21,7 +24,7 @@ import com.herumi.mcl.*;
 //1. in the public key, second element: g1^((beta * gamma, 0, 0) * R^(-1)) --> g1^((beta, 0, 0) * R^(-1))
 //2. in the vector exponent of hTheta: ((beta - tTheta)/(beta * gamma)) --> (beta - tTheta)/gamma
 //3. in the vector exponent of c1: (alpha * beta * gamma) --> (alpha * gamma)
-public class MTBRevised {
+public class RiskyMTBRevised {
 	
 	private static int u, t, n, v;
 	private static G1 g1;
@@ -34,10 +37,10 @@ public class MTBRevised {
 		Mcl.SystemInit(lambda);
 		
 		//save so it can be used in later functions
-		MTBRevised.u = u;
-		MTBRevised.t = t;
-		MTBRevised.n = n;
-		MTBRevised.v = v;
+		RiskyMTBRevised.u = u;
+		RiskyMTBRevised.t = t;
+		RiskyMTBRevised.n = n;
+		RiskyMTBRevised.v = v;
 		
 		//choose random beta, gamma
 		Fr beta = new Fr();
@@ -84,7 +87,7 @@ public class MTBRevised {
 		VectorND exp2NT = new VectorND(VectorND.VECTOR_ZERO, n + 2);
 		exp2NT.getCoords().set(0, gamma);
 		VectorND exp2 = NDMatrix.transform(RInverted, exp2NT);
-		ArrayList<G1> e2 = VectorND.exponentiate(g1, exp2);
+		ArrayList<G2> e2 = VectorND.exponentiate(g2, exp2);
 		
 		PK.add(e1); //add first two elements to public key
 		PK.add(e2);
@@ -94,7 +97,7 @@ public class MTBRevised {
 			VectorND exp3NT = new VectorND(VectorND.VECTOR_ZERO, n + 2);
 			exp3NT.getCoords().set(0, gammaToTheI);
 			VectorND exp3 = NDMatrix.transform(R, exp3NT);
-			ArrayList<G2> pkJ = VectorND.exponentiate(g2, exp3);
+			ArrayList<G1> pkJ = VectorND.exponentiate(g1, exp3);
 			PK.add(pkJ);
 			Mcl.mul(gammaToTheI, gammaToTheI, gamma);
 		}
@@ -108,7 +111,7 @@ public class MTBRevised {
 		Mcl.div(e1ExpHVNT, e1ExpHVNT, gamma);
 		expHVNT.getCoords().set(0, e1ExpHVNT);
 		VectorND expHV = NDMatrix.transform(R, expHVNT);
-		ArrayList<G2> hTheta = VectorND.exponentiate(g2, expHV);	
+		ArrayList<G1> hTheta = VectorND.exponentiate(g1, expHV);	
 		hkTheta.add(hTheta);
 				
 		//compute all the g2 vectors
@@ -121,7 +124,7 @@ public class MTBRevised {
 			expHVENT.getCoords().set(0, e1ExpHVENT);
 			//transformed
 			VectorND expHVE = NDMatrix.transform(R, expHVENT);
-			ArrayList<G2> elementHelper = VectorND.exponentiate(g2, expHVE);
+			ArrayList<G1> elementHelper = VectorND.exponentiate(g1, expHVE);
 			hkTheta.add(elementHelper);
 			Mcl.mul(gammaToThePowerHelper, gammaToThePowerHelper, gamma);
 		}
@@ -175,7 +178,7 @@ public class MTBRevised {
 			
 			VectorND expNT = new VectorND(expNTVals);
 			VectorND exp = NDMatrix.transform(RInverted, expNT);
-			ArrayList<G1> element = VectorND.exponentiate(g1, exp);
+			ArrayList<G2> element = VectorND.exponentiate(g2, exp);
 			sk.add(element);
 			Mcl.mul(gammaToThePower, gammaToThePower, gamma);
 		}
@@ -190,10 +193,10 @@ public class MTBRevised {
 		Fr alpha = new Fr();
 		alpha.setByCSPRNG();
 		
-		ArrayList<G1> c1 = new ArrayList<G1>((ArrayList<G1>) PK.get(1));
+		ArrayList<G2> c1 = new ArrayList<G2>((ArrayList<G2>) PK.get(1));
 		
 		for (int l = 0; l < c1.size(); l++) {
-			G1 elC1 = new G1();
+			G2 elC1 = new G2();
 			Mcl.mul(elC1, c1.get(l), alpha);
 			c1.set(l, elC1);
 		}
@@ -212,25 +215,25 @@ public class MTBRevised {
 		}
 		
 		//then use the coefficients to calculate c2
-		ArrayList<G2> c2 = new ArrayList<G2>((ArrayList<G2>) PK.get(2));
+		ArrayList<G1> c2 = new ArrayList<G1>((ArrayList<G1>) PK.get(2));
 		int k = coefficients.length;
 		for (int z = 0; z < c2.size(); z++) {
-			G2 helper = new G2();
+			G1 helper = new G1();
 			Mcl.mul(helper, c2.get(z), coefficients[k - 1]);
 			c2.set(z, helper);
 		}
 		
 		for (int i = k - 2; i >= 0; i--) {
 			//if (coefficients.length == 1) break;
-			ArrayList<G2> element = new ArrayList<G2>((ArrayList<G2>) PK.get(k - i + 1));
+			ArrayList<G1> element = new ArrayList<G1>((ArrayList<G1>) PK.get(k - i + 1));
 			for (int y = 0; y < c2.size(); y++) {
-				G2 p = new G2();
+				G1 p = new G1();
 				Mcl.mul(p, element.get(y), coefficients[i]);
 				element.set(y, p);
 			}
 			
 			for (int j = 0; j < element.size(); j++) {
-				G2 b = new G2();
+				G1 b = new G1();
 				Mcl.add(b, c2.get(j), element.get(j));
 				c2.set(j, b);
 			}
@@ -238,7 +241,7 @@ public class MTBRevised {
 		}
 		
 		for (int l = 0; l < c2.size(); l++) {
-			G2 b = new G2();
+			G1 b = new G1();
 			Mcl.mul(b, c2.get(l), alpha);
 			c2.set(l, b);
 		}
@@ -251,9 +254,9 @@ public class MTBRevised {
 	public static GT decMTB(ArrayList<Object> sk, ArrayList<Object> helperKey, Set<Integer> S, Set<Integer> U, Object[] c) {
 		
 		//extract from the ciphertext and secret key
-		ArrayList<G2> hTheta = (ArrayList<G2>) helperKey.get(0);
-		ArrayList<G1> c1 = (ArrayList<G1>) c[0];
-		ArrayList<G2> c2 = (ArrayList<G2>) c[1];
+		ArrayList<G1> hTheta = (ArrayList<G1>) helperKey.get(0);
+		ArrayList<G2> c1 = (ArrayList<G2>) c[0];
+		ArrayList<G1> c2 = (ArrayList<G1>) c[1];
 		
 		Set<Integer> SDiff = new HashSet<Integer>(S);
 		Set<Integer> UDiff = new HashSet<Integer>(U);
@@ -288,58 +291,58 @@ public class MTBRevised {
 		if (PNumerator.length == 1)
 			P[0] = new Fr(0); //special case, P is a zero polynomial
 		
-		ArrayList<G2> JThetaP = new ArrayList<G2>((ArrayList<G2>) helperKey.get(1));
+		ArrayList<G1> JThetaP = new ArrayList<G1>((ArrayList<G1>) helperKey.get(1));
 		int p = P.length;
 		for (int z = 0; z < JThetaP.size(); z++) {
-			G2 helperJTP = new G2();
+			G1 helperJTP = new G1();
 			Mcl.mul(helperJTP, JThetaP.get(z), P[p - 1]);
 			JThetaP.set(z, helperJTP);
 		}
 		
 		for (int i = p - 2; i >= 0; i--) {
-			ArrayList<G2> element = new ArrayList<G2>((ArrayList<G2>) helperKey.get(p - i));
+			ArrayList<G1> element = new ArrayList<G1>((ArrayList<G1>) helperKey.get(p - i));
 			for (int y = 0; y < element.size(); y++) {
-				G2 a = new G2();
+				G1 a = new G1();
 				Mcl.mul(a, element.get(y), P[i]);
 				element.set(y, a);
 			}
 			//add the element by the vector JThetaP
 			for (int j = 0; j < element.size(); j++) {
-				G2 b = new G2();
+				G1 b = new G1();
 				Mcl.add(b, JThetaP.get(j), element.get(j));
 				JThetaP.set(j, b);
 			}
 		}
 		
 		//compute HThetaR
-		ArrayList<G1> HThetaR = new ArrayList<G1>((ArrayList<G1>) sk.get(0));
+		ArrayList<G2> HThetaR = new ArrayList<G2>((ArrayList<G2>) sk.get(0));
 		int r = R.length;
 		for (int z = 0; z < HThetaR.size(); z++)  {
-			G1 helperHTR = new G1();
+			G2 helperHTR = new G2();
 			Mcl.mul(helperHTR, HThetaR.get(z), R[r - 1]);
 			HThetaR.set(z, helperHTR);
 		}
 
 		for (int i = r - 2; i >= 0; i--) {
 			if (U.size() == 1) break;
-			ArrayList<G1> element = new ArrayList<G1>((ArrayList<G1>) sk.get(r - i - 1));
+			ArrayList<G2> element = new ArrayList<G2>((ArrayList<G2>) sk.get(r - i - 1));
 			for (int y = 0; y < element.size(); y++) {
-				G1 a = new G1();
+				G2 a = new G2();
 				Mcl.mul(a, element.get(y), R[i]);
 				element.set(y, a);
 			}
 			
 			//add the element by the vector JThetaP
 			for (int j = 0; j < element.size(); j++) {
-				G1 b = new G1();
+				G2 b = new G2();
 				Mcl.add(b, HThetaR.get(j), element.get(j));
 				HThetaR.set(j, b);
 			}
 		}
 		
-		GT e1 = VectorND.vectorPairing(c1, hTheta);
-		GT e2 = VectorND.vectorPairing(c1, JThetaP);
-		GT e3 = VectorND.vectorPairing(HThetaR, c2);
+		GT e1 = VectorND.vectorPairing(hTheta, c1);
+		GT e2 = VectorND.vectorPairing(JThetaP, c1);
+		GT e3 = VectorND.vectorPairing(c2, HThetaR);
 		Mcl.mul(e1, e1, e2);
 		Mcl.mul(e1, e1, e3);
 		return e1;
@@ -416,13 +419,36 @@ public class MTBRevised {
 	
 	public static void testRuntimes(int percent, int lambda) {
 		for (int N = 100; N <= 1000000; N *= 10) {
-			int n = (int) Math.ceil(Math.pow(N, 0.5));
-			int m = (int) Math.ceil(((double) N)/n);
-			int subsetSize = (int) Math.round(0.01 * percent * n);
-			printRuntimes(n, m, subsetSize, lambda);
+			//int n = (int) Math.ceil(Math.pow(N, 0.5));
+			//int m = (int) Math.ceil(((double) N)/n);
+			int subsetSize = (int) Math.round(0.01 * percent * N);
+			printRuntimes(N, 1, subsetSize, lambda);
 		}
 		
 	}
+	
+	//TEST THE MTB SCHEME
+	/*public static void main(String[] args) {
+		File lib = new File("../../lib/libmcljava.dylib");
+		System.load(lib.getAbsolutePath());
+		Object[] gen = genMTB(10, 1000, 1, 10, Mcl.BN254);
+		ArrayList<Object> PK = (ArrayList<Object>) gen[0];
+		Object[] MSK = (Object[]) gen[1];
+			
+		Set<Integer> S = new HashSet<Integer>();
+		S.addAll(Arrays.asList(1, 4, 6, 7, 10));
+		Set<Integer> U = new HashSet<Integer>();
+		U.addAll(Arrays.asList(1));
+		VectorND x = new VectorND(VectorND.VECTOR_ZERO, 10);
+		ArrayList<Object> sk = extractMTB(MSK, U, x);
+		ArrayList<Object> helperKey = (ArrayList<Object>) PK.get(PK.size() - 1);
+		Object[] enc = encMTB(PK, S);
+		Object[] C = (Object[]) enc[0];
+		GT encapsulatedKey = (GT) enc[1];
+		GT encapsulatedKey1 = decMTB(sk, helperKey, S, U, C);
+		System.out.println("Encapsulated Key Actual: " + encapsulatedKey);
+		System.out.println("Decrypted Encapsulated Key: " + encapsulatedKey1);
+	}*/
 	
 	public static void main(String[] args) {
 		File lib = new File("../../lib/libmcljava.dylib");
@@ -448,7 +474,7 @@ class RiskyBroadcastMultischeme {
 		int n = 2;
 		int v = N;
 		int u = 1, t = 1;
-		Object[] setup = MTBRevised.genMTB(u, v, t, n, lambda);
+		Object[] setup = RiskyMTBRevised.genMTB(u, v, t, n, lambda);
 		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
 		Object[] MSK = (Object[]) setup[1];
 		ArrayList<Object> secretKeys = new ArrayList<Object>();
@@ -492,7 +518,7 @@ class RiskyBroadcastMultischeme {
 		//finally, generate the key
 		Set<Integer> U = new HashSet<Integer>();
 		U.add(ID);
-		ArrayList<Object> skID = MTBRevised.extractMTB(MSK, U, wJI);
+		ArrayList<Object> skID = RiskyMTBRevised.extractMTB(MSK, U, wJI);
 		return skID;
 	}
 	
@@ -505,7 +531,7 @@ class RiskyBroadcastMultischeme {
 			TjS.add(ID);
 		}
 		
-		return MTBRevised.encMTB(PK, TjS);
+		return RiskyMTBRevised.encMTB(PK, TjS);
 		
 	}
 	
@@ -524,7 +550,7 @@ class RiskyBroadcastMultischeme {
 		Set<Integer> U = new HashSet<Integer>();
 		U.add(userID);
 		
-		return MTBRevised.decMTB(skID, helperKey, TjS, U, c);
+		return RiskyMTBRevised.decMTB(skID, helperKey, TjS, U, c);
 	}
 	
 }
