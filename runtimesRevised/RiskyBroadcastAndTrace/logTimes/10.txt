@@ -14,10 +14,10 @@ decryption took 0.111840936 seconds (u = 823)
 
 SUCCESSFUL DECRYPTION (10000 total users): N = 10000, M = 1, subset size = 1000
 
-setup took 9.46899771 seconds
-encryption took 3.282996879 seconds
-key generation took 8.9045E-4 seconds
-decryption took 1.893245004 seconds (u = 5100)
+setup took 8.598814741 seconds
+encryption took 3.335600824 seconds
+key generation took 7.98513E-4 seconds
+decryption took 3.310846239 seconds (u = 8860)
 
 SUCCESSFUL DECRYPTION (100000 total users): N = 100000, M = 1, subset size = 10000
 
