@@ -158,7 +158,7 @@ public class NonriskyBroadcastAndTrace {
 	//To get the N^(1/3) scheme, set a = 2/3. In general, we get a scheme of size (N^(1 - a), N^(1 - a), N^a)
 	public static void printRuntimes(int N, int M, double a, int subsetSize, int lambda) {
 		
-		int T = (int) Math.ceil(Math.pow(N, a));
+		int T = (int) Math.floor(Math.pow(N, a));
 		long startSetup = System.nanoTime();
 		Object[] setup = NonriskyBroadcastAndTrace.setup(N, M, T, Mcl.BN254);
 		long elapsedSetup = System.nanoTime() - startSetup;
