@@ -2,28 +2,28 @@ Testing runtimes, a = 1
 
 SUCCESSFUL DECRYPTION (100 total users): N = 100, M = 1, T = 100, subset size = 10
 
-setup took 0.03891901 seconds
-encryption took 0.1669047 seconds
-key generation took 5.04904E-4 seconds
-decryption took 0.005274631 seconds (u = 59)
+setup took 0.028255358 seconds
+encryption took 0.148183953 seconds
+key generation took 9.27417E-4 seconds
+decryption took 0.006603882 seconds (u = 5)
 
 SUCCESSFUL DECRYPTION (1000 total users): N = 1000, M = 1, T = 1000, subset size = 100
 
-setup took 0.010760162 seconds
-encryption took 2.340990453 seconds
-key generation took 8.9445E-4 seconds
-decryption took 0.010361619 seconds (u = 171)
+setup took 0.007940292 seconds
+encryption took 1.984377961 seconds
+key generation took 0.001471478 seconds
+decryption took 0.012852912 seconds (u = 768)
 
 SUCCESSFUL DECRYPTION (10000 total users): N = 10000, M = 1, T = 10000, subset size = 1000
 
-setup took 0.0157281 seconds
-encryption took 18.753558473 seconds
-key generation took 5.59974E-4 seconds
-decryption took 0.006676817 seconds (u = 7310)
+setup took 0.01305265 seconds
+encryption took 16.690006321 seconds
+key generation took 7.97449E-4 seconds
+decryption took 0.00644452 seconds (u = 4394)
 
 SUCCESSFUL DECRYPTION (100000 total users): N = 100000, M = 1, T = 100000, subset size = 10000
 
-setup took 0.018429945 seconds
-encryption took 170.731349257 seconds
-key generation took 5.78864E-4 seconds
-decryption took 0.005039971 seconds (u = 76180)
+setup took 0.017823193 seconds
+encryption took 166.59216519 seconds
+key generation took 8.10893E-4 seconds
+decryption took 0.006432163 seconds (u = 21835)
