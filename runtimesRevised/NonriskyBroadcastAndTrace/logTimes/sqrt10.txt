@@ -2,10 +2,10 @@ Testing runtimes with a = 1/2
 
 SUCCESSFUL DECRYPTION (100 total users): N = 100, M = 1, T = 10, subset size = 10
 
-setup took 0.043472902 seconds
-encryption took 0.021397766 seconds
-key generation took 0.009337835 seconds
-decryption took 0.008375228 seconds (u = 36)
+setup took 0.013792926 seconds
+encryption took 0.018465665 seconds
+key generation took 0.014918967 seconds
+decryption took 0.007722002 seconds (u = 38)
 
 SUCCESSFUL DECRYPTION (1000 total users): N = 1000, M = 1, T = 31, subset size = 100
 
