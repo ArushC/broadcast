@@ -25,3 +25,10 @@ setup took 40.642643199 seconds
 encrypt took 170.72757677 seconds
 keygen took 64.725847369 seconds
 decrypt took 168.476991857 seconds
+
+SUCCESSFUL DECRYPTION: n = 1000000, subset size = 100000
+
+setup took 410.223017394 seconds
+encrypt took 16457.887750331 seconds
+keygen took 561.782558604 seconds
+decrypt took 16431.979723981 seconds
