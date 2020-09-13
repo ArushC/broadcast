@@ -25,11 +25,3 @@ setup took 947.379042338 seconds
 encryption took 69610.053123565 seconds
 key generation took 0.009588892 seconds
 decryption took 69073.087063486 seconds (u = 941889)
-
-
-SUCCESSFUL DECRYPTION (1000000 total users): N = 1000000, M = 1, subset size = 100000
-
-setup took TBD seconds
-encryption took 59809.987472992 seconds
-key generation took 0.005729098 seconds
-decryption took 18270.096636663 seconds (u = 321818)
