@@ -217,7 +217,6 @@ public class AugBERevised {
 	}
 	
 	
-	
 	public static GT decryptABBE(Object[][] C, HashSet<Integer> S, Object[] SK, int u)     {
 		
 		//extract data
@@ -251,16 +250,18 @@ public class AugBERevised {
 		GT numerator = new GT();
 		GT e1 = computeVectorPairing(Rx, Cy);
 		Mcl.mul(numerator, Bx, e1);
+
 		
 		GT denominator = new GT();
 		GT e2 = computeVectorPairing(RSquigglex, CSquiggley);
+		
 		GT e3 = new GT();
 		Mcl.pairing(e3, Tx, dDoublePrimeXY);
-		Mcl.pow(e3, e3, new Fr(-1));
+		Mcl.mul(numerator, numerator, e3);
+		
 		GT e4 = new GT();
 		Mcl.pairing(e4, KPrimeXY, Ax);
-		Mcl.mul(denominator, e2, e3);
-		Mcl.mul(denominator, denominator, e4);
+		Mcl.mul(denominator, e2, e4);
 		
 		GT result = new GT();
 		Mcl.pow(denominator, denominator, new Fr(-1));
@@ -268,8 +269,6 @@ public class AugBERevised {
 		
 		return result;
 	}
-	
-	
 	
 	private static GT computeVectorPairing(G1[] g1Vals, G2[] g2Vals) {
 		
