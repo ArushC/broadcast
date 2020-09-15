@@ -67,14 +67,16 @@ public class AugBERevised {
 		
 		byte[] b = Tools.generateRandomBytes(m + 2);
 		
+		GT g1g2Pairing = new GT();
+		Mcl.pairing(g1g2Pairing, g1, g2);
+		
 		//Add everything in this one gigantic for loop (repeat this single-column addition m times)
 		for (int i = 0; i < m; i++) {
 			
 			G1 Ei = new G1(); //CHECK THIS if nothing else is the issue
 			Mcl.mul(Ei, g1, rExponents[i]);
 			
-			GT Gi = new GT();
-			Mcl.pairing(Gi, g1, g2);
+			GT Gi = new GT(g1g2Pairing);
 			Mcl.pow(Gi, Gi, alphaExponents[i]);
 		
 			
