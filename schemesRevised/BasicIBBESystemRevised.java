@@ -317,7 +317,7 @@ public class BasicIBBESystemRevised {
 		
 		Mcl.SystemInit(lambda);
 		long startSetup = System.nanoTime();
-		Object[] setup = setup(Mcl.BN254, N);
+		Object[] setup = setup(lambda, N);
 		long elapsedSetup = System.nanoTime() - startSetup;
 		double secondsSetup = ((double) elapsedSetup) / 1E9;
 		Fr ID = new Fr();
