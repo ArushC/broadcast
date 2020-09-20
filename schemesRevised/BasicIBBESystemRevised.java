@@ -13,7 +13,7 @@ public class BasicIBBESystemRevised {
 
 	private static int m;
 	
-	//input: security parameter lambda, maximal subset size m
+	//input: lambda = security parameter, m = number of users in broadcast system
 	//output: Object[] containing public key PP and master secret key MSK
 	public static Object[] setup(int lambda, int m) {
 		
