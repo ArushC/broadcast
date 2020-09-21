@@ -134,7 +134,7 @@ public class IBBESystemRevised {
 		
 	}
 	
-	//outputs a random l - 1 degree polynomial
+	//outputs a random l - 1 degree polynomial such that F(n + j) = 1 for j in {k + 1, k + 2, ..., l}
 	public static Fr[] tagGen(ArrayList<Fr> S, ArrayList<Object> PK) {
 		
 		//extract l and n, compute k
@@ -145,22 +145,29 @@ public class IBBESystemRevised {
 		Fr[] xVals = new Fr[l];
 		Fr[] yVals = new Fr[l];
 		
+		Fr[] afterPoly = {new Fr(1)};
+		
+		//polynomial has the form (random k - 1 degree polynomial) * (x - (n + (k + 1))) * ... * ((x - (n + l)) + 1
+		//first, calculate the product  (x - (n + (k + 1))) * ... * ((x - (n + l))
 		for (int j = k + 1; j <= l; j++) {
-			xVals[j - 1] = new Fr(n + j);
-			yVals[j - 1] = new Fr(1); //F(n + j) = 1 for j in [k + 1, l]
+			Fr p = new Fr(n + j);
+			Mcl.mul(p, p, new Fr(-1));
+			Fr[] binomial = {new Fr(1), new Fr(p)};
+			afterPoly = LagrangeInterpolationZp.multiply(afterPoly, binomial);
+		}
+
+		
+		//(random k - 1 degree polynomial)
+		Fr[] randomCoefficientsPoly = new Fr[k - 1];
+		for (int i = 0; i < k - 1; i++) {
+			Fr p = new Fr();
+			p.setByCSPRNG();
+			randomCoefficientsPoly[i] = p;
 		}
 		
-		//this is the "random" part: the x values are the i-values in {1, ..., k}, F(i) = random Fr
-		for (int i = 0; i < k; i++) {
-			Fr p = S.get(i);
-			Fr fi = new Fr();
-			fi.setByCSPRNG();
-			xVals[i] = p;
-			yVals[i] = fi;
-		}
-		
-		//calculate the lagrange interpolation based on these points
-		Fr[] tau = LagrangeInterpolationZp.laGrangeFaster(xVals, yVals, l - 1);
+		//finally, multiply the two components together and add 1
+		Fr[] tau = LagrangeInterpolationZp.multiply(randomCoefficientsPoly, afterPoly);
+		Mcl.add(tau[tau.length - 1], tau[tau.length - 1], new Fr(1));
 		return tau;
 		
 	}
