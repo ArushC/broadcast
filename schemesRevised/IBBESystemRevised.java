@@ -61,8 +61,7 @@ public class IBBESystemRevised {
 		Mcl.mul(element, g1, gamma); //add g1^(gamma)
 		PK.add(element);
 		G1 element2 = new G1();
-		Mcl.mul(element2, g1, gamma);
-		Mcl.mul(element2, element2, alpha); //add g1^(gamma * alpha)
+		Mcl.mul(element2, element, alpha); //calculate g1^(alpha * gamma)
 		PK.add(element2);
 		
 		//second part of PK is going to be the following
