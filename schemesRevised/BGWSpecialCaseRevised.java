@@ -7,7 +7,6 @@ import java.util.Arrays;
 import miscellaneous.Tools;
 import com.herumi.mcl.*;
 
-
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.1)
 //Changes made: optimized selection of G1 and G2, included gg^(alpha^i) for all i in the public key,
 //both g1 and g2 are included in the public key
