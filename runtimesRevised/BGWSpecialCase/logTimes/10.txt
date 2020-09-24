@@ -28,7 +28,7 @@ decryption took 0.015334917 seconds (i = 50320)
 
 SUCCESSFUL DECRYPTION: n = 1000000, subset size = 100000
 
-setup took 424.363858748 seconds
-encryption took 1.136157881 seconds
-key generation took 1.20926E-4 seconds
-decryption took 0.493012773 seconds (i = 283251)
+setup took 423.398506826 seconds
+encryption took 0.664762992 seconds
+key generation took 1.17878E-4 seconds
+decryption took 0.349515422 seconds (i = 343320)
