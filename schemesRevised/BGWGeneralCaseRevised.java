@@ -2,11 +2,15 @@ package schemesRevised;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+
+import miscellaneous.Tools;
+
 import com.herumi.mcl.*;
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.2)
 //Changes made: optimized selection of G1 and G2, included gg^(alpha^i) for all i in the public key,
 //both g1 and g2 are included in the public key, used HASHSETS to calculate the intersection of SHatL and SL
+//and added a key generation function instead of computing the private keys for all N users in the setup function
 //MAKE SURE TO MENTION IN PAPER: precomputation
 public class BGWGeneralCaseRevised {
 
@@ -75,44 +79,32 @@ public class BGWGeneralCaseRevised {
 		}
 		
 		
-		//calculate private keys and put them into a list
-		ArrayList<G1> privateKeys = new ArrayList<G1>();
-		for (int i = 1; i <= n; i++) {
-			G1 priv = new G1();
-			int b = (i % B == 0) ? B : (i % B); //i = (a-1)B + b
-			int a = (int) Math.ceil(((double) i) / B); 
-			Mcl.mul(priv, (G1) PK[b + 1], randomBetas.get(a - 1)); // d_i = (g_b)^(beta)
-			privateKeys.add(priv);
-		}
+		//define a master secret key
+		Object[] MSK = {randomBetas, PK};
+		
 		//return public key & private key
 		Object[] result = new Object[2];
 		result[0] = PK;
-		result[1] = privateKeys;
+		result[1] = MSK;
 		return result;
 	}
 	
-	//precomputes K = e(g_(B+1), g) as e(g_B, gg_1)
-	private static void precompute(G1 gB, G2 gg1) {
-		//calculate e(g, g_(B+1))
-		K = new GT();
-		Mcl.pairing(K, gB, gg1);
+	
+	
+	//generates the key for user i
+	public static G1 keyGen(Object[] MSK, int i) {
+		
+		//extract from MSK
+		ArrayList<Fr> randomBetas = (ArrayList<Fr>) MSK[0];
+		Object[] PK = (Object[]) MSK[1];
+		
+		G1 priv = new G1();
+		int b = (i % B == 0) ? B : (i % B); //i = (a-1)B + b
+		int a = (int) Math.ceil(((double) i) / B); 
+		Mcl.mul(priv, (G1) PK[b + 1], randomBetas.get(a - 1)); // d_i = (g_b)^(beta)
+		return priv;
 	}
-
-	private static ArrayList<Integer> getSLSubset(HashSet<Integer> S, int l) {
 	
-			HashSet<Integer> sHatL = new HashSet<Integer>();
-			for (int i = 1; i <= B; i++) {
-				sHatL.add((l - 1) * B + i);  //part = {(l - 1)B + 1, (l - 1)B + 2, ..., lB}
-			}
-			
-			sHatL.retainAll(S); //calculate intersection of sHatL and S
-			ArrayList<Integer> sL = new ArrayList<Integer>();
-			for (Integer x: sHatL) {
-				sL.add(x - l * B + B); //check to make sure this is a subset of {1, ..., B}
-			}
-	
-			return sL;
-		}
 	
 	//Input: S = subset to which the message is brodcast, PK = public key
 	//Output: Hdr = header (broadcast ciphertext), K = message encryption key
@@ -173,6 +165,8 @@ public class BGWGeneralCaseRevised {
 		G2 c0 = (G2) Hdr.get(0);
 		ArrayList<Integer> sA = getSLSubset(S, a);
 		
+		//calculate number of values in all subsets
+		
 		G1 product = new G1(di);
 		for (Integer j: sA) {	
 			if (j == b) { //j != b
@@ -193,6 +187,29 @@ public class BGWGeneralCaseRevised {
 		return K_R;
 		
 	}
+	
+	//precomputes K = e(g_(B+1), g) as e(g_B, gg_1)
+	private static void precompute(G1 gB, G2 gg1) {
+		//calculate e(g, g_(B+1))
+		K = new GT();
+		Mcl.pairing(K, gB, gg1);
+	}
+
+	private static ArrayList<Integer> getSLSubset(HashSet<Integer> S, int l) {
+		
+			HashSet<Integer> sHatL = new HashSet<Integer>();
+			for (int i = 1; i <= B; i++) {
+				sHatL.add((l - 1) * B + i);  //part = {(l - 1)B + 1, (l - 1)B + 2, ..., lB}
+			}
+				
+			sHatL.retainAll(S); //calculate intersection of sHatL and S
+			ArrayList<Integer> sL = new ArrayList<Integer>();
+			for (Integer x: sHatL) {
+				sL.add(x - l * B + B); //check to make sure this is a subset of {1, ..., B}
+			}
+		
+			return sL;
+	}
 
 	//Test the runtimes of the algorithms
 	public static void testRuntimes(int percent) {
@@ -211,9 +228,10 @@ public class BGWGeneralCaseRevised {
 		Object[] setup = setup(n);
 		long elapsedSetup = System.nanoTime() - startSetup;
 		double secondsSetup = ((double) elapsedSetup) / 1E9;
-		//extract public/private key from setup
+		//extract public key & MSK from setup
 		Object[] PK = (Object[]) setup[0];
-		ArrayList<G1> privateKeys = (ArrayList<G1>) setup[1];
+		Object[] MSK = (Object[]) setup[1];
+		
 		int randomID = 0;
 		HashSet<Integer> S = new HashSet<Integer>();
 		//randomly generate numbers to put in the subset S (NO REPEATS)
@@ -222,7 +240,7 @@ public class BGWGeneralCaseRevised {
 				randomNums.add(i + 1);
 			}
 			for (int i = 0; i < subsetSize; i++) {
-				int randomIndex = ThreadLocalRandom.current().nextInt(0, randomNums.size());
+				int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
 				randomID = randomNums.get(randomIndex);
 				S.add(randomID);
 				randomNums.remove(randomIndex);
@@ -237,7 +255,12 @@ public class BGWGeneralCaseRevised {
 		//Get user ID i to test the decryption
 		int i = randomID; //int i is the last ID that was added to the set S
 		ArrayList<Object> Hdr = (ArrayList<Object>) encrypted[0];
-		G1 di = privateKeys.get(i - 1);
+		
+		//generate key for user i
+		long startKeyGen = System.nanoTime();
+		G1 di = keyGen(MSK, i);
+		long elapsedKeyGen = System.nanoTime() - startKeyGen;
+		double secondsKeyGen = ((double) elapsedKeyGen)/1E9;
 		
 		//Get elapsed time for decrypt
 		long startDecrypt = System.nanoTime();
@@ -251,6 +274,7 @@ public class BGWGeneralCaseRevised {
 		System.out.println(); //padding
 		System.out.println("setup took " + secondsSetup + " seconds");
 		System.out.println("encryption took " + secondsEncrypt + " seconds");
+		System.out.println("key generation took " + secondsKeyGen + " seconds");
 		System.out.println("decryption took " + secondsDecrypt + " seconds (i = " + i + ")");
 		System.out.println(); //more padding
 		
