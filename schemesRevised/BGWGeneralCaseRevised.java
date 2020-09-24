@@ -277,11 +277,12 @@ public class BGWGeneralCaseRevised {
 		System.out.println("key generation took " + secondsKeyGen + " seconds");
 		System.out.println("decryption took " + secondsDecrypt + " seconds (i = " + i + ")");
 		System.out.println(); //more padding
-		
-		long[] elapsedTimes = new long[3];
+
+		long[] elapsedTimes = new long[4];
 		elapsedTimes[0] = elapsedSetup;
 		elapsedTimes[1] = elapsedEncrypt;
-		elapsedTimes[2] = elapsedDecrypt;
+		elapsedTimes[2] = elapsedKeyGen;
+		elapsedTimes[3] = elapsedDecrypt;
 		
 		return elapsedTimes;
 	}
