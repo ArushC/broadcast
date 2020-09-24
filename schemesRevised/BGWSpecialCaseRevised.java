@@ -1,14 +1,17 @@
 package schemesRevised;
+
 import java.io.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+import miscellaneous.Tools;
 import com.herumi.mcl.*;
 
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.1)
 //Changes made: optimized selection of G1 and G2, included gg^(alpha^i) for all i in the public key,
-//              both g1 and g2 are included in the public key
+//both g1 and g2 are included in the public key
+//and added a key generation function instead of computing the private keys for all N users in the setup function
 //MENTION IN PAPER: precomputation of K
 public class BGWSpecialCaseRevised {
 
@@ -17,8 +20,8 @@ public class BGWSpecialCaseRevised {
 	
 	//Input: n = # of receivers
 	//Output: Object[]
-	//first element:  list containing public key PK
-	//second element: list containing private keys: d1, d2, ... dn 
+	//first element:  public key PK
+	//second element: MSK
 	public static Object[] setup(int n) {
 		
 		BGWSpecialCaseRevised.n = n; //save n so it can be used for other functions
@@ -61,33 +64,33 @@ public class BGWSpecialCaseRevised {
 		//precompute K
 		precompute((G1) PK[n+1], (G2) PK[2 * n + 2]);
 		
-		//random beta in Z_p
-		Fr beta = new Fr();
-		beta.setByCSPRNG();
+		//random gamma in Z_p
+		Fr gamma = new Fr();
+		gamma.setByCSPRNG();
 		
 		//compute v
 		G1 v = new G1();
-		Mcl.mul(v, g, beta); //v = g^beta
+		Mcl.mul(v, g, gamma); //v = g^gamma
 		PK[3 * n + 2] = v;
 		
-		//calculate private keys and put them into a list
-		ArrayList<G1> privateKeys = new ArrayList<G1>();
-		for (int i = 1; i <= n; i++) {
-			G1 priv = new G1();
-			Mcl.mul(priv, (G1) PK[i + 1], beta); // d_i = (g_i)^(beta)
-			privateKeys.add(priv);
-		}
+		//define a master secret key
+		Object[] MSK = {gamma, PK};
+		
 		//return public key & private key
-		Object[] result = new Object[2];
-		result[0] = PK;
-		result[1] = privateKeys;
+		Object[] result = {PK, MSK};
 		return result;
 	}
 	
-	//precomputes K = e(gn+1, g) as e(gn, gg1)
-	private static void precompute(G1 gN, G2 gg1) {
-		K = new GT();
-		Mcl.pairing(K, gN, gg1);
+	//generates the key for individual user i from the master secret key MSK
+	public static G1 keyGen(Object[] MSK, int i) {
+		
+		//extract from MSK
+		Fr gamma = (Fr) MSK[0];
+		Object[] PK = (Object[]) MSK[1];
+		
+		G1 priv = new G1();
+		Mcl.mul(priv, (G1) PK[i + 1], gamma);
+		return priv;
 	}
 	
 	//Input: S = subset to which the message is brodcast, PK = public key
@@ -173,10 +176,10 @@ public class BGWSpecialCaseRevised {
 		Object[] setup = setup(n);
 		long elapsedSetup = System.nanoTime() - startSetup;
 		double secondsSetup = ((double) elapsedSetup) / 1E9;
+		
 		//extract public/private key from setup
 		Object[] PK = (Object[]) setup[0];
-		ArrayList<G1> privateKeys = (ArrayList<G1>) setup[1];
-		
+		Object[] MSK = (Object[]) setup[1];	
 		
 		ArrayList<Integer> S = new ArrayList<Integer>();
 		//randomly generate numbers to put in the subset S (NO REPEATS)
@@ -185,7 +188,7 @@ public class BGWSpecialCaseRevised {
 			randomNums.add(i + 1);
 		}
 		for (int i = 0; i < subsetSize; i++) {
-			int randomIndex = ThreadLocalRandom.current().nextInt(0, randomNums.size());
+			int randomIndex = ThreadLocalRandom.current().nextInt(1, randomNums.size());
 			int randomID = randomNums.get(randomIndex);
 			S.add(randomID);
 			randomNums.remove(randomIndex);
@@ -196,10 +199,16 @@ public class BGWSpecialCaseRevised {
 		Object[] encrypted = encrypt(S, PK);
 		long elapsedEncrypt = System.nanoTime() - startEncrypt;
 		double secondsEncrypt = ((double) elapsedEncrypt) / 1E9;
+		
 		//Get random user ID i to test the decryption
 		int i = S.get(ThreadLocalRandom.current().nextInt(0, S.size()));
 		Object[] Hdr = (Object[]) encrypted[0];
-		G1 di = privateKeys.get(i - 1);
+		
+		//generate the key
+		long startKeyGen = System.nanoTime();
+		G1 di = keyGen(MSK, i);
+		long elapsedKeyGen = System.nanoTime() - startKeyGen;
+		double secondsKeyGen = ((double) elapsedKeyGen)/1E9;
 		
 		//Get elapsed time for decrypt
 		long startDecrypt = System.nanoTime();
@@ -213,17 +222,24 @@ public class BGWSpecialCaseRevised {
 		System.out.println(); //padding
 		System.out.println("setup took " + secondsSetup + " seconds");
 		System.out.println("encryption took " + secondsEncrypt + " seconds");
+		System.out.println("key generation took " + secondsKeyGen + " seconds");
 		System.out.println("decryption took " + secondsDecrypt + " seconds (i = " + i + ")");
 		System.out.println(); //more padding
 		
-		long[] elapsedTimes = new long[3];
+		long[] elapsedTimes = new long[4];
 		elapsedTimes[0] = elapsedSetup;
 		elapsedTimes[1] = elapsedEncrypt;
-		elapsedTimes[2] = elapsedDecrypt;
+		elapsedTimes[2] = elapsedKeyGen;
+		elapsedTimes[3] = elapsedDecrypt;
 		
 		return elapsedTimes;
 	}
 	
+	//precomputes K = e(gn+1, g) as e(gn, gg1)
+	private static void precompute(G1 gN, G2 gg1) {
+		K = new GT();
+		Mcl.pairing(K, gN, gg1);
+	}
 	
 	//Test the runtimes of the algorithms
 	public static void testRuntimes(int percent) {
@@ -242,5 +258,4 @@ public class BGWSpecialCaseRevised {
 		testRuntimes(1);
 		
 	}
-
 }
