@@ -1,10 +1,8 @@
 package schemesRevised;
-
 import java.io.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-import miscellaneous.Tools;
 import com.herumi.mcl.*;
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.1)
