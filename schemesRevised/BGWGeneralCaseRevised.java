@@ -19,8 +19,8 @@ public class BGWGeneralCaseRevised {
 	
 	//Input: n = # of receivers
 	//Output: Object[]
-	//first element:  list containing public key PK
-	//second element: list containing private keys: d1, d2, ... dn 
+	//first element:  public key PK
+	//second element: MSK 
 	public static Object[] setup(int n) {
 		
 		BGWGeneralCaseRevised.n = n; //save n so it can be used for other functions
