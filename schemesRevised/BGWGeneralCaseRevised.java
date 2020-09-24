@@ -2,9 +2,6 @@ package schemesRevised;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-
-import miscellaneous.Tools;
-
 import com.herumi.mcl.*;
 
 //This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.2)
@@ -20,7 +17,7 @@ public class BGWGeneralCaseRevised {
 	//Input: n = # of receivers
 	//Output: Object[]
 	//first element:  public key PK
-	//second element: MSK 
+	//second element: MSK
 	public static Object[] setup(int n) {
 		
 		BGWGeneralCaseRevised.n = n; //save n so it can be used for other functions
@@ -67,20 +64,20 @@ public class BGWGeneralCaseRevised {
 		//precompute K
 		precompute((G1) PK[B + 1], (G2) PK[2 * B + 2]);
 		
-		//generate random betas in Z_p and use to generate v1, v2, ..., vA
-		ArrayList<Fr> randomBetas = new ArrayList<Fr>();
+		//generate random Gammas in Z_p and use to generate v1, v2, ..., vA
+		ArrayList<Fr> randomGammas = new ArrayList<Fr>();
 		for (int i = 1; i <= A; i++) {
-			Fr beta = new Fr();
-			beta.setByCSPRNG();
+			Fr gamma = new Fr();
+			gamma.setByCSPRNG();
 			G1 v = new G1();
-			Mcl.mul(v, g, beta);
-			randomBetas.add(beta);
+			Mcl.mul(v, g, gamma);
+			randomGammas.add(gamma);
 			PK[3 * B + i + 1] = v;
 		}
 		
 		
 		//define a master secret key
-		Object[] MSK = {randomBetas, PK};
+		Object[] MSK = {randomGammas, PK};
 		
 		//return public key & private key
 		Object[] result = new Object[2];
@@ -95,13 +92,13 @@ public class BGWGeneralCaseRevised {
 	public static G1 keyGen(Object[] MSK, int i) {
 		
 		//extract from MSK
-		ArrayList<Fr> randomBetas = (ArrayList<Fr>) MSK[0];
+		ArrayList<Fr> randomGammas = (ArrayList<Fr>) MSK[0];
 		Object[] PK = (Object[]) MSK[1];
 		
 		G1 priv = new G1();
 		int b = (i % B == 0) ? B : (i % B); //i = (a-1)B + b
 		int a = (int) Math.ceil(((double) i) / B); 
-		Mcl.mul(priv, (G1) PK[b + 1], randomBetas.get(a - 1)); // d_i = (g_b)^(beta)
+		Mcl.mul(priv, (G1) PK[b + 1], randomGammas.get(a - 1)); // d_i = (g_b)^(gamma)
 		return priv;
 	}
 	
@@ -277,7 +274,7 @@ public class BGWGeneralCaseRevised {
 		System.out.println("key generation took " + secondsKeyGen + " seconds");
 		System.out.println("decryption took " + secondsDecrypt + " seconds (i = " + i + ")");
 		System.out.println(); //more padding
-
+		
 		long[] elapsedTimes = new long[4];
 		elapsedTimes[0] = elapsedSetup;
 		elapsedTimes[1] = elapsedEncrypt;
