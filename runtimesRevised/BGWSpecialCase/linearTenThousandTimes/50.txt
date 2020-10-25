@@ -1,59 +1,69 @@
 SUCCESSFUL DECRYPTION: n = 10000, subset size = 5000
 
-setup took 6.164270714 seconds
-encryption took 0.012249147 seconds
-decryption took 0.013621828 seconds (i = 8901)
+setup took 4.023841924 seconds
+encryption took 0.006032417 seconds
+key generation took 9.94E-5 seconds
+decryption took 0.006568316 seconds (i = 6923)
 
 SUCCESSFUL DECRYPTION: n = 20000, subset size = 10000
 
-setup took 12.605954666 seconds
-encryption took 0.014425329 seconds
-decryption took 0.014450576 seconds (i = 5593)
+setup took 7.905040939 seconds
+encryption took 0.012468717 seconds
+key generation took 9.6239E-5 seconds
+decryption took 0.012858417 seconds (i = 9355)
 
 SUCCESSFUL DECRYPTION: n = 30000, subset size = 15000
 
-setup took 18.26457531 seconds
-encryption took 0.024852246 seconds
-decryption took 0.024062758 seconds (i = 2483)
+setup took 12.328883141 seconds
+encryption took 0.017834013 seconds
+key generation took 9.7512E-5 seconds
+decryption took 0.01747043 seconds (i = 6441)
 
 SUCCESSFUL DECRYPTION: n = 40000, subset size = 20000
 
-setup took 20.425897666 seconds
-encryption took 0.040754334 seconds
-decryption took 0.031503601 seconds (i = 21292)
+setup took 15.64422392 seconds
+encryption took 0.02246771 seconds
+key generation took 9.8947E-5 seconds
+decryption took 0.023428606 seconds (i = 38809)
 
 SUCCESSFUL DECRYPTION: n = 50000, subset size = 25000
 
-setup took 25.557808977 seconds
-encryption took 0.048617255 seconds
-decryption took 0.058331523 seconds (i = 11021)
+setup took 18.762661313 seconds
+encryption took 0.02768805 seconds
+key generation took 1.027E-4 seconds
+decryption took 0.028763277 seconds (i = 35944)
 
 SUCCESSFUL DECRYPTION: n = 60000, subset size = 30000
 
-setup took 28.9159284 seconds
-encryption took 0.036165672 seconds
-decryption took 0.037377803 seconds (i = 292)
+setup took 27.980822443 seconds
+encryption took 0.061871808 seconds
+key generation took 1.95792E-4 seconds
+decryption took 0.05952823 seconds (i = 26673)
 
 SUCCESSFUL DECRYPTION: n = 70000, subset size = 35000
 
-setup took 35.325157587 seconds
-encryption took 0.040126989 seconds
-decryption took 0.041160356 seconds (i = 52668)
+setup took 30.088555972 seconds
+encryption took 0.042610212 seconds
+key generation took 1.013E-4 seconds
+decryption took 0.041190213 seconds (i = 26907)
 
 SUCCESSFUL DECRYPTION: n = 80000, subset size = 40000
 
-setup took 40.854830156 seconds
-encryption took 0.04453451 seconds
-decryption took 0.044657707 seconds (i = 57772)
+setup took 31.668495404 seconds
+encryption took 0.044746722 seconds
+key generation took 9.8159E-5 seconds
+decryption took 0.04519223 seconds (i = 13985)
 
 SUCCESSFUL DECRYPTION: n = 90000, subset size = 45000
 
-setup took 44.208600078 seconds
-encryption took 0.051625573 seconds
-decryption took 0.050742726 seconds (i = 68389)
+setup took 34.755418932 seconds
+encryption took 0.052220459 seconds
+key generation took 9.9954E-5 seconds
+decryption took 0.051417425 seconds (i = 7590)
 
 SUCCESSFUL DECRYPTION: n = 100000, subset size = 50000
 
-setup took 57.569104078 seconds
-encryption took 0.057913282 seconds
-decryption took 0.056369734 seconds (i = 60445)
+setup took 40.88976971 seconds
+encryption took 0.137828095 seconds
+key generation took 1.98718E-4 seconds
+decryption took 0.096011517 seconds (i = 55458)
