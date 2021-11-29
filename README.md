@@ -11,4 +11,4 @@ Instructions for how to build the library are at the bottom of the page.
 
 IMPORTANT: the most recent schemes and runtimes are in the folders "schemesRevised" and "runtimesRevised", respectively. The folders "schemes" and "runtimes" contain older versions of these files (which contain implementation errors).
 
-SIDENOTE: The following research paper explains the runtimes and conducts a thorough data analysis: https://eprint.iacr.org/2021/1525
+SIDENOTE: The following research paper references the runtimes presented in this repository under "runtimesRevised": https://eprint.iacr.org/2021/1526
