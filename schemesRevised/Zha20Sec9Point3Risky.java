@@ -23,7 +23,7 @@ import com.herumi.mcl.*;
 //1. in the public key, second element: g1^((beta * gamma, 0, 0) * R^(-1)) --> g1^((beta, 0, 0) * R^(-1))
 //2. in the vector exponent of hTheta: ((beta - tTheta)/(beta * gamma)) --> (beta - tTheta)/gamma
 //3. in the vector exponent of c1: (alpha * beta * gamma) --> (alpha * gamma)
-public class MTBRevised {
+public class Zha20Sec9Point3Risky {
 	
 	private static int u, t, n, v;
 	private static G1 g1;
@@ -36,10 +36,10 @@ public class MTBRevised {
 		Mcl.SystemInit(lambda);
 		
 		//save so it can be used in later functions
-		MTBRevised.u = u;
-		MTBRevised.t = t;
-		MTBRevised.n = n;
-		MTBRevised.v = v;
+		Zha20Sec9Point3Risky.u = u;
+		Zha20Sec9Point3Risky.t = t;
+		Zha20Sec9Point3Risky.n = n;
+		Zha20Sec9Point3Risky.v = v;
 		
 		//choose random beta, gamma
 		Fr beta = new Fr();
@@ -473,7 +473,7 @@ class RiskyBroadcastMultischeme {
 		int n = 2;
 		int v = N;
 		int u = 1, t = 1;
-		Object[] setup = MTBRevised.genMTB(u, v, t, n, lambda);
+		Object[] setup = Zha20Sec9Point3Risky.genMTB(u, v, t, n, lambda);
 		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
 		Object[] MSK = (Object[]) setup[1];
 		ArrayList<Object> secretKeys = new ArrayList<Object>();
@@ -517,7 +517,7 @@ class RiskyBroadcastMultischeme {
 		//finally, generate the key
 		Set<Integer> U = new HashSet<Integer>();
 		U.add(ID);
-		ArrayList<Object> skID = MTBRevised.extractMTB(MSK, U, wJI);
+		ArrayList<Object> skID = Zha20Sec9Point3Risky.extractMTB(MSK, U, wJI);
 		return skID;
 	}
 	
@@ -530,7 +530,7 @@ class RiskyBroadcastMultischeme {
 			TjS.add(ID);
 		}
 		
-		return MTBRevised.encMTB(PK, TjS);
+		return Zha20Sec9Point3Risky.encMTB(PK, TjS);
 		
 	}
 	
@@ -549,7 +549,7 @@ class RiskyBroadcastMultischeme {
 		Set<Integer> U = new HashSet<Integer>();
 		U.add(userID);
 		
-		return MTBRevised.decMTB(skID, helperKey, TjS, U, c);
+		return Zha20Sec9Point3Risky.decMTB(skID, helperKey, TjS, U, c);
 	}
 	
 }
