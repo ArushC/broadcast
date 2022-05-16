@@ -9,7 +9,7 @@ import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2019/038.pdf, 3.1 (page 11)
 //Changes made: switched g1 and g2 (less multiplications and exponentiations over g1 are favorable)
-public class BasicIBBESystemRevised {
+public class GW19 {
 
 	private static int m;
 	
@@ -18,7 +18,7 @@ public class BasicIBBESystemRevised {
 	public static Object[] setup(int lambda, int m) {
 		
 		Mcl.SystemInit(lambda);
-		BasicIBBESystemRevised.m = m; //save so it can be used for other functions
+		GW19.m = m; //save so it can be used for other functions
 		
 		//1. generate u1 and u2
 		VectorND u1 = new VectorND(m + 1); //automatically set randomly by the class
