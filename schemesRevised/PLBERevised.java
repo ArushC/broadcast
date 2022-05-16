@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
-import miscellaneous.Tools;
+import helperclasses.miscellaneous.Tools;
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/eprint-bin/getfile.pl?entry=2009/532&version=20091104:184423&file=532.pdf
