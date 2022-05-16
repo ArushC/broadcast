@@ -6,12 +6,12 @@ import helperclasses.miscellaneous.CustomPRF;
 import helperclasses.miscellaneous.Tools;
 import com.herumi.mcl.*;
 
-//The scheme: https://eprint.iacr.org/2008/268.pdf (4.3.1, page 12)
+//The IBBE scheme: https://eprint.iacr.org/2008/268.pdf (4.3.1, page 12)
 //mention that K is precomputed in the setup function, key generation is for a single user
 //Additional changes: fixed computation of g^P(alpha)
 //Included g1 and g1^alpha in the public key (do not need g1^(alpha^2), g1^(alpha^3), ..., etc, only g1 and g1^alpha)
 //Also note that this IBBE system is not meant to work when l = 1
-public class IBBESystemVariantRevised {
+public class GW09Sec4Point3Point1 {
 
 	private static GT K;
 	private static int lambda;
@@ -23,7 +23,7 @@ public class IBBESystemVariantRevised {
 	public static Object[] setup(int n, int l, int lambda) {
 		
 		Mcl.SystemInit(lambda);
-		IBBESystemVariantRevised.lambda = lambda;
+		GW09Sec4Point3Point1.lambda = lambda;
 		//instead of creating a GroupGen function, the groups are generated here
 		
 		//generate random g1, g2
