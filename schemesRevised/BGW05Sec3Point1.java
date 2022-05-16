@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import com.herumi.mcl.*;
 
-//This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.1)
+//This is the special case of the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.1)
 //Changes made: optimized selection of G1 and G2, included gg^(alpha^i) for all i in the public key,
 //both g1 and g2 are included in the public key
 //and added a key generation function instead of computing the private keys for all N users in the setup function
 //MENTION IN PAPER: precomputation of K
-public class BGWSpecialCaseRevised {
+public class BGW05Sec3Point1 {
 
 	private static int n;
 	private static GT K; //to be precomputed in the setup function
@@ -21,7 +21,7 @@ public class BGWSpecialCaseRevised {
 	//second element: MSK
 	public static Object[] setup(int n) {
 		
-		BGWSpecialCaseRevised.n = n; //save n so it can be used for other functions
+		BGW05Sec3Point1.n = n; //save n so it can be used for other functions
 		
 		//initialize random generator g in G
 		G1 g = new G1();
