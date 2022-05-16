@@ -4,12 +4,12 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import com.herumi.mcl.*;
 
-//This is the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.2)
-//Changes made: optimized selection of G1 and G2, included gg^(alpha^i) for all i in the public key,
+//This is the general case for the BGW scheme: https://eprint.iacr.org/2005/018.pdf (3.2)
+//Changes made: optimized selection of G1 and G2, included g2^(alpha^i) for all i in the public key,
 //both g1 and g2 are included in the public key, used HASHSETS to calculate the intersection of SHatL and SL
 //and added a key generation function instead of computing the private keys for all N users in the setup function
 //MAKE SURE TO MENTION IN PAPER: precomputation
-public class BGWGeneralCaseRevised {
+public class BGW05Sec3Point2 {
 
 	private static int n, A, B;
 	private static GT K; //to be precomputed in the setup function
@@ -20,7 +20,7 @@ public class BGWGeneralCaseRevised {
 	//second element: MSK
 	public static Object[] setup(int n) {
 		
-		BGWGeneralCaseRevised.n = n; //save n so it can be used for other functions
+		BGW05Sec3Point2.n = n; //save n so it can be used for other functions
 		
 		//instantiate B = floor(sqrt(n)),  A = ceil(n/B)
 		B = (int) Math.floor(Math.pow((double) n, 0.5));
