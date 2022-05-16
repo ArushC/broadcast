@@ -15,9 +15,7 @@ import com.herumi.mcl.*;
 //finally, changed the elements in g1 and g2 to obtain the most efficient scheme
 
 public class AugBERevised {
-	
-	private static int m;
-	
+
 	private static int m;
 	
 	//ouput: public key PK, private keys SK
