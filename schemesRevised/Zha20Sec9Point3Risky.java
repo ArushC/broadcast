@@ -13,7 +13,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.herumi.mcl.*;
 
 
-//The scheme: https://eprint.iacr.org/2020/954, section 9.3, page 58
+//First: the MTB scheme: https://eprint.iacr.org/2020/954, section 9.2, page 56
+//Drop down to line 460 to see the implementation of risky broadcast and trace, which uses the MTB scheme
 //"we use a single helper key for all users and include the helper key in the public parameters
 //to obtain a risky broadcast multi-scheme of size (N, 1, 1)"
 //CHANGES MADE: include R^(-1) in the master secret key so it does not have to be recomputed during secret key extraction
