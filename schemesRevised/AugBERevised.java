@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
 import java.io.*;
-import miscellaneous.Tools;
+import helperclasses.miscellaneous.Tools;
 import helperclasses.structures.Vector2D;
 import com.herumi.mcl.*;
 
@@ -33,7 +33,7 @@ public class AugBERevised {
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		
 		int m = (int) Math.ceil(Math.pow(N, 0.5));
-		AugBERevisedV2.m = m; //save this value so it can be used in other functions
+		AugBERevised.m = m; //save this value so it can be used in other functions
 
 		//2. Choose random exponents and store in arrays
 		Fr[] cExponents = new Fr[m];
