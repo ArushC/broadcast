@@ -8,7 +8,7 @@ import helperclasses.miscellaneous.Tools;
 import helperclasses.structures.Vector2D;
 import com.herumi.mcl.*;
 
-//The scheme: https://eprint.iacr.org/2009/532.pdf (5.2, page 10)
+//The ABBE scheme: https://eprint.iacr.org/2009/532.pdf (5.2, page 10)
 //Changes made: added a master secret key to the scheme which contains the public parameters, in addition to:
 //r1, r2, ..., r_m, c1, c2, ..., c_m, alpha1, alpha2, ..., alpha_m
 //also added a key generation function to the ABBE scheme
