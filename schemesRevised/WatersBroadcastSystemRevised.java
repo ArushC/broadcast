@@ -1,14 +1,9 @@
 package schemesRevised;
-
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.io.*;
-
-import miscellaneous.Tools;
-import net.sourceforge.sizeof.SizeOf;
-
+import helperclasses.miscellaneous.Tools;
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2009/385.pdf (pages 28-29)
