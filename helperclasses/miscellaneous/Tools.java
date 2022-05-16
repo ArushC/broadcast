@@ -1,4 +1,4 @@
-package miscellaneous;
+package helperclasses.miscellaneous;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
