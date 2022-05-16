@@ -1,4 +1,4 @@
-package miscellaneous;
+package helperclasses.miscellaneous;
 
 import com.herumi.mcl.Fr;
 import com.herumi.mcl.G1;
