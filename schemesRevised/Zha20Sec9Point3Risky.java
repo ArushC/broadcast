@@ -459,6 +459,7 @@ public class Zha20Sec9Point3Risky {
 
 //this is the risky broadcast & trace scheme given in section 9.3 of https://eprint.iacr.org/2020/954
 //note: page 36 is helpful
+//IMPORTANT NOTE: this implementation of the risky broadcast and trace scheme did NOT use the user-expansion compiler
 class RiskyBroadcastMultischeme {
 	
 	private static int N, M;
