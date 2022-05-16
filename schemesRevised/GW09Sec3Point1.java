@@ -7,13 +7,13 @@ import java.util.Arrays;
 import helperclasses.miscellaneous.Tools;
 import java.util.concurrent.ThreadLocalRandom;
 
-//The scheme: https://eprint.iacr.org/2008/268.pdf (3.1, page 8)
+//The semi-static scheme: https://eprint.iacr.org/2008/268.pdf (3.1, page 8)
 //Changes made: optimized selection of G1 and G2, added both to the public key
 //KeyGen takes the public key as a parameter (a slight modification to the described scheme)
 //K is precomputed in the setup phase so that encryption does not require pairings
 //Secret key contains g^(alpha) and gg^(alpha) 
 
-public class SemiStaticBGWRevised {
+public class GW09Sec3Point1 {
 
 	private static int n;
 	private static GT K;
@@ -24,7 +24,7 @@ public class SemiStaticBGWRevised {
 		
 		//instead of creating a GroupGen function, the groups are generated here
 		
-		SemiStaticBGWRevised.n = n; //save n so it can be used for later functions
+		GW09Sec3Point1.n = n; //save n so it can be used for later functions
 		
 		G1 g = new G1();
 		Mcl.hashAndMapToG1(g, "abc".getBytes());
