@@ -8,11 +8,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import helperclasses.miscellaneous.Tools;
 import com.herumi.mcl.*;
 
-//The scheme: https://eprint.iacr.org/eprint-bin/getfile.pl?entry=2009/532&version=20091104:184423&file=532.pdf
+//This is a PLBE scheme
+//The original Type-II pairing construction details are outlined on pages 7-9 of  
+//https://eprint.iacr.org/eprint-bin/getfile.pl?entry=2009/532&version=20091104:184423&file=532.pdf
+//Modifications made to convert this to a Type-III pairing setting were described in section 3.8.2 of our paper
 //Changes made: added a master secret key to the scheme which contains the public paramaters, in addition to:
 //r1, r2, ..., r_m, c1, c2, ..., c_m, alpha1, alpha2, ..., alpha_m
 //also added a key generation function to the PLBE scheme
-public class PLBERevised {
+public class GKSW09 {
 	
 	private static int m;
 	
@@ -29,7 +32,7 @@ public class PLBERevised {
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		
 		int m = (int) Math.ceil(Math.pow(N, 0.5));
-		PLBERevised.m = m; //save this value so it can be used in other functions
+		GKSW09.m = m; //save this value so it can be used in other functions
 
 		//2. Choose random exponents and store in arrays
 		Fr[] cExponents = new Fr[m];
