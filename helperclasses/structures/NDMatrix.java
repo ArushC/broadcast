@@ -1,7 +1,7 @@
 package helperclasses.structures;
 import java.io.File;
 import java.util.ArrayList;
-import miscellaneous.Tools;
+import helperclasses.miscellaneous.Tools;
 import com.herumi.mcl.Fr;
 import com.herumi.mcl.Mcl;
 
