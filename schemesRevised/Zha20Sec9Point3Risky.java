@@ -116,7 +116,7 @@ public class Zha20Sec9Point3Risky {
 		//compute all the g2 vectors
 		Fr gammaToThePowerHelper = new Fr(1);
 		for (int j = 0; j <= v; j++) {
-				//nontransformed
+			//nontransformed
 			VectorND expHVENT = new VectorND(VectorND.VECTOR_ZERO, n + 2);
 			Fr e1ExpHVENT = new Fr();
 			Mcl.mul(e1ExpHVENT, tauTheta, gammaToThePowerHelper);
