@@ -10,7 +10,7 @@ import com.herumi.mcl.*;
 //Added g2 to the public key (g1 is in the private key), both g1^(b) and g2^(b) are included in the public key
 //In paper: Explain how random elements u1, ..., uN were chosen
 //mention that the KeyGen algorithm only generates the key for one user
-public class WatersBroadcastSystemRevised { 
+public class Wat09 { 
 	
 	//input: security parameter lambda (Mcl.BN254 or Mcl.BLS_381)
 	//output: (public key PK, secret key MSK)
