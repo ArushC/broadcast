@@ -3,8 +3,8 @@ import helperclasses.polynomials.LagrangeInterpolationZp;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
-import miscellaneous.CustomPRF;
-import miscellaneous.Tools;
+import helperclasses.miscellaneous.CustomPRF;
+import helperclasses.miscellaneous.Tools;
 import com.herumi.mcl.*;
 
 //The scheme: https://eprint.iacr.org/2008/268.pdf (4.1, page 10)
