@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-public class LagrangeInterpolation {
+public class LaGrangeInterpolation {
 	
 	//multiplies two polynomials
 	//input: coefficients of 1st polynomial, coefficients of second polynomial
