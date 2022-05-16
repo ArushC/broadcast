@@ -10,9 +10,10 @@ import com.herumi.mcl.Fr;
 import com.herumi.mcl.GT;
 import com.herumi.mcl.Mcl;
 
+//nonrisky broadcast and trace scheme
 //Zhandry's O(N^(1 - a), N^(1 - a), N^a) scheme -- setting a = 2/3 yields a scheme with public/private key of N^(1/3)
 //The scheme: https://eprint.iacr.org/2020/954, section 9.3, post risk-mitigation compiler & user-expansion compiler
-public class NonriskyBroadcastAndTrace {
+public class Zha20Sec9Point3Nonrisky {
 	
 	private static int nOverT, MT, T, N;
 	
@@ -22,15 +23,15 @@ public class NonriskyBroadcastAndTrace {
 		int nOverT = (int) Math.ceil(((double) N)/T);
 		
 		//save to be used in later functions
-		NonriskyBroadcastAndTrace.nOverT = nOverT;
-		NonriskyBroadcastAndTrace.MT = M * T;
-		NonriskyBroadcastAndTrace.T = T;
-		NonriskyBroadcastAndTrace.N = N;
+		Zha20Sec9Point3Nonrisky.nOverT = nOverT;
+		Zha20Sec9Point3Nonrisky.MT = M * T;
+		Zha20Sec9Point3Nonrisky.T = T;
+		Zha20Sec9Point3Nonrisky.N = N;
 		
 		int n = 2;
 		int v = nOverT;
 		int u = 1, t = 1;
-		Object[] setup = MTBRevised.genMTB(u, v, t, n, lambda);
+		Object[] setup = Zha20Sec9Point3Risky.genMTB(u, v, t, n, lambda);
 		ArrayList<Object> PK = (ArrayList<Object>) setup[0];
 		Object[] MSK = (Object[]) setup[1];
 		ArrayList<Object> secretKeys = new ArrayList<Object>();
@@ -82,7 +83,7 @@ public class NonriskyBroadcastAndTrace {
 				//finally, generate the key for the Xth instance
 				Set<Integer> U = new HashSet<Integer>();
 				U.add(newID);
-				ArrayList<Object> ski = MTBRevised.extractMTB(MSK, U, wJI);
+				ArrayList<Object> ski = Zha20Sec9Point3Risky.extractMTB(MSK, U, wJI);
 				skID.add(ski);
 
 			}
@@ -116,7 +117,7 @@ public class NonriskyBroadcastAndTrace {
 				int ID = (l - 1) * nOverT + i;
 				TjS.add(ID);
 			}
-			ciphertext.add(MTBRevised.encMTB(PK, TjS));
+			ciphertext.add(Zha20Sec9Point3Risky.encMTB(PK, TjS));
 		}
 			
 		Object[] res = {ciphertext, X};
@@ -152,7 +153,7 @@ public class NonriskyBroadcastAndTrace {
 
 		Set<Integer> U = new HashSet<Integer>();
 		U.add(IDXInstance);	
-		return MTBRevised.decMTB(ski, helperKey, TjS, U, c);
+		return Zha20Sec9Point3Risky.decMTB(ski, helperKey, TjS, U, c);
 	}
 	
 	//To get the N^(1/3) scheme, set a = 2/3. In general, we get a scheme of size (N^(1 - a), N^(1 - a), N^a)
@@ -160,7 +161,7 @@ public class NonriskyBroadcastAndTrace {
 		
 		int T = (int) Math.floor(Math.pow(N, a));
 		long startSetup = System.nanoTime();
-		Object[] setup = NonriskyBroadcastAndTrace.setup(N, M, T, Mcl.BN254);
+		Object[] setup = Zha20Sec9Point3Nonrisky.setup(N, M, T, Mcl.BN254);
 		long elapsedSetup = System.nanoTime() - startSetup;
 		double secondsSetup = ((double) elapsedSetup)/1E9;
 		
@@ -193,7 +194,7 @@ public class NonriskyBroadcastAndTrace {
 		ArrayList<Object> helperKey = (ArrayList<Object>) PK.get(PK.size() - 1);
 		
 		long startEnc = System.nanoTime();
-		Object[] C = NonriskyBroadcastAndTrace.enc(PK, k, S);
+		Object[] C = Zha20Sec9Point3Nonrisky.enc(PK, k, S);
 		long elapsedEnc = System.nanoTime() - startEnc;
 		double secondsEnc = ((double) elapsedEnc)/1E9;
 		
@@ -206,13 +207,13 @@ public class NonriskyBroadcastAndTrace {
 		Object[] c = (Object[]) enc[0];
 		
 		long startKeyGen = System.nanoTime();
-		ArrayList<Object> skID = NonriskyBroadcastAndTrace.keyGen(ID, tk);
+		ArrayList<Object> skID = Zha20Sec9Point3Nonrisky.keyGen(ID, tk);
 		long elapsedKeyGen = System.nanoTime() - startKeyGen;
 		double secondsKeyGen = ((double) elapsedKeyGen)/1E9;
 		
 		//Finally, decrypt
 		long startDec = System.nanoTime();
-		GT encapsulatedKey1 = NonriskyBroadcastAndTrace.decrypt(ID, skID, helperKey, S, X, c);
+		GT encapsulatedKey1 = Zha20Sec9Point3Nonrisky.decrypt(ID, skID, helperKey, S, X, c);
 		long elapsedDec = System.nanoTime() - startDec;
 		double secondsDec = ((double) elapsedDec)/1E9;
 		
