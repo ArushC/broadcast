@@ -11,7 +11,7 @@ import com.herumi.mcl.*;
 //Note one part that was very difficult to figure out because it is not explained in the paper:
 //The only way C4 can be computed without accessing the private key is as e((g1^alpha)^F(alpha), (gHat2)^(alpha^(l-2)))^t
 //Also note that this IBBE system does not work when l = 1
-public class IBBESystemRevised {
+public class GW09Sec4Point1 {
 
 	private static G2 g2;
 	private static GT K;
@@ -23,7 +23,7 @@ public class IBBESystemRevised {
 	public static Object[] setup(int n, int l, int lambda) {
 		
 		Mcl.SystemInit(lambda);
-		IBBESystemRevised.lambda = lambda;
+		GW09Sec4Point1.lambda = lambda;
 		
 		//instead of creating a GroupGen function, the groups are generated here
 		//generate random g1, g2
