@@ -14,7 +14,7 @@ import com.herumi.mcl.*;
 //also added a key generation function to the ABBE scheme
 //finally, changed the elements in g1 and g2 to obtain the most efficient scheme
 
-public class AugBERevised {
+public class GKSW10Sec5Point2 {
 
 	private static int m;
 	
@@ -31,7 +31,7 @@ public class AugBERevised {
 		Mcl.hashAndMapToG2(g2, "def".getBytes());
 		
 		int m = (int) Math.ceil(Math.pow(N, 0.5));
-		AugBERevised.m = m; //save this value so it can be used in other functions
+		GKSW10Sec5Point2.m = m; //save this value so it can be used in other functions
 
 		//2. Choose random exponents and store in arrays
 		Fr[] cExponents = new Fr[m];
