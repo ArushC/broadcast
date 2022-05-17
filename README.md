@@ -20,5 +20,4 @@ IMPORTANT NOTE: by the end of steps 1-3, you should have successfully generated 
    
 6. To test runtimes for one of the schemes, run the command "java schemes.**NAMEOFCLASS**", where **NAMEOFCLASS** is the name of any one of the files in the "schemes" directory, excluding the '.java' file extension.  
 
-
-A detailed analysis of observed runtimes can be found in this research paper: https://eprint.iacr.org/2021/1526.
+An analysis of observed runtimes can be found in the full version of the research paper based on this implementation: https://eprint.iacr.org/2021/1526.
