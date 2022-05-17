@@ -1,4 +1,4 @@
-package schemesRevised;
+package schemes;
 import com.herumi.mcl.*;
 import java.io.*;
 import java.security.SecureRandom;
