@@ -2,7 +2,7 @@
 
 * **BGW05Sec3Point1** -> Standard broadcast encryption secure against static adversaries. Section 3.1 of https://eprint.iacr.org/2005/018.pdf ("A Special Case")
 * **BGW05Sec3Point2** -> Standard broadcast encryption secure against static adversaries. Section 3.2 of https://eprint.iacr.org/2005/018.pdf ("General Case")
-* **BaselineOverPairings** -> the ElGamal baseline scheme implemented over the non-optimal pairings-based curve G1 (just for fun).
+* **BaselineOverPairings** -> the ElGamal baseline scheme implemented over the non-optimal pairings-based curve G1.
 * **GKSW09** -> Private linear broadcast encryption. Pages 7-9 of https://eprint.iacr.org/eprint-bin/getfile.pl?entry=2009/532&version=20091104:184423&file=532.pdf.
 * **GKSW10Sec5Point2** -> Augmented broadcast-based encryption (ABBE). Section 5.2 of https://eprint.iacr.org/2009/532.pdf.
 * **GW09Sec3Point1** -> Standard broadcast encryption secure against semi-static adversaries. Section 3.1 of https://eprint.iacr.org/2008/268.pdf.
