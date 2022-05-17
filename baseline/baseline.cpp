@@ -1,8 +1,9 @@
 
-// Run using g++ --std=c++11 baseline.cpp -I/usr/local/Cellar/openssl@1.1/1.1.1g/include/ -L/usr/local/Cellar/openssl@1.1/1.1.1g/lib/ -lssl -lcrypto
-//Note filepaths may vary depending on the system
-//Make sure you have the latest version of openssl installed
-//Please excuse the messy code -- I am not a regular C++ coder
+// Run using g++ --std=c++11 baseline.cpp -I/opt/homebrew/Cellar/openssl@1.1/1.1.1k/include/ -L/opt/homebrew/Cellar/openssl@1.1/1.1.1k/lib -lssl -lcrypto
+//Note: include/library filepaths may vary depending on the system. The above command assumes that openssl was installed
+//using homebrew. On MacOSX, this can be achieved by running "brew install openssl". If openssl is installed somewhere else, 
+//run the command "locate openssl" to find it. The "include" folder directory should correspond to the -I flag, and the
+//"lib" folder directory to the -L flag
 //  Created by Arush Chhatrapati on 7/15/20.
 //  Copyright © 2020 Arush Chhatrapati. All rights reserved.
 
@@ -20,11 +21,6 @@
 
 using namespace std;
 using namespace std::chrono;
-
-//Use these if testing for N = 1000000 and comment out lines #149, 150, and 171
-//BIGNUM *private_key[1000000];
-//EC_POINT *public_key[1000001];
-//EC_POINT *ciphertext[1000000];
 
 //function to get a random point (generator) on a curve (NOT NECESSARY)
 EC_POINT* get_random_generator(EC_GROUP *group, BIGNUM *order, BN_CTX *ctx) {
@@ -146,8 +142,8 @@ void printRuntimes(int lambda, int N, int subsetSize) {
     EC_GROUP *group;
     BIGNUM *order;
     BN_CTX *ctx;
-    BIGNUM *private_key[N];
-    EC_POINT *public_key[N + 1];
+    BIGNUM **private_key = (BIGNUM**) malloc(N * sizeof(BIGNUM*));
+    EC_POINT **public_key = (EC_POINT**) malloc((N + 1) * sizeof(EC_POINT*));
     auto start = high_resolution_clock::now();
     setup(lambda, N, group, order, ctx, private_key, public_key);
     auto stop = high_resolution_clock::now();
@@ -159,8 +155,7 @@ void printRuntimes(int lambda, int N, int subsetSize) {
         randomNums.push_back(i + 1);
     }
     
-    int sArr[subsetSize];
-    int* S = sArr;
+    int* S = (int*) malloc(subsetSize * sizeof(int));
     
     for (int i = 0; i < subsetSize; i++) {
         int randIndex = (std::rand() % randomNums.size());
@@ -168,7 +163,7 @@ void printRuntimes(int lambda, int N, int subsetSize) {
         randomNums.erase(randomNums.begin() + randIndex);
     }
      //subset
-    EC_POINT *ciphertext[N];
+    EC_POINT **ciphertext = (EC_POINT**) malloc(N * sizeof(EC_POINT*));
     EC_POINT *m = get_random_generator(group, order, ctx);
 
     BEGIN
@@ -184,10 +179,16 @@ void printRuntimes(int lambda, int N, int subsetSize) {
     END("decrypt took: ")
     
     cout <<endl; //padding
+
+    //free all the the dynamically-allocated memory
+    free(ciphertext);
+    free(S);
+    free(private_key);
+    free(public_key);
 }
 
 void testRuntimes(int lambda, int percent) {
-    for (int N = 100; N <= 100000; N *= 10) {
+    for (int N = 100; N <= 1000000; N *= 10) {
         int subsetSize = (int) (percent * 0.01 * N);
         printRuntimes(lambda, N, subsetSize);
     }
@@ -201,8 +202,6 @@ int main()
  //    {"P-384", NID_secp384r1},
  //    {"P-521", NID_secp521r1}
     cout <<"All times are in seconds" <<endl << endl;
-    int lambda = NID_X9_62_prime256v1;
-    testRuntimes(lambda, 10); //only tests from N = 100 to N = 100000
-    //printRuntimes(lambda, 1000000, subsetSize); //Uncomment to test N = 1000000
-                                             //and follow instructions on line #24
+    int lambda = NID_X9_62_prime256v1; //curve to use for testing
+    testRuntimes(lambda, 10);
 }
