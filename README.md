@@ -1,10 +1,10 @@
 # Broadcast Encryption Implementations
 
-This is a library containing implementations of broadcast encryption systems using the MCL Java pairings library. Source code for the implemented schemes can be found under the "schemes" directory. The runtimes were tested on a 2014 Macbook Air with a 1.4 GHz Dual-Core Intel Core i5 processor and 4GB RAM, and can be found under the "runtimes" directory. 
+This is a library containing implementations of broadcast encryption systems using the MCL Java pairings library. The source code for the implemented schemes can be found under the "schemes" directory. The runtimes were tested on a 2014 Macbook Air with a 1.4 GHz Dual-Core Intel Core i5 processor and 4GB RAM, and can be found under the "runtimes" directory. 
 
 If you want to run the source code and test runtimes on your own system, follow these steps:
 
-1. Download the MCL library from https://github.com/herumi/mcl. We will assume that the library was installed in a folder titled "mcl".
+1. Download the MCL library from https://github.com/herumi/mcl. For the remainder of these steps, we will assume that the library was installed in a folder titled "mcl".
 2. Build the library. Instructions for how to build the library are at the bottom of the page in the README doc.
 3. Build the Java bindings for the library. Instructions for how to do this are at the bottom of the following page: https://github.com/herumi/mcl/tree/master/ffi/java.
 
@@ -22,4 +22,4 @@ IMPORTANT NOTE: by the end of steps 1-3, you should have successfully generated 
 6. To test runtimes for one of the schemes, run the command "java schemes.<NAMEOFCLASS>", where "<NAMEOFCLASS>" is the name of any one of the files in the "schemes" directory, excluding the '.java' file extension.  
 
 
-All runtimes are analyzed in depth in the paper: https://eprint.iacr.org/2021/1526.
+A detailed analysis of observed runtimes can be found in this research paper: https://eprint.iacr.org/2021/1526.
