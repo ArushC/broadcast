@@ -1,4 +1,4 @@
-package schemesRevised;
+package schemes;
 import helperclasses.polynomials.LagrangeInterpolationZp;
 import java.io.File;
 import java.util.ArrayList;
