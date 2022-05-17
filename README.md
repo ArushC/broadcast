@@ -5,7 +5,7 @@ This is a library containing implementations of broadcast encryption systems usi
 If you want to run the source code and test runtimes on your own system, follow these steps:
 
 1. Download the MCL library from https://github.com/herumi/mcl. For the remainder of these steps, we will assume that the library was installed in a folder titled "mcl".
-2. Build the library. Instructions for how to build the library are at the bottom of the page in the README doc.
+2. Build the library. Instructions for how to build the library are at the bottom of the page linked above, in the README doc.
 3. Build the Java bindings for the library. Instructions for how to do this are at the bottom of the following page: https://github.com/herumi/mcl/tree/master/ffi/java.
 
 IMPORTANT NOTE: by the end of steps 1-3, you should have successfully generated a .lib file titled "libmcljava.dylib". The lib file should be found at "mcl/lib". Without this library file, none of the schemes can be run.
