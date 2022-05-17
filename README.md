@@ -18,7 +18,7 @@ IMPORTANT NOTE: by the end of steps 1-3, you should have successfully generated 
     
    Note that if you modify the source code in any of the files, you will have to rerun the above commands to see the changes reflected in the compiled code.
    
-6. To test runtimes for one of the schemes, run the command "java schemes.**NAMEOFCLASS**>", where "/<NAMEOFCLASS/>" is the name of any one of the files in the "schemes" directory, excluding the '.java' file extension.  
+6. To test runtimes for one of the schemes, run the command "java schemes.**NAMEOFCLASS**>", where **NAMEOFCLASS** is the name of any one of the files in the "schemes" directory, excluding the '.java' file extension.  
 
 
 A detailed analysis of observed runtimes can be found in this research paper: https://eprint.iacr.org/2021/1526.
