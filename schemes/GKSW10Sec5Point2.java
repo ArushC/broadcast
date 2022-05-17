@@ -1,4 +1,4 @@
-package schemesRevised;
+package schemes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
