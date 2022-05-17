@@ -1,5 +1,5 @@
 
-// Run using the following command:
+// You should have OpenSSL installed. Run the program using the following command:
 // "g++ --std=c++11 baseline.cpp -I/opt/homebrew/Cellar/openssl@1.1/1.1.1k/include/ -L/opt/homebrew/Cellar/openssl@1.1/1.1.1k/lib -lssl -lcrypto"
 //Note: include/library filepaths may vary depending on the system. The above command assumes that openssl was installed
 //using homebrew. On MacOSX, this can be achieved by running "brew install openssl". If openssl is installed somewhere else, 
