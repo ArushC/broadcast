@@ -1,14 +1,12 @@
-package schemesRevised;
+package schemes;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
-
-import miscellaneous.Tools;
-
+import helperclasses.miscellaneous.Tools;
 import com.herumi.mcl.*;
 
 //Implementation of the baseline scheme over the group G1 used for the pairing-based schemes
-public class BaselineSchemeRevised {
+public class BaselineOverPairings {
 
 	private static int N;
 	
@@ -16,7 +14,7 @@ public class BaselineSchemeRevised {
 	public static Object[] setup(int lambda, int N) {
 		
 		Mcl.SystemInit(lambda);
-		BaselineSchemeRevised.N = N;
+		BaselineOverPairings.N = N;
 		
 		//1. Random generator g
 		G1 g = new G1();
