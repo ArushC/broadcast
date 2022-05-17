@@ -13,7 +13,6 @@ IMPORTANT NOTE: by the end of steps 1-3, you should have successfully generated 
 4. Download this repository, and copy the folders "schemes" and "helperclasses" to the directory "mcl/ffi/java".
 5. Navigate to "mcl/ffi/java" in a terminal, and run the following commands:
    * javac -d . helperclasses/miscellaneous/*.java
-   * javac -d . helperclasses/polynomials/*.java
    * javac -d . helperclasses/structures/*.java
    * javac -d . schemes/*.java
     
