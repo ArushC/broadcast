@@ -1,4 +1,4 @@
-package schemesRevised;
+package schemes;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
