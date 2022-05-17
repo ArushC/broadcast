@@ -1,4 +1,4 @@
-package schemesRevised;
+package schemes;
 import helperclasses.polynomials.LagrangeInterpolationZp;
 import helperclasses.structures.VectorND;
 import java.io.File;
