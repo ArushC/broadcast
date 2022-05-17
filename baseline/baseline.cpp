@@ -3,8 +3,8 @@
 // "g++ --std=c++11 baseline.cpp -I/opt/homebrew/Cellar/openssl@1.1/1.1.1k/include/ -L/opt/homebrew/Cellar/openssl@1.1/1.1.1k/lib -lssl -lcrypto"
 //Note: include/library filepaths may vary depending on the system. The above command assumes that openssl was installed
 //using homebrew. On MacOSX, this can be achieved by running "brew install openssl". If openssl is installed somewhere else, 
-//run the command "locate openssl" to find it. The "include" folder directory should correspond to the -I flag, and the
-//"lib" folder directory to the -L flag
+//run the command "locate openssl" to find it. The "include" folder subdirectory should correspond to the -I flag, and the
+//"lib" folder subdirectory to the -L flag.
 //  Created by Arush Chhatrapati on 7/15/20.
 //  Copyright © 2020 Arush Chhatrapati. All rights reserved.
 
