@@ -10,7 +10,7 @@ If you want to run the source code and test runtimes on your own system, follow 
 
 IMPORTANT NOTE: by the end of steps 1-3, you should have successfully generated a .lib file titled "libmcljava.dylib". The lib file should be found at "mcl/lib". Without this library file, none of the schemes can be run.
 
-4. Download this repository, and copy the folders "schemes" and "helperclasses" to the directory "mcl/ffi/java".
+4. Download this repository, and move the folders "schemes" and "helperclasses" to the directory "mcl/ffi/java".
 5. Navigate to "mcl/ffi/java" in a terminal, and run the following commands:
    * javac -d . helperclasses/miscellaneous/*.java
    * javac -d . helperclasses/structures/*.java
