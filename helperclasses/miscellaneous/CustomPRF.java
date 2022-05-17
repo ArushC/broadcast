@@ -4,7 +4,7 @@ import com.herumi.mcl.Fr;
 import com.herumi.mcl.G1;
 import com.herumi.mcl.Mcl;
 
-//custom pseudorandom function for the IBBE construction
+//custom pseudorandom function for IBBE systems GW09Sec4Point1 and GW09Sec4Point3Point1
 public class CustomPRF {
 	
 	private String key;
