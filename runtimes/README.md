@@ -1,4 +1,4 @@
-The naming convention for all of the files/subdirectories can be explained as follows:
+The naming convention for all of the files/subdirectories can be explained as follows (unless otherwise specified):
 
 **Subdirectories:**
 
